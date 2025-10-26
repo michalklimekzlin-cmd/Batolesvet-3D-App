@@ -1,31 +1,33 @@
-// VaFT • Inventář (kompatibilní s map.logic.js)
+// VaFT • Inventář (bezpečný + kompatibilní s map.logic.js)
+console.log("✅ VaFT.inventory.js načten");
 
-export async function buildInventory(state) {
-  const { mix, label } = state;
+export async function buildInventory(state = { mix:{}, label:"..." }) {
+  const mix = state.mix || {};
   const items = [];
 
-  // základní položky podle mixu
-  if (mix.B > 0.6) items.push({ id:'seed',   title:'Semínko',      power:mix.B });
-  if (mix.G > 0.6) items.push({ id:'glyph',  title:'Znak ☼',       power:mix.G });
-  if (mix.AI> 0.6) items.push({ id:'logic',  title:'Čip logiky',   power:mix.AI});
-  if (mix.P > 0.6) items.push({ id:'heart',  title:'Tlukot srdce', power:mix.P });
+  // 🎒 Základní položky podle energie týmů
+  if (mix.B > 0.6) items.push({ id:'seed',   title:'Semínko života',   power:mix.B });
+  if (mix.G > 0.6) items.push({ id:'glyph',  title:'Znak rovnováhy',   power:mix.G });
+  if (mix.AI> 0.6) items.push({ id:'logic',  title:'Čip poznání',      power:mix.AI});
+  if (mix.P > 0.6) items.push({ id:'heart',  title:'Tlukot srdce',     power:mix.P });
 
-  // vždy jádro
-  items.push({ id:'core', title:`Jádro (${label})`, power: 0.5 + 0.5*Math.random() });
+  // 🧩 Vždy přidej jádro podle fáze
+  items.push({ id:'core', title:`Jádro (${state.label || 'neznámé'})`, power: 1.0 });
 
-  // 🔑 map.logic očekává funkci tipsFor(m) -> pole tipů
-  function tipsFor(m) {
-    const tips = [];
-    if (m?.B > 1.5) tips.push('🌱 Pečuj o klid – B je silné.');
-    if (m?.G > 1.5) tips.push('✨ Zapisuj symboly – G roste.');
-    if (m?.AI > 1.5) tips.push('🧩 Zkus analýzu cesty – AI žhne.');
-    if (m?.P > 1.5) tips.push('❤️ Naslouchej pocitu – P vede.');
-    // vždy vrať aspoň prázdné pole
+  // 💬 Tipy pro mapu – musí vždy vracet pole
+  const tipsFor = (m={}) => {
+    const tips=[];
+    if (m.B>1.5)  tips.push('🌱 Klid je síla – energie B roste.');
+    if (m.G>1.5)  tips.push('✨ Zapisuj symboly – G žhne.');
+    if (m.AI>1.5) tips.push('🤖 Přemýšlej hlouběji – AI aktivní.');
+    if (m.P>1.5)  tips.push('❤️ Naslouchej sobě – P dýchá.');
+    if (!tips.length) tips.push('💤 Svět je v rovnováze.');
     return tips;
-  }
+  };
 
-  // volitelně může map.logic používat i linksFor – dáme bezpečný default
-  function linksFor() { return []; }
+  // 🔗 Základní placeholder pro mapové vazby
+  const linksFor = () => [];
 
+  // 💾 Vrací objekt s všemi funkcemi
   return { items, tipsFor, linksFor };
 }
