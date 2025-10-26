@@ -1,47 +1,24 @@
-// viri.skills.js – registry dovedností Viriho
-export const SkillCaps = { min: 0, max: 5 };
+// VaFT • Skills
+// Dovednosti, které může VaFT časem získávat a rozvíjet
 
-export const Skills = {
-  guidingEcho: {
-    name: 'Guiding Echo',
-    intensity: 1,
-    cooldown: 5000,
-    apply(ctx) {
-      // ctx: { map, ui, audio, state }
-      ctx.ui.whisper('Tudy to zkus…', { ttl: 2500 });
-    }
-  },
+export function initVaFTSkills(xp) {
+  const skills = new Map();
 
-  lensShift: {
-    name: 'Lens Shift',
-    intensity: 1,
-    cooldown: 8000,
-    apply(ctx) {
-      ctx.ui.toneOverlay({ hue: 170, sat: 8 * this.intensity, dur: 1400 });
-    }
-  },
+  function gain(name, amount = 0.1) {
+    const val = (skills.get(name) || 0) + amount;
+    skills.set(name, Math.min(1, val));
+  }
 
-  pathWarp: {
-    name: 'Path Warp',
-    intensity: 1,
-    cooldown: 10000,
-    apply(ctx) {
-      ctx.map.toggleGate({ nearPlayer: true });
-    }
-  },
-
-  clarityFlash: {
-    name: 'Clarity Flash',
-    intensity: 1,
-    cooldown: 7000,
-    apply(ctx) {
-      ctx.ui.flash('🟢 Jasnost', { dur: 600 });
+  function decay() {
+    for (const [k,v] of skills.entries()) {
+      skills.set(k, Math.max(0, v - 0.001));
     }
   }
-};
 
-export function setIntensity(name, level) {
-  const s = Skills[name];
-  if (!s) return;
-  s.intensity = Math.max(SkillCaps.min, Math.min(SkillCaps.max, level|0));
+  function list() {
+    return Array.from(skills.entries())
+      .map(([k,v]) => ({ name:k, level:+(v*100).toFixed(1) }));
+  }
+
+  return { gain, decay, list };
 }
