@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Batolesvět • Viri (živé jádro)</title>
+  <title>Batolesvět • VafT (živé jádro)</title>
   <style>
     html,body{
       margin:0;height:100%;
@@ -64,11 +64,11 @@
 
   <div id="worldLabel">Svět: Michal Klimek</div>
 
-  <!-- DOORS: za Virim (pozadí) -->
+  <!-- DOORS: za VafTem (pozadí) -->
   <canvas id="canvasDoor" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></canvas>
-  <!-- VIRI: hlavní orb -->
-  <canvas id="canvasVafi" style="position:fixed;inset:0;z-index:1;"></canvas>
-  <!-- AURA: před Virim (písmena/kouř) -->
+  <!-- VafT: hlavní orb -->
+  <canvas id="canvasVafT" style="position:fixed;inset:0;z-index:1;"></canvas>
+  <!-- AURA: před VafTem (písmena/kouř) -->
   <canvas id="canvasAura" style="position:fixed;inset:0;z-index:2;pointer-events:none;"></canvas>
 
   <!-- HUD + Rady + chybový log -->
@@ -89,58 +89,58 @@
 
   <!-- ✅ ES module kód MUSÍ být uvnitř <script type="module"> -->
   <script type="module">
-    import { ViriXP }         from './viri.experience.js';
-    import { startViriForm }  from './viri.form.js';
-    import { buildInventory } from './viri.inventory.js';
-    import { initMap }        from './map.logic.js';
-    import { initViriLearning } from './viri.learning.js';
+    import { VafTXP }            from './vaft.experience.js';
+    import { startVafTForm }     from './vaft.form.js';
+    import { buildInventory }    from './vaft.inventory.js';
+    import { initMap }           from './map.logic.js';
+    import { initVafTLearning }  from './vaft.learning.js';
     import './events.core.js';
 
-    import { startViriDoor }  from './viri.door.js';
-    import { startViriAura }  from './viri.aura.js';
+    import { startVafTDoor }     from './vaft.door.js';
+    import { startVafTAura }     from './vaft.aura.js';
 
     /* ➕ NOVÉ: odznaky mentorek */
     import { mountMentorBadges } from './badges.js';
-mountMentorBadges('./data/members.json'); // ← důležité
+    mountMentorBadges('./data/members.json'); // ← důležité
     /* MENTORKY – rychlý inline render (bez externích souborů) */
-(() => {
-  const css = document.createElement('style');
-  css.textContent = `
-    .mentor-badge{
-      position:fixed;z-index:21;background:rgba(20,24,32,.88);color:#cfe;
-      border:1px solid #334;border-radius:.8rem;padding:6px 10px;
-      font:12px/1.25 system-ui,-apple-system,sans-serif;backdrop-filter:blur(6px) saturate(120%);
-      box-shadow:0 8px 28px rgba(0,0,0,.4); pointer-events:none; opacity:.96
-    }
-    .mentor-badge .t{opacity:.75;margin-right:6px}
-    .mentor-badge .chip{display:inline-block;margin:2px 4px 0 0;padding:2px 8px;border-radius:.7rem;border:1px solid #3a4557;background:#0f131b}
-    .mb-tl{top:52px;left:16px}      /* pod #btnTopLeft */
-    .mb-tr{top:52px;right:16px}     /* pod #btnTopRight */
-    .mb-bl{bottom:52px;left:16px}   /* nad #btnBottomLeft */
-    .mb-br{bottom:52px;right:16px}  /* nad #btnBottomRight */
-  `;
-  document.head.appendChild(css);
+    (() => {
+      const css = document.createElement('style');
+      css.textContent = `
+        .mentor-badge{
+          position:fixed;z-index:21;background:rgba(20,24,32,.88);color:#cfe;
+          border:1px solid #334;border-radius:.8rem;padding:6px 10px;
+          font:12px/1.25 system-ui,-apple-system,sans-serif;backdrop-filter:blur(6px) saturate(120%);
+          box-shadow:0 8px 28px rgba(0,0,0,.4); pointer-events:none; opacity:.96
+        }
+        .mentor-badge .t{opacity:.75;margin-right:6px}
+        .mentor-badge .chip{display:inline-block;margin:2px 4px 0 0;padding:2px 8px;border-radius:.7rem;border:1px solid #3a4557;background:#0f131b}
+        .mb-tl{top:52px;left:16px}
+        .mb-tr{top:52px;right:16px}
+        .mb-bl{bottom:52px;left:16px}
+        .mb-br{bottom:52px;right:16px}
+      `;
+      document.head.appendChild(css);
 
-  const mentors = {
-    batolesvet: ["Stanička"],
-    glyph:      ["Vaneska"],
-    pedrovci:   ["Sofie"],
-    ai:         ["Terezka"]
-  };
+      const mentors = {
+        batolesvet: ["Stanička"],
+        glyph:      ["Vaneska"],
+        pedrovci:   ["Sofie"],
+        ai:         ["Terezka"]
+      };
 
-  const make = (cls, label, names) => {
-    const el = document.createElement('div');
-    el.className = `mentor-badge ${cls}`;
-    el.innerHTML = `<span class="t">Mentorka:</span>${names.map(n=>`<span class="chip">${n}</span>`).join('')}`;
-    el.setAttribute('aria-label', `Mentorka ${label}: ${names.join(', ')}`);
-    document.body.appendChild(el);
-  };
+      const make = (cls, label, names) => {
+        const el = document.createElement('div');
+        el.className = `mentor-badge ${cls}`;
+        el.innerHTML = `<span class="t">Mentorka:</span>${names.map(n=>`<span class="chip">${n}</span>`).join('')}`;
+        el.setAttribute('aria-label', `Mentorka ${label}: ${names.join(', ')}`);
+        document.body.appendChild(el);
+      };
 
-  make('mb-tl','Batolesvět', mentors.batolesvet);
-  make('mb-tr','Glyph',      mentors.glyph);
-  make('mb-bl','Pedrovci',   mentors.pedrovci);
-  make('mb-br','AI',         mentors.ai);
-})();
+      make('mb-tl','Batolesvět', mentors.batolesvet);
+      make('mb-tr','Glyph',      mentors.glyph);
+      make('mb-bl','Pedrovci',   mentors.pedrovci);
+      make('mb-br','AI',         mentors.ai);
+    })();
     mountMentorBadges(); // zobrazí jména Stanička, Terezka, Vaneska, Sofie
 
     // fallback, kdyby EVENTS ještě nebyly na window
@@ -152,13 +152,13 @@ mountMentorBadges('./data/members.json'); // ← důležité
     };
 
     // spustit po načtení modulů
-    const door = startViriDoor(document.getElementById('canvasDoor'));
-    const aura = startViriAura(document.getElementById('canvasAura'));
+    const door = startVafTDoor(document.getElementById('canvasDoor'));
+    const aura = startVafTAura(document.getElementById('canvasAura'));
 
-    const cv   = document.getElementById('canvasVafi');
-    const viri = startViriForm(cv);
-    const xp   = new ViriXP();
-    initViriLearning(xp);
+    const cv   = document.getElementById('canvasVafT');
+    const vaft = startVafTForm(cv);
+    const xp   = new VafTXP();
+    initVafTLearning(xp);
 
     // rady bublina
     const advice = document.getElementById('advice');
@@ -181,9 +181,9 @@ mountMentorBadges('./data/members.json'); // ← důležité
     function loop(){
       xp.tick();
       const s = xp.getState();
-      viri.setMix(s.mix);
-      aura?.setMix?.(s.mix);           // jemně obarví „kouř“ podle mixu
-      door?.tick?.(s);                 // může reagovat na fázi/label
+      vaft.setMix(s.mix);
+      aura?.setMix?.(s.mix);
+      door?.tick?.(s);
 
       if (s.label !== lastLabel) {
         lastLabel = s.label;
