@@ -1,47 +1,41 @@
-// 🧱 VIRI DOOR — holografické „dveře“ do dílny
-export function startViriDoor(canvas) {
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+// VaFT • Door (pozadí, vlnění a světelný dech)
+console.log("✅ VaFT.door.js načten");
+
+export function startVaFTDoor(canvas) {
+  const ctx = canvas.getContext("2d", { alpha: true });
   let t = 0;
 
-  function draw() {
-    const { width, height } = canvas;
-    ctx.clearRect(0, 0, width, height);
-
-    const cx = width / 2;
-    const cy = height / 2;
-    const radius = Math.min(width, height) / 4;
-    const pulse = Math.sin(t * 0.03) * 10;
-
-    const grd = ctx.createRadialGradient(cx, cy, radius * 0.5, cx, cy, radius + 40);
-    grd.addColorStop(0, `rgba(0,255,255,${0.05 + 0.05 * Math.sin(t * 0.1)})`);
-    grd.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = grd;
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius + pulse, 0, Math.PI * 2);
-    ctx.fill();
-
-    // světelné pruhy kolem „portálu“
-    for (let i = 0; i < 8; i++) {
-      const angle = (t * 0.02 + i * Math.PI / 4);
-      const x = cx + Math.cos(angle) * (radius + 20);
-      const y = cy + Math.sin(angle) * (radius + 20);
-      ctx.beginPath();
-      ctx.arc(x, y, 6, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0,200,255,${0.3 + 0.3 * Math.sin(t * 0.2 + i)})`;
-      ctx.fill();
-    }
-
-    t++;
-    requestAnimationFrame(draw);
-  }
-
   function resize() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
+    canvas.width = Math.floor(canvas.clientWidth * dpr);
+    canvas.height = Math.floor(canvas.clientHeight * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
+  window.addEventListener("resize", resize, { passive: true });
   resize();
-  window.addEventListener('resize', resize);
-  draw();
+
+  function tick(state = { mix: { B: 0, G: 0, AI: 0, P: 0 } }) {
+    t += 1 / 60;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+
+    const energy = (state.mix.B + state.mix.G + state.mix.AI + state.mix.P) / 4;
+    const hue = 200 + (state.mix.AI * 20) - (state.mix.P * 15);
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, `hsl(${hue}, 70%, ${20 + 20 * energy}%)`);
+    grad.addColorStop(1, `hsl(${hue + 30}, 80%, ${10 + 10 * energy}%)`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // pulz brány
+    const pulse = Math.sin(t * 1.3) * 0.5 + 0.5;
+    const glow = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w * 0.5);
+    glow.addColorStop(0, `rgba(180,200,255,${0.15 + energy * 0.15 + pulse * 0.1})`);
+    glow.addColorStop(1, "transparent");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  return { tick };
 }
