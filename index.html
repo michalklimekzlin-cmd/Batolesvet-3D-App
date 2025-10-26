@@ -121,12 +121,17 @@
       door?.tick?.(s);
       paintHUD(s);
       if (s.label !== lastLabel) {
-        lastLabel = s.label;
-        buildInventory(s).then(inv => initMap({ canvas: cv, inventory: inv }));
-      }
-      requestAnimationFrame(loop);
-    }
-    loop();
+  lastLabel = s.label;
+  buildInventory(s).then(inv => {
+    // safety obal – kdyby prohlížeč načetl starou verzi:
+    const safeInv = {
+      items: inv?.items ?? [],
+      tipsFor: inv?.tipsFor ?? (() => []),
+      linksFor: inv?.linksFor ?? (() => []),
+    };
+    initMap({ canvas: cv, inventory: safeInv });
+  }).catch(err => console.error('Inventory error:', err));
+}
 
     // simulace života
     let t=0;
