@@ -5,18 +5,54 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Batolesvět • Viri (živé jádro)</title>
   <style>
-    html,body{margin:0;height:100%;background:#000;color:#cfe;font:16px/1.5 system-ui,-apple-system,sans-serif;overflow:hidden}
+    html,body{
+      margin:0;height:100%;
+      background:#000;color:#cfe;
+      font:16px/1.5 system-ui,-apple-system,sans-serif;
+      overflow:hidden
+    }
     canvas{width:100%;height:100%;display:block}
-    .btn{position:fixed;padding:8px 14px;border-radius:.7rem;border:1px solid #334;background:rgba(28,30,36,.85);color:#cbe;font-weight:600;backdrop-filter:blur(8px) saturate(120%);transition:.25s;z-index:20}
+    .btn{
+      position:fixed;padding:8px 14px;border-radius:.7rem;
+      border:1px solid #334;
+      background:rgba(28,30,36,.85);color:#cbe;font-weight:600;
+      backdrop-filter:blur(8px) saturate(120%);
+      transition:.25s;z-index:20
+    }
     .btn:hover{background:rgba(50,52,60,.92)}
-    #btnTopLeft{top:16px;left:16px} #btnTopRight{top:16px;right:16px}
-    #btnBottomLeft{bottom:16px;left:16px} #btnBottomRight{bottom:16px;right:16px}
-    #worldLabel{position:fixed;left:0;right:0;bottom:64px;text-align:center;color:#9ff;opacity:.9;z-index:15}
-    #hudLog{position:fixed;left:50%;transform:translateX(-50%);bottom:92px;max-width:92vw;background:rgba(20,22,26,.82);color:#cfe;
-      border:1px solid #2d3a40;border-radius:10px;padding:10px 14px;font:13px/1.4 system-ui,-apple-system,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.45);backdrop-filter:blur(8px);z-index:30}
-    #advice{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;padding:8px 12px;border-radius:.7rem;border:1px solid #355;background:rgba(12,18,24,.9);color:#cff;font-weight:600;opacity:0;transition:.3s;pointer-events:none;z-index:40}
-    #err{position:fixed;left:10px;bottom:10px;max-width:88vw;max-height:40vh;overflow:auto;background:rgba(10,10,10,.9);color:#f88;
-      border:1px solid #500;border-radius:8px;padding:8px 10px;font:12px/1.35 ui-monospace,Menlo,Consolas;z-index:9999;display:none;white-space:pre-wrap}
+    #btnTopLeft{top:16px;left:16px}
+    #btnTopRight{top:16px;right:16px}
+    #btnBottomLeft{bottom:16px;left:16px}
+    #btnBottomRight{bottom:16px;right:16px}
+    #worldLabel{
+      position:fixed;left:0;right:0;bottom:64px;
+      text-align:center;color:#9ff;opacity:.9;z-index:15
+    }
+    #hudLog{
+      position:fixed;left:50%;transform:translateX(-50%);
+      bottom:92px;max-width:92vw;
+      background:rgba(20,22,26,.82);color:#cfe;
+      border:1px solid #2d3a40;border-radius:10px;
+      padding:10px 14px;
+      font:13px/1.4 system-ui,-apple-system,sans-serif;
+      box-shadow:0 8px 30px rgba(0,0,0,.45);
+      backdrop-filter:blur(8px);z-index:30
+    }
+    #advice{
+      position:fixed;left:50%;transform:translateX(-50%);
+      bottom:28px;padding:8px 12px;border-radius:.7rem;
+      border:1px solid #355;background:rgba(12,18,24,.9);
+      color:#cff;font-weight:600;opacity:0;
+      transition:.3s;pointer-events:none;z-index:40
+    }
+    #err{
+      position:fixed;left:10px;bottom:10px;
+      max-width:88vw;max-height:40vh;overflow:auto;
+      background:rgba(10,10,10,.9);color:#f88;
+      border:1px solid #500;border-radius:8px;
+      padding:8px 10px;font:12px/1.35 ui-monospace,Menlo,Consolas;
+      z-index:9999;display:none;white-space:pre-wrap
+    }
   </style>
 </head>
 <body>
@@ -42,7 +78,11 @@
 
   <script>
     const $ = s => document.querySelector(s);
-    const logErr = (msg)=>{ const el=$('#err'); el.style.display='block'; el.textContent += (msg+'\n'); };
+    const logErr = (msg)=>{
+      const el=$('#err');
+      el.style.display='block';
+      el.textContent += (msg+'\n');
+    };
     window.addEventListener('error', e=>logErr(`❌ ${e.message} @ ${e.filename?.split('/').pop?.()}:${e.lineno||''}`));
     window.addEventListener('unhandledrejection', e=>logErr('❌ Promise: '+(e.reason?.message||e.reason||'unknown')));
   </script>
@@ -58,6 +98,10 @@
 
     import { startViriDoor }  from './viri.door.js';
     import { startViriAura }  from './viri.aura.js';
+
+    /* ➕ NOVÉ: odznaky mentorek */
+    import { mountMentorBadges } from './badges.js';
+    mountMentorBadges(); // zobrazí jména Stanička, Terezka, Vaneska, Sofie
 
     // fallback, kdyby EVENTS ještě nebyly na window
     window.EVENTS ||= {
@@ -110,7 +154,8 @@
     loop();
 
     // simulace života (do té doby, než bude UI/feeds)
-    let t=0; setInterval(()=>{
+    let t=0;
+    setInterval(()=>{
       xp.add({team:'batolesvet', value:Math.abs(Math.sin(t*.33))*2});
       xp.add({team:'glyph',      value:Math.abs(Math.sin(t*.51))*2});
       xp.add({team:'ai',         value:Math.abs(Math.sin(t*.77))*2});
