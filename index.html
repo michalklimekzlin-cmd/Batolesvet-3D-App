@@ -5,54 +5,21 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Batolesvět • VaFT (živé jádro)</title>
   <style>
-    html,body{
-      margin:0;height:100%;
-      background:#000;color:#cfe;
-      font:16px/1.5 system-ui,-apple-system,sans-serif;
-      overflow:hidden
-    }
+    html,body{margin:0;height:100%;background:#000;color:#cfe;font:16px/1.5 system-ui,-apple-system,sans-serif;overflow:hidden}
     canvas{width:100%;height:100%;display:block}
-    .btn{
-      position:fixed;padding:8px 14px;border-radius:.7rem;
-      border:1px solid #334;
-      background:rgba(28,30,36,.85);color:#cbe;font-weight:600;
-      backdrop-filter:blur(8px) saturate(120%);
-      transition:.25s;z-index:20
-    }
+    .btn{position:fixed;padding:8px 14px;border-radius:.7rem;border:1px solid #334;background:rgba(28,30,36,.85);color:#cbe;font-weight:600;backdrop-filter:blur(8px) saturate(120%);transition:.25s;z-index:20}
     .btn:hover{background:rgba(50,52,60,.92)}
-    #btnTopLeft{top:16px;left:16px}
-    #btnTopRight{top:16px;right:16px}
-    #btnBottomLeft{bottom:16px;left:16px}
-    #btnBottomRight{bottom:16px;right:16px}
-    #worldLabel{
-      position:fixed;left:0;right:0;bottom:64px;
-      text-align:center;color:#9ff;opacity:.9;z-index:15
-    }
+    #btnTopLeft{top:16px;left:16px} #btnTopRight{top:16px;right:16px}
+    #btnBottomLeft{bottom:16px;left:16px} #btnBottomRight{bottom:16px;right:16px}
+    #worldLabel{position:fixed;left:0;right:0;bottom:64px;text-align:center;color:#9ff;opacity:.9;z-index:15}
     #hudLog{
       position:fixed;left:50%;transform:translateX(-50%);
-      bottom:92px;max-width:92vw;
-      background:rgba(20,22,26,.82);color:#cfe;
-      border:1px solid #2d3a40;border-radius:10px;
-      padding:10px 14px;
-      font:13px/1.4 system-ui,-apple-system,sans-serif;
-      box-shadow:0 8px 30px rgba(0,0,0,.45);
-      backdrop-filter:blur(8px);z-index:30
+      bottom:92px;max-width:92vw;background:rgba(20,22,26,.82);color:#cfe;
+      border:1px solid #2d3a40;border-radius:10px;padding:10px 14px;
+      font:13px/1.4 system-ui,-apple-system,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.45);backdrop-filter:blur(8px);z-index:30
     }
-    #advice{
-      position:fixed;left:50%;transform:translateX(-50%);
-      bottom:28px;padding:8px 12px;border-radius:.7rem;
-      border:1px solid #355;background:rgba(12,18,24,.9);
-      color:#cff;font-weight:600;opacity:0;
-      transition:.3s;pointer-events:none;z-index:40
-    }
-    #err{
-      position:fixed;left:10px;bottom:10px;
-      max-width:88vw;max-height:40vh;overflow:auto;
-      background:rgba(10,10,10,.9);color:#f88;
-      border:1px solid #500;border-radius:8px;
-      padding:8px 10px;font:12px/1.35 ui-monospace,Menlo,Consolas;
-      z-index:9999;display:none;white-space:pre-wrap
-    }
+    #advice{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;padding:8px 12px;border-radius:.7rem;border:1px solid #355;background:rgba(12,18,24,.9);color:#cff;font-weight:600;opacity:0;transition:.3s;pointer-events:none;z-index:40}
+    #err{position:fixed;left:10px;bottom:10px;max-width:88vw;max-height:40vh;overflow:auto;background:rgba(10,10,10,.9);color:#f88;border:1px solid #500;border-radius:8px;padding:8px 10px;font:12px/1.35 ui-monospace,Menlo,Consolas;z-index:9999;display:none;white-space:pre-wrap}
   </style>
 </head>
 <body>
@@ -79,71 +46,59 @@
   <script>
     const $ = s => document.querySelector(s);
     const logErr = (msg)=>{
-      const el=$('#err');
-      el.style.display='block';
-      el.textContent += (msg+'\n');
+      const el=$('#err'); el.style.display='block'; el.textContent += (msg+'\n');
     };
     window.addEventListener('error', e=>logErr(`❌ ${e.message} @ ${e.filename?.split('/').pop?.()}:${e.lineno||''}`));
     window.addEventListener('unhandledrejection', e=>logErr('❌ Promise: '+(e.reason?.message||e.reason||'unknown')));
   </script>
 
-  <!-- ✅ ES module kód MUSÍ být uvnitř <script type="module"> -->
+  <!-- ✅ ES module kód -->
   <script type="module">
-    import { VaFTXP }           from './VaFT.experience.js';
-import { startVaFTForm }    from './VaFT.form.js';
-import { buildInventory }   from './VaFT.inventory.js';
-import { initMap }          from './map.logic.js';
-import { initVaFTLearning } from './VaFT.learning.js';
-import './events.core.js';
+    /* CORE */
+    import { VaFTXP }            from './VaFT.experience.js';
+    import { startVaFTForm }     from './VaFT.form.js';
+    import { buildInventory }    from './VaFT.inventory.js';
+    import { initVaFTLearning }  from './VaFT.learning.js';
+    import { startVaFTDoor }     from './VaFT.door.js';
+    import { startVaFTAura }     from './VaFT.aura.js';
 
-import { startVaFTDoor }    from './VaFT.door.js';
-import { startVaFTAura }    from './VaFT.aura.js';
+    /* EXTRA MODULY */
+    import { initVaFTGuardian }  from './VaFT.guardian.js';
+    import { initVaFTMind }      from './VaFT.mind.js';
+    import { initVaFTSkills }    from './VaFT.skills.js';
 
-    /* ➕ NOVÉ: odznaky mentorek */
+    /* OSTATNÍ */
+    import { initMap }           from './map.logic.js';
+    import './events.core.js';
     import { mountMentorBadges } from './badges.js';
-    mountMentorBadges('./data/members.json'); // ← důležité
-    /* MENTORKY – rychlý inline render (bez externích souborů) */
+    mountMentorBadges('./data/members.json');
+
+    /* Inline „Mentorky“ mini UI */
     (() => {
       const css = document.createElement('style');
       css.textContent = `
-        .mentor-badge{
-          position:fixed;z-index:21;background:rgba(20,24,32,.88);color:#cfe;
-          border:1px solid #334;border-radius:.8rem;padding:6px 10px;
-          font:12px/1.25 system-ui,-apple-system,sans-serif;backdrop-filter:blur(6px) saturate(120%);
-          box-shadow:0 8px 28px rgba(0,0,0,.4); pointer-events:none; opacity:.96
-        }
+        .mentor-badge{position:fixed;z-index:21;background:rgba(20,24,32,.88);color:#cfe;border:1px solid #334;border-radius:.8rem;padding:6px 10px;font:12px/1.25 system-ui,-apple-system,sans-serif;backdrop-filter:blur(6px) saturate(120%);box-shadow:0 8px 28px rgba(0,0,0,.4);pointer-events:none;opacity:.96}
         .mentor-badge .t{opacity:.75;margin-right:6px}
         .mentor-badge .chip{display:inline-block;margin:2px 4px 0 0;padding:2px 8px;border-radius:.7rem;border:1px solid #3a4557;background:#0f131b}
-        .mb-tl{top:52px;left:16px}
-        .mb-tr{top:52px;right:16px}
-        .mb-bl{bottom:52px;left:16px}
-        .mb-br{bottom:52px;right:16px}
+        .mb-tl{top:52px;left:16px}.mb-tr{top:52px;right:16px}.mb-bl{bottom:52px;left:16px}.mb-br{bottom:52px;right:16px}
       `;
       document.head.appendChild(css);
-
-      const mentors = {
-        batolesvet: ["Stanička"],
-        glyph:      ["Vaneska"],
-        pedrovci:   ["Sofie"],
-        ai:         ["Terezka"]
-      };
-
-      const make = (cls, label, names) => {
-        const el = document.createElement('div');
-        el.className = `mentor-badge ${cls}`;
-        el.innerHTML = `<span class="t">Mentorka:</span>${names.map(n=>`<span class="chip">${n}</span>`).join('')}`;
-        el.setAttribute('aria-label', `Mentorka ${label}: ${names.join(', ')}`);
+      const mentors={batolesvet:["Stanička"],glyph:["Vaneska"],pedrovci:["Sofie"],ai:["Terezka"]};
+      const make=(cls,label,names)=>{
+        const el=document.createElement('div');
+        el.className=`mentor-badge ${cls}`;
+        el.innerHTML=`<span class="t">Mentorka:</span>${names.map(n=>`<span class="chip">${n}</span>`).join('')}`;
+        el.setAttribute('aria-label',`Mentorka ${label}: ${names.join(', ')}`);
         document.body.appendChild(el);
       };
-
-      make('mb-tl','Batolesvět', mentors.batolesvet);
-      make('mb-tr','Glyph',      mentors.glyph);
-      make('mb-bl','Pedrovci',   mentors.pedrovci);
-      make('mb-br','AI',         mentors.ai);
+      make('mb-tl','Batolesvět',mentors.batolesvet);
+      make('mb-tr','Glyph',mentors.glyph);
+      make('mb-bl','Pedrovci',mentors.pedrovci);
+      make('mb-br','AI',mentors.ai);
     })();
-    mountMentorBadges(); // zobrazí jména Stanička, Terezka, Vaneska, Sofie
+    mountMentorBadges();
 
-    // fallback, kdyby EVENTS ještě nebyly na window
+    // fallback EVENTS
     window.EVENTS ||= {
       voice:(m)=>console.log('🎙️',m),
       mood:(m)=>console.log('💫',m),
@@ -151,22 +106,25 @@ import { startVaFTAura }    from './VaFT.aura.js';
       ground:()=>console.log('🌍 ground')
     };
 
-    // spustit po načtení modulů
+    /* ==== START ==== */
     const door = startVaFTDoor(document.getElementById('canvasDoor'));
     const aura = startVaFTAura(document.getElementById('canvasAura'));
-
     const cv   = document.getElementById('canvasVaFT');
+
     const vaft = startVaFTForm(cv);
     const xp   = new VaFTXP();
     initVaFTLearning(xp);
 
+    // nové moduly napojení
+    const guardian = initVaFTGuardian(xp);
+    const mind     = initVaFTMind(xp);
+    const skills   = initVaFTSkills(xp);
+
     // rady bublina
     const advice = document.getElementById('advice');
     const showAdvice = (t)=>{
-      advice.textContent = t;
-      advice.style.opacity = 1;
-      clearTimeout(showAdvice._t);
-      showAdvice._t = setTimeout(()=>advice.style.opacity=0, 2000);
+      advice.textContent = t; advice.style.opacity = 1;
+      clearTimeout(showAdvice._t); showAdvice._t = setTimeout(()=>advice.style.opacity=0,2000);
     };
 
     // rohy → EVENTS
@@ -176,15 +134,32 @@ import { startVaFTAura }    from './VaFT.aura.js';
     L('btnBottomLeft').onclick  = () => { window.EVENTS.voice({team:'pedrovci',text:'cítím změnu',weight:+0.6}); window.EVENTS.mood({calm:+0.05}); showAdvice('❤️ Důvěřuj pocitu.'); };
     L('btnBottomRight').onclick = () => { window.EVENTS.voice({team:'ai',text:'analýza: východ',weight:+0.7}); window.EVENTS.vision({kind:'path',truth:1}); showAdvice('🧩 Logika vpřed.'); };
 
+    // HUD helper
+    const hud = document.getElementById('hudLog');
+    function paintHUD(s){
+      const pct = k=>Math.round(100*Math.max(0,Math.min(1,s.mix[k]/3)));
+      hud.innerHTML = `🧭 fáze: ${s.label}<br>🧪 mix → B:${pct('B')}% • G:${pct('G')}% • AI:${pct('AI')}% • P:${pct('P')}%<br>• Guardian calm: ${guardian.calm?.toFixed?.(2) ?? '—'}`;
+    }
+
     // hlavní smyčka
     let lastLabel='';
     function loop(){
       xp.tick();
       const s = xp.getState();
+
+      // moduly
+      guardian.tick();
+      mind.reflect();
+      skills.decay();
+
+      // render
       vaft.setMix(s.mix);
+      vaft.step();
       aura?.setMix?.(s.mix);
       door?.tick?.(s);
+      paintHUD(s);
 
+      // změna fáze → rebuild map/inventory
       if (s.label !== lastLabel) {
         lastLabel = s.label;
         buildInventory(s).then(inv => initMap({ canvas: cv, inventory: inv }));
@@ -193,13 +168,15 @@ import { startVaFTAura }    from './VaFT.aura.js';
     }
     loop();
 
-    // simulace života (do té doby, než bude UI/feeds)
+    // simulace života
     let t=0;
     setInterval(()=>{
       xp.add({team:'batolesvet', value:Math.abs(Math.sin(t*.33))*2});
       xp.add({team:'glyph',      value:Math.abs(Math.sin(t*.51))*2});
       xp.add({team:'ai',         value:Math.abs(Math.sin(t*.77))*2});
       xp.add({team:'pedrovci',   value:Math.abs(Math.cos(t*.41))*2});
+      // ukázkový skill růst při aktivitě
+      if (Math.sin(t*.5)>0.9) skills.gain('vnímavost', 0.02);
       t+=.055;
     },220);
   </script>
