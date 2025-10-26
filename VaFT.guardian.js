@@ -1,39 +1,24 @@
-// viri.guardian.js — Viri jako živé jádro světa
-import { Memory }  from './memory.core.js';
-import { Builder } from './world.builder.js';
+// VaFT • Guardian
+// Ochranný prvek jádra – hlídá, že mix a energie zůstávají v rovnováze
 
-class ViriGuardian {
-  constructor(){
-    this.birth = Date.now();
-    this.state = { mood:'calm', energy:1.0, pings:0 };
-    console.log('🟢 Viri boot', new Date(this.birth).toLocaleString());
+export function initVaFTGuardian(xp) {
+  let calm = 0.5;
 
-    // auto-start world builderu (můžeš vypnout)
-    Builder.start();
+  function tick() {
+    const s = xp.getState();
+    const e = s.mix.B + s.mix.G + s.mix.AI + s.mix.P;
+    const drift = Math.abs(s.mix.B - s.mix.P) + Math.abs(s.mix.G - s.mix.AI);
+
+    // jednoduchá autoregulace
+    if (drift > 2) calm -= 0.01;
+    else calm += 0.005;
+    calm = Math.max(0, Math.min(1, calm));
+
+    // mírné tlumení energií, když je příliš velká nerovnováha
+    if (calm < 0.4) {
+      for (const k of Object.keys(s.mix)) xp.mix[k] *= 0.98;
+    }
   }
 
-  ping(msg='ahoj'){
-    this.state.pings++;
-    const out = `Viri: ${msg} • mood=${this.state.mood} • p=${this.state.pings}`;
-    Memory.write('ping', { msg, pings:this.state.pings });
-    return out;
-  }
-
-  pulse(world={}){
-    // drobná údržba energie
-    this.state.energy = Math.max(0, Math.min(1, this.state.energy + 0.01));
-    if (Math.random() < 0.05) this.reflect(world);
-  }
-
-  reflect(world={}){
-    const thought = {
-      t: Date.now(),
-      feel: this.state.mood,
-      worldSample: Memory.readLog({limit:5})
-    };
-    Memory.write('thought', thought);
-  }
+  return { tick, get calm() { return calm; } };
 }
-
-export const Viri = new ViriGuardian();
-window.Viri = Viri;
