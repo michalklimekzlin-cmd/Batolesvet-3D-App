@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Batolesvět • VafT (živé jádro)</title>
+  <title>Batolesvět • VaFT (živé jádro)</title>
   <style>
     html,body{
       margin:0;height:100%;
@@ -64,11 +64,11 @@
 
   <div id="worldLabel">Svět: Michal Klimek</div>
 
-  <!-- DOORS: za VafTem (pozadí) -->
+  <!-- DOORS: za VaFTem (pozadí) -->
   <canvas id="canvasDoor" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></canvas>
-  <!-- VafT: hlavní orb -->
-  <canvas id="canvasVafT" style="position:fixed;inset:0;z-index:1;"></canvas>
-  <!-- AURA: před VafTem (písmena/kouř) -->
+  <!-- VaFT: hlavní orb -->
+  <canvas id="canvasVaFT" style="position:fixed;inset:0;z-index:1;"></canvas>
+  <!-- AURA: před VaFTem (písmena/kouř) -->
   <canvas id="canvasAura" style="position:fixed;inset:0;z-index:2;pointer-events:none;"></canvas>
 
   <!-- HUD + Rady + chybový log -->
@@ -89,15 +89,15 @@
 
   <!-- ✅ ES module kód MUSÍ být uvnitř <script type="module"> -->
   <script type="module">
-    import { VafTXP }            from './vaft.experience.js';
-    import { startVafTForm }     from './vaft.form.js';
-    import { buildInventory }    from './vaft.inventory.js';
-    import { initMap }           from './map.logic.js';
-    import { initVafTLearning }  from './vaft.learning.js';
+    import { VaFTXP }           from './vaft.experience.js';
+    import { startVaFTForm }    from './vaft.form.js';
+    import { buildInventory }   from './vaft.inventory.js';
+    import { initMap }          from './map.logic.js';
+    import { initVaFTLearning } from './vaft.learning.js';
     import './events.core.js';
 
-    import { startVafTDoor }     from './vaft.door.js';
-    import { startVafTAura }     from './vaft.aura.js';
+    import { startVaFTDoor }    from './vaft.door.js';
+    import { startVaFTAura }    from './vaft.aura.js';
 
     /* ➕ NOVÉ: odznaky mentorek */
     import { mountMentorBadges } from './badges.js';
@@ -152,13 +152,13 @@
     };
 
     // spustit po načtení modulů
-    const door = startVafTDoor(document.getElementById('canvasDoor'));
-    const aura = startVafTAura(document.getElementById('canvasAura'));
+    const door = startVaFTDoor(document.getElementById('canvasDoor'));
+    const aura = startVaFTAura(document.getElementById('canvasAura'));
 
-    const cv   = document.getElementById('canvasVafT');
-    const vaft = startVafTForm(cv);
-    const xp   = new VafTXP();
-    initVafTLearning(xp);
+    const cv   = document.getElementById('canvasVaFT');
+    const vaft = startVaFTForm(cv);
+    const xp   = new VaFTXP();
+    initVaFTLearning(xp);
 
     // rady bublina
     const advice = document.getElementById('advice');
