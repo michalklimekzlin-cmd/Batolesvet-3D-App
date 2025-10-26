@@ -1,29 +1,45 @@
-// Správa zkušeností Viriho (mix, label, nálada)
-export class ViriXP{
-  constructor(){
-    this.mix = { batolesvet:0.25, glyph:0.25, ai:0.25, pedrovci:0.25 };
-    this.mood = { calm:0.5, anxiety:0.2 };
-    this._t = 0;
+// VaFT • Experience (stav světa)
+
+export class VaFTXP {
+  constructor() {
+    this.t = 0;
+    // mix čtyř týmů: Batolesvět (B), Glyph (G), AI (AI), Pedrovci (P)
+    this.mix = { B: 0, G: 0, AI: 0, P: 0 };
+    this.label = 'start';
   }
-  add({team,value=0,weight=1}){
-    if(!this.mix.hasOwnProperty(team)) return;
-    const v = Math.max(0, Math.min(1, value * weight * 0.5));
-    this.mix[team] = Math.max(0, Math.min(1, this.mix[team] + v));
+
+  tick(dt = 1 / 60) {
+    this.t += dt;
+    // jemné tlumení, aby hodnoty dojížděly plynule
+    this.mix.B *= 0.985;
+    this.mix.G *= 0.985;
+    this.mix.AI *= 0.985;
+    this.mix.P *= 0.985;
+
+    // stavové „štítky“ podle energie
+    const e = this.energy();
+    this.label = e > 2.4 ? 'roste' : e > 1.0 ? 'žhne' : 'tiše';
   }
-  tick(){
-    this._t += 1/60;
-    for(const k in this.mix){
-      this.mix[k] = Math.max(0, this.mix[k] - 0.005);
-    }
-    const dom = Object.entries(this.mix).sort((a,b)=>b[1]-a[1])[0][0];
-    this.label =
-      dom==='batolesvet' ? 'puls paměti' :
-      dom==='glyph'      ? 'znaky a řeč' :
-      dom==='ai'         ? 'analýza' :
-      'emoce';
-    this.mood.calm    = clamp(0.4 + this.mix.pedrovci*0.6);
-    this.mood.anxiety = clamp(0.3 - this.mix.pedrovci*0.3);
+
+  add({ team, value = 0 }) {
+    const key =
+      team === 'batolesvet' ? 'B' :
+      team === 'glyph'      ? 'G' :
+      team === 'ai'         ? 'AI' : 'P';
+    this.mix[key] = Math.min(3, this.mix[key] + value);
   }
-  getState(){ return { mix:{...this.mix}, label:this.label, mood:{...this.mood} }; }
+
+  energy() {
+    return this.mix.B + this.mix.G + this.mix.AI + this.mix.P;
+  }
+
+  getState() {
+    return { t: this.t, label: this.label, mix: { ...this.mix } };
+  }
 }
-const clamp=(v)=>Math.max(0,Math.min(1,v));
+
+// volitelná továrna (když bys někde chtěl vytvářet z funkce)
+export function createVaFTXP() { return new VaFTXP(); }
+
+// zároveň nechám i default export, kdyby ses někde rozhodl pro default import
+export default VaFTXP;
