@@ -103,6 +103,44 @@
   </script>
 
   <!-- ✅ hlavní modul -->
+  <script>
+  // Nezničitelná guma na "Svět: ..."
+  (function(){
+    const isWorld = n => {
+      if (!(n && n.nodeType===1)) return false;
+      const t = (n.textContent||'').trim();
+      return n.id === 'worldLabel' || /^Svět\s*:/i.test(t);
+    };
+
+    // 1) okamžitě smaž existující
+    document.querySelectorAll('#worldLabel, body *').forEach(n=>{
+      if (isWorld(n)) n.remove();
+    });
+
+    // 2) skryj i kdyby něco uniklo stylům
+    const s = document.createElement('style');
+    s.textContent = `
+      #worldLabel, [id*="worldLabel"] { display:none !important; visibility:hidden !important; }
+      *:has(> #worldLabel) { display:contents !important; } /* obrana, když je to zabalené */
+    `;
+    document.head.appendChild(s);
+
+    // 3) hlídej budoucí vkládání a hned maž
+    new MutationObserver(muts=>{
+      muts.forEach(m=>{
+        m.addedNodes.forEach(n=>{
+          if (isWorld(n)) n.remove();
+          // projdi i potomky
+          if (n.querySelectorAll) {
+            n.querySelectorAll('#worldLabel, *').forEach(x=>{
+              if (isWorld(x)) x.remove();
+            });
+          }
+        });
+      });
+    }).observe(document.body, { childList:true, subtree:true });
+  })();
+</script>
   <script type="module">
     /* CORE */
     import { VaFTXP }            from './VaFT.experience.js?v=3';
