@@ -4,21 +4,36 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Batolesvět • VaFT (živé jádro)</title>
+
   <style>
     html,body{margin:0;height:100%;background:#000;color:#cfe;font:16px/1.5 system-ui,-apple-system,sans-serif;overflow:hidden}
     canvas{width:100%;height:100%;display:block}
+
     .btn{position:fixed;padding:8px 14px;border-radius:.7rem;border:1px solid #334;background:rgba(28,30,36,.85);color:#cbe;font-weight:600;backdrop-filter:blur(8px) saturate(120%);transition:.25s;z-index:20}
     .btn:hover{background:rgba(50,52,60,.92)}
     #btnTopLeft{top:16px;left:16px} #btnTopRight{top:16px;right:16px}
     #btnBottomLeft{bottom:16px;left:16px} #btnBottomRight{bottom:16px;right:16px}
-    #worldLabel{position:fixed;left:0;right:0;bottom:64px;text-align:center;color:#9ff;opacity:.9;z-index:15}
+
+    /* podpis / titul */
+    #vaf-sign{
+      position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+      font-weight:600;letter-spacing:.04em;
+      color:#bcd;opacity:.75;text-shadow:0 1px 8px rgba(200,230,255,.25);
+      user-select:none;pointer-events:none;z-index:40;
+      animation:vafBreath 6s ease-in-out infinite;
+    }
+    @keyframes vafBreath{
+      0%,100%{opacity:.75;text-shadow:0 1px 8px rgba(200,230,255,.25)}
+      50%{opacity:1;text-shadow:0 0 14px rgba(255,255,255,.6)}
+    }
+
     #hudLog{
       position:fixed;left:50%;transform:translateX(-50%);
       bottom:92px;max-width:92vw;background:rgba(20,22,26,.82);color:#cfe;
       border:1px solid #2d3a40;border-radius:10px;padding:10px 14px;
       font:13px/1.4 system-ui,-apple-system,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.45);backdrop-filter:blur(8px);z-index:30
     }
-    #advice{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;padding:8px 12px;border-radius:.7rem;border:1px solid #355;background:rgba(12,18,24,.9);color:#cff;font-weight:600;opacity:0;transition:.3s;pointer-events:none;z-index:40}
+    #advice{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;padding:8px 12px;border-radius:.7rem;border:1px solid #355;background:rgba(12,18,24,.9);color:#cff;font-weight:600;opacity:0;transition:.3s;pointer-events:none;z-index:35}
     #err{position:fixed;left:10px;bottom:10px;max-width:88vw;max-height:40vh;overflow:auto;background:rgba(10,10,10,.9);color:#f88;border:1px solid #500;border-radius:8px;padding:8px 10px;font:12px/1.35 ui-monospace,Menlo,Consolas;z-index:9999;display:none;white-space:pre-wrap}
   </style>
 </head>
@@ -29,7 +44,8 @@
   <div id="btnBottomLeft" class="btn">Pedrovci</div>
   <div id="btnBottomRight" class="btn">AI</div>
 
-  <div id="worldLabel">Svět: Michal Klimek</div>
+  <!-- podpis / titul -->
+  <div id="vaf-sign" aria-label="Vivere atque FruiT">Vivere atque FruiT</div>
 
   <!-- vrstvy -->
   <canvas id="canvasDoor" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></canvas>
@@ -54,7 +70,7 @@
     /* CORE */
     import { VaFTXP }            from './VaFT.experience.js?v=2';
     import { startVaFTForm }     from './VaFT.form.js?v=2';
-    import { buildInventory } from './VaFT.inventory.js?v=7';
+    import { buildInventory }    from './VaFT.inventory.js?v=7';
     import { initVaFTLearning }  from './VaFT.learning.js?v=2';
     import { startVaFTDoor }     from './VaFT.door.js?v=2';
     import { startVaFTAura }     from './VaFT.aura.js?v=2';
@@ -75,15 +91,15 @@
     const aura = startVaFTAura(document.getElementById('canvasAura'));
     const cv   = document.getElementById('canvasVaFT');
 
-    const xp   = new VaFTXP();
-    const vaft = startVaFTForm(cv);
+    const xp       = new VaFTXP();
+    const vaft     = startVaFTForm(cv);
     const learning = initVaFTLearning(xp);
 
     const guardian = initVaFTGuardian(xp);
     const mind     = initVaFTMind(xp);
     const skills   = initVaFTSkills(xp);
 
-    const hud = document.getElementById('hudLog');
+    const hud    = document.getElementById('hudLog');
     const advice = document.getElementById('advice');
 
     const showAdvice = (t)=>{
@@ -105,36 +121,44 @@
       hud.innerHTML = `🧭 fáze: ${s.label}<br>🧪 mix → B:${pct('B')}% • G:${pct('G')}% • AI:${pct('AI')}% • P:${pct('P')}%<br>• Guardian calm: ${guardian.calm?.toFixed?.(2) ?? '—'}`;
     }
 
-    // hlavní smyčka
-    let lastLabel='';
-    function loop(){
+    // hlavní smyčka (requestAnimationFrame)
+    let lastLabel = '';
+    function frame(){
       xp.tick();
       learning.tick?.();
+
       const s = xp.getState();
       guardian.tick();
       mind.reflect();
       skills.decay();
+
       vaft.setMix(s.mix);
       vaft.step();
+
       aura?.setMix?.(s.mix);
       aura?.tick?.();
       door?.tick?.(s);
-      paintHUD(s);
-      if (s.label !== lastLabel) {
-  lastLabel = s.label;
-  buildInventory(s).then(inv => {
-    // safety obal – kdyby prohlížeč načetl starou verzi:
-    const safeInv = {
-      items: inv?.items ?? [],
-      tipsFor: inv?.tipsFor ?? (() => []),
-      linksFor: inv?.linksFor ?? (() => []),
-    };
-    initMap({ canvas: cv, inventory: safeInv });
-  }).catch(err => console.error('Inventory error:', err));
-}
 
-    // simulace života
-    let t=0;
+      paintHUD(s);
+
+      if (s.label !== lastLabel) {
+        lastLabel = s.label;
+        buildInventory(s).then(inv => {
+          const safeInv = {
+            items:   inv?.items   ?? [],
+            tipsFor: inv?.tipsFor ?? (() => []),
+            linksFor:inv?.linksFor?? (() => []),
+          };
+          initMap({ canvas: cv, inventory: safeInv });
+        }).catch(err => console.error('Inventory error:', err));
+      }
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    // simulace života (jednou; ne uvnitř smyčky)
+    let t = 0;
     setInterval(()=>{
       xp.add({team:'batolesvet', value:Math.abs(Math.sin(t*.33))*2});
       xp.add({team:'glyph',      value:Math.abs(Math.sin(t*.51))*2});
