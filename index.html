@@ -6,19 +6,34 @@
   <title>Batolesvět • VaFT (živé jádro)</title>
 
   <style>
-    html,body{margin:0;height:100%;background:#000;color:#cfe;font:16px/1.5 system-ui,-apple-system,sans-serif;overflow:hidden}
+    html,body{
+      margin:0;height:100%;
+      background:#000;color:#cfe;
+      font:16px/1.5 system-ui,-apple-system,sans-serif;
+      overflow:hidden
+    }
     canvas{width:100%;height:100%;display:block}
 
-    .btn{position:fixed;padding:8px 14px;border-radius:.7rem;border:1px solid #334;background:rgba(28,30,36,.85);color:#cbe;font-weight:600;backdrop-filter:blur(8px) saturate(120%);transition:.25s;z-index:20}
+    .btn{
+      position:fixed;padding:8px 14px;
+      border-radius:.7rem;border:1px solid #334;
+      background:rgba(28,30,36,.85);color:#cbe;
+      font-weight:600;backdrop-filter:blur(8px) saturate(120%);
+      transition:.25s;z-index:20
+    }
     .btn:hover{background:rgba(50,52,60,.92)}
-    #btnTopLeft{top:16px;left:16px} #btnTopRight{top:16px;right:16px}
-    #btnBottomLeft{bottom:16px;left:16px} #btnBottomRight{bottom:16px;right:16px}
+    #btnTopLeft{top:16px;left:16px}
+    #btnTopRight{top:16px;right:16px}
+    #btnBottomLeft{bottom:16px;left:16px}
+    #btnBottomRight{bottom:16px;right:16px}
 
     /* podpis / titul */
     #vaf-sign{
-      position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+      position:fixed;left:50%;bottom:22px;
+      transform:translateX(-50%);
       font-weight:600;letter-spacing:.04em;
-      color:#bcd;opacity:.75;text-shadow:0 1px 8px rgba(200,230,255,.25);
+      color:#bcd;opacity:.75;
+      text-shadow:0 1px 8px rgba(200,230,255,.25);
       user-select:none;pointer-events:none;z-index:40;
       animation:vafBreath 6s ease-in-out infinite;
     }
@@ -29,12 +44,28 @@
 
     #hudLog{
       position:fixed;left:50%;transform:translateX(-50%);
-      bottom:92px;max-width:92vw;background:rgba(20,22,26,.82);color:#cfe;
+      bottom:92px;max-width:92vw;
+      background:rgba(20,22,26,.82);color:#cfe;
       border:1px solid #2d3a40;border-radius:10px;padding:10px 14px;
-      font:13px/1.4 system-ui,-apple-system,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.45);backdrop-filter:blur(8px);z-index:30
+      font:13px/1.4 system-ui,-apple-system,sans-serif;
+      box-shadow:0 8px 30px rgba(0,0,0,.45);
+      backdrop-filter:blur(8px);z-index:30
     }
-    #advice{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;padding:8px 12px;border-radius:.7rem;border:1px solid #355;background:rgba(12,18,24,.9);color:#cff;font-weight:600;opacity:0;transition:.3s;pointer-events:none;z-index:35}
-    #err{position:fixed;left:10px;bottom:10px;max-width:88vw;max-height:40vh;overflow:auto;background:rgba(10,10,10,.9);color:#f88;border:1px solid #500;border-radius:8px;padding:8px 10px;font:12px/1.35 ui-monospace,Menlo,Consolas;z-index:9999;display:none;white-space:pre-wrap}
+    #advice{
+      position:fixed;left:50%;transform:translateX(-50%);
+      bottom:28px;padding:8px 12px;border-radius:.7rem;
+      border:1px solid #355;background:rgba(12,18,24,.9);
+      color:#cff;font-weight:600;opacity:0;transition:.3s;
+      pointer-events:none;z-index:35
+    }
+    #err{
+      position:fixed;left:10px;bottom:10px;
+      max-width:88vw;max-height:40vh;overflow:auto;
+      background:rgba(10,10,10,.9);color:#f88;
+      border:1px solid #500;border-radius:8px;padding:8px 10px;
+      font:12px/1.35 ui-monospace,Menlo,Consolas;
+      z-index:9999;display:none;white-space:pre-wrap
+    }
   </style>
 </head>
 <body>
@@ -58,33 +89,39 @@
 
   <script>
     const $ = s => document.querySelector(s);
-    const logErr = (msg)=>{
-      const el=$('#err'); el.style.display='block'; el.textContent += (msg+'\n');
+    const logErr = msg => {
+      const el = $('#err');
+      el.style.display = 'block';
+      el.textContent += msg + '\n';
     };
-    window.addEventListener('error', e=>logErr(`❌ ${e.message} @ ${e.filename?.split('/').pop?.()}:${e.lineno||''}`));
-    window.addEventListener('unhandledrejection', e=>logErr('❌ Promise: '+(e.reason?.message||e.reason||'unknown')));
+    window.addEventListener('error', e =>
+      logErr(`❌ ${e.message} @ ${e.filename?.split('/').pop?.()}:${e.lineno || ''}`)
+    );
+    window.addEventListener('unhandledrejection', e =>
+      logErr('❌ Promise: ' + (e.reason?.message || e.reason || 'unknown'))
+    );
   </script>
 
   <!-- ✅ hlavní modul -->
   <script type="module">
     /* CORE */
-    import { VaFTXP }            from './VaFT.experience.js?v=2';
-    import { startVaFTForm }     from './VaFT.form.js?v=2';
+    import { VaFTXP }            from './VaFT.experience.js?v=3';
+    import { startVaFTForm }     from './VaFT.form.js?v=3';
     import { buildInventory }    from './VaFT.inventory.js?v=7';
-    import { initVaFTLearning }  from './VaFT.learning.js?v=2';
-    import { startVaFTDoor }     from './VaFT.door.js?v=2';
-    import { startVaFTAura }     from './VaFT.aura.js?v=2';
+    import { initVaFTLearning }  from './VaFT.learning.js?v=3';
+    import { startVaFTDoor }     from './VaFT.door.js?v=3';
+    import { startVaFTAura }     from './VaFT.aura.js?v=3';
 
     /* EXTRA MODULY */
-    import { initVaFTGuardian }  from './VaFT.guardian.js?v=2';
-    import { initVaFTMind }      from './VaFT.mind.js?v=2';
-    import { initVaFTSkills }    from './VaFT.skills.js?v=2';
+    import { initVaFTGuardian }  from './VaFT.guardian.js?v=3';
+    import { initVaFTMind }      from './VaFT.mind.js?v=3';
+    import { initVaFTSkills }    from './VaFT.skills.js?v=3';
 
     /* OSTATNÍ */
-    import { initMap }           from './map.logic.js?v=2';
-    import './events.core.js?v=2';
-    import { mountMentorBadges } from './badges.js?v=2';
-    mountMentorBadges('./data/members.json?v=2');
+    import { initMap }           from './map.logic.js?v=3';
+    import './events.core.js?v=3';
+    import { mountMentorBadges } from './badges.js?v=3';
+    mountMentorBadges('./data/members.json?v=3');
 
     /* === START === */
     const door = startVaFTDoor(document.getElementById('canvasDoor'));
@@ -102,10 +139,11 @@
     const hud    = document.getElementById('hudLog');
     const advice = document.getElementById('advice');
 
-    const showAdvice = (t)=>{
-      advice.textContent = t; advice.style.opacity = 1;
+    const showAdvice = t => {
+      advice.textContent = t;
+      advice.style.opacity = 1;
       clearTimeout(showAdvice._t);
-      showAdvice._t = setTimeout(()=>advice.style.opacity=0,2000);
+      showAdvice._t = setTimeout(() => (advice.style.opacity = 0), 2000);
     };
 
     // rohy → EVENTS
@@ -117,11 +155,11 @@
 
     // HUD helper
     function paintHUD(s){
-      const pct = k=>Math.round(100*Math.max(0,Math.min(1,s.mix[k]/3)));
+      const pct = k => Math.round(100 * Math.max(0, Math.min(1, s.mix[k] / 3)));
       hud.innerHTML = `🧭 fáze: ${s.label}<br>🧪 mix → B:${pct('B')}% • G:${pct('G')}% • AI:${pct('AI')}% • P:${pct('P')}%<br>• Guardian calm: ${guardian.calm?.toFixed?.(2) ?? '—'}`;
     }
 
-    // hlavní smyčka (requestAnimationFrame)
+    // hlavní smyčka
     let lastLabel = '';
     function frame(){
       xp.tick();
@@ -157,16 +195,16 @@
     }
     requestAnimationFrame(frame);
 
-    // simulace života (jednou; ne uvnitř smyčky)
+    // simulace života
     let t = 0;
-    setInterval(()=>{
+    setInterval(() => {
       xp.add({team:'batolesvet', value:Math.abs(Math.sin(t*.33))*2});
       xp.add({team:'glyph',      value:Math.abs(Math.sin(t*.51))*2});
       xp.add({team:'ai',         value:Math.abs(Math.sin(t*.77))*2});
       xp.add({team:'pedrovci',   value:Math.abs(Math.cos(t*.41))*2});
-      if (Math.sin(t*.5)>0.9) skills.gain?.('vnímavost', 0.02);
-      t+=.055;
-    },220);
+      if (Math.sin(t*.5) > 0.9) skills.gain?.('vnímavost', 0.02);
+      t += .055;
+    }, 220);
   </script>
 </body>
 </html>
