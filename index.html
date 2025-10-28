@@ -103,43 +103,48 @@
   </script>
 
   <!-- ✅ hlavní modul -->
-  <script>
-  // Nezničitelná guma na "Svět: ..."
+<script>
+  // 🌍 Strážce světa — přepisuje "Svět:" na "Vivere atque FruiT"
   (function(){
-    const isWorld = n => {
-      if (!(n && n.nodeType===1)) return false;
-      const t = (n.textContent||'').trim();
-      return n.id === 'worldLabel' || /^Svět\s*:/i.test(t);
+    const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,''); // bez diakritiky
+    const replaceWorldText = el => {
+      if (!el || !el.textContent) return;
+      const t = norm(el.textContent).toLowerCase();
+      if (t.includes('svet:') || el.id === 'worldLabel') {
+        el.textContent = 'Vivere atque FruiT';
+        el.id = 'vaf-sign';
+        el.setAttribute('aria-label', 'Vivere atque FruiT');
+        el.style = `
+          position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+          font-weight:600;letter-spacing:.04em;
+          color:#bcd;opacity:.85;
+          text-shadow:0 1px 8px rgba(200,230,255,.25);
+          user-select:none;pointer-events:none;z-index:40;
+          animation:vafBreath 6s ease-in-out infinite;
+        `;
+      }
     };
 
-    // 1) okamžitě smaž existující
-    document.querySelectorAll('#worldLabel, body *').forEach(n=>{
-      if (isWorld(n)) n.remove();
-    });
+    // nahradí existující
+    document.querySelectorAll('body *').forEach(replaceWorldText);
 
-    // 2) skryj i kdyby něco uniklo stylům
-    const s = document.createElement('style');
-    s.textContent = `
-      #worldLabel, [id*="worldLabel"] { display:none !important; visibility:hidden !important; }
-      *:has(> #worldLabel) { display:contents !important; } /* obrana, když je to zabalené */
-    `;
-    document.head.appendChild(s);
-
-    // 3) hlídej budoucí vkládání a hned maž
+    // pozoruje změny
     new MutationObserver(muts=>{
       muts.forEach(m=>{
-        m.addedNodes.forEach(n=>{
-          if (isWorld(n)) n.remove();
-          // projdi i potomky
-          if (n.querySelectorAll) {
-            n.querySelectorAll('#worldLabel, *').forEach(x=>{
-              if (isWorld(x)) x.remove();
-            });
+        m.addedNodes && m.addedNodes.forEach(n=>{
+          if (n.nodeType===1){
+            replaceWorldText(n);
+            n.querySelectorAll && n.querySelectorAll('*').forEach(replaceWorldText);
           }
         });
+        if (m.type==='characterData'){
+          const el=m.target.parentElement;
+          replaceWorldText(el);
+        }
       });
-    }).observe(document.body, { childList:true, subtree:true });
+    }).observe(document.body,{childList:true,subtree:true,characterData:true});
   })();
+</script>
 </script>
   <script type="module">
     /* CORE */
