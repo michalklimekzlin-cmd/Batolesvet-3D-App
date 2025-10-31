@@ -3,224 +3,42 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Batolesvět • VaFT (živé jádro)</title>
-
+  <title>Batolesvět • 3D Space-first (v0.33)</title>
+  <meta name="color-scheme" content="dark light" />
   <style>
-    html,body{
-      margin:0;height:100%;
-      background:#000;color:#cfe;
-      font:16px/1.5 system-ui,-apple-system,sans-serif;
-      overflow:hidden
-    }
-    canvas{width:100%;height:100%;display:block}
-
-    .btn{
-      position:fixed;padding:8px 14px;
-      border-radius:.7rem;border:1px solid #334;
-      background:rgba(28,30,36,.85);color:#cbe;
-      font-weight:600;backdrop-filter:blur(8px) saturate(120%);
-      transition:.25s;z-index:20
-    }
-    .btn:hover{background:rgba(50,52,60,.92)}
-    #btnTopLeft{top:16px;left:16px}
-    #btnTopRight{top:16px;right:16px}
-    #btnBottomLeft{bottom:16px;left:16px}
-    #btnBottomRight{bottom:16px;right:16px}
-
-    #hudLog{
-      position:fixed;left:50%;transform:translateX(-50%);
-      bottom:92px;max-width:92vw;
-      background:rgba(20,22,26,.82);color:#cfe;
-      border:1px solid #2d3a40;border-radius:10px;padding:10px 14px;
-      font:13px/1.4 system-ui,-apple-system,sans-serif;
-      box-shadow:0 8px 30px rgba(0,0,0,.45);
-      backdrop-filter:blur(8px);z-index:30
-    }
-    #advice{
-      position:fixed;left:50%;transform:translateX(-50%);
-      bottom:28px;padding:8px 12px;border-radius:.7rem;
-      border:1px solid #355;background:rgba(12,18,24,.9);
-      color:#cff;font-weight:600;opacity:0;transition:.3s;
-      pointer-events:none;z-index:35
-    }
-    #err{
-      position:fixed;left:10px;bottom:10px;
-      max-width:88vw;max-height:40vh;overflow:auto;
-      background:rgba(10,10,10,.9);color:#f88;
-      border:1px solid #500;border-radius:8px;padding:8px 10px;
-      font:12px/1.35 ui-monospace,Menlo,Consolas;
-      z-index:9999;display:none;white-space:pre-wrap
-    }
+    html,body{margin:0;height:100%;background:#000;color:#cfe;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+    #top{position:fixed;left:12px;top:12px;right:12px;display:flex;gap:10px;align-items:center;
+      padding:8px 12px;background:rgba(10,12,16,.72);backdrop-filter:saturate(120%) blur(8px);
+      border:1px solid #223;border-radius:.6rem;z-index:10}
+    .btn{padding:8px 14px;border-radius:.7rem;border:1px solid #334;background:#10141a;color:#cfe;font-weight:600;cursor:pointer}
+    .btn:hover{background:#151a22}
+    #ui{position:fixed;inset:auto 12px 12px 12px;display:flex;gap:8px;align-items:flex-end;z-index:10}
+    #prog{flex:1;min-height:64px;max-height:35vh;background:#0a0e14;border:1px solid #223;color:#bfe;border-radius:.6rem;padding:10px;font-family:ui-monospace,Consolas,Monaco,monospace}
+    #hint{opacity:.8}
+    canvas{display:block;width:100vw;height:100vh}
   </style>
 </head>
 <body>
-  <!-- rohové odznaky -->
-  <div id="btnTopLeft" class="btn">Batolesvět</div>
-  <div id="btnTopRight" class="btn">Glyph</div>
-  <div id="btnBottomLeft" class="btn">Pedrovci</div>
-  <div id="btnBottomRight" class="btn">AI</div>
+  <div id="top">
+    <strong>Vivere atque FruiT • 3D Space-first</strong>
+    <span id="hint">1) Prostor → 2) Postavy • otáčej prstem/myší</span>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <button class="btn" id="spaceBtn">Prostor</button>
+      <button class="btn" id="avatarsBtn">Postavy</button>
+      <button class="btn" id="runBtn">Spustit</button>
+      <button class="btn" id="clearBtn">Vyčistit</button>
+    </div>
+  </div>
 
-  <!-- vrstvy -->
-  <canvas id="canvasDoor" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></canvas>
-  <canvas id="canvasVaFT" style="position:fixed;inset:0;z-index:1;"></canvas>
-  <canvas id="canvasAura" style="position:fixed;inset:0;z-index:2;pointer-events:none;"></canvas>
+  <div id="ui">
+    <textarea id="prog" spellcheck="false">\{*(•.)(.•)*}//  \[*(•.)(.•)*]//</textarea>
+  </div>
 
-  <div id="hudLog">🧭 fáze: …<br>🧪 mix → B:0% • G:0% • AI:0% • P:0%</div>
-  <div id="advice">…</div>
-  <pre id="err"></pre>
+  <canvas id="c" aria-label="Batolesvět 3D"></canvas>
 
-  <!-- 🌍 Strážce světa: přepisuje "Svět:" na "Vivere atque FruiT" -->
-  <script>
-    (function(){
-      const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-      const replaceWorldText = el => {
-        if (!el || !el.textContent) return;
-        const t = norm(el.textContent).toLowerCase();
-        if (t.includes('svet:') || el.id === 'worldLabel') {
-          el.textContent = 'Vivere atque FruiT';
-          el.id = 'vaf-sign';
-          el.setAttribute('aria-label', 'Vivere atque FruiT');
-          el.style = `
-            position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
-            font-weight:600;letter-spacing:.04em;
-            color:#bcd;opacity:.85;
-            text-shadow:0 1px 8px rgba(200,230,255,.25);
-            user-select:none;pointer-events:none;z-index:40;
-            animation:vafBreath 6s ease-in-out infinite;
-          `;
-        }
-      };
-      document.querySelectorAll('body *').forEach(replaceWorldText);
-      new MutationObserver(muts=>{
-        muts.forEach(m=>{
-          m.addedNodes && m.addedNodes.forEach(n=>{
-            if (n.nodeType===1){
-              replaceWorldText(n);
-              n.querySelectorAll && n.querySelectorAll('*').forEach(replaceWorldText);
-            }
-          });
-          if (m.type==='characterData'){
-            const el=m.target.parentElement;
-            replaceWorldText(el);
-          }
-        });
-      }).observe(document.body,{childList:true,subtree:true,characterData:true});
-    })();
-  </script>
-
-  <!-- ✅ hlavní modul -->
-  <script type="module">
-    /* CORE */
-    import { VaFTXP }            from './VaFT.experience.js?v=4';
-    import { startVaFTForm }     from './VaFT.form.js?v=4';
-    import { buildInventory }    from './VaFT.inventory.js?v=8';
-    import { initVaFTLearning }  from './VaFT.learning.js?v=4';
-    import { startVaFTDoor }     from './VaFT.door.js?v=4';
-    import { startVaFTAura }     from './VaFT.aura.js?v=4';
-
-    /* EXTRA MODULY */
-    import { initVaFTGuardian }  from './VaFT.guardian.js?v=4';
-    import { initVaFTMind }      from './VaFT.mind.js?v=4';
-    import { initVaFTSkills }    from './VaFT.skills.js?v=4';
-
-    /* OSTATNÍ */
-    import { initMap }           from './map.logic.js?v=4';
-    import './events.core.js?v=4';
-    import { mountMentorBadges } from './badges.js?v=4';
-    mountMentorBadges('./data/members.json?v=4');
-
-    /* === START === */
-    const door = startVaFTDoor(document.getElementById('canvasDoor'));
-    const aura = startVaFTAura(document.getElementById('canvasAura'));
-    const cv   = document.getElementById('canvasVaFT');
-
-    const xp       = new VaFTXP();
-    const vaft     = startVaFTForm(cv);
-    const learning = initVaFTLearning(xp);
-
-    const guardian = initVaFTGuardian(xp);
-    const mind     = initVaFTMind(xp);
-    const skills   = initVaFTSkills(xp);
-
-    const hud    = document.getElementById('hudLog');
-    const advice = document.getElementById('advice');
-
-    const showAdvice = t => {
-      advice.textContent = t;
-      advice.style.opacity = 1;
-      clearTimeout(showAdvice._t);
-      showAdvice._t = setTimeout(() => (advice.style.opacity = 0), 2000);
-    };
-
-    // rohy → EVENTS
-    const L = id => document.getElementById(id);
-    L('btnTopLeft').onclick     = () => { window.EVENTS.ground(); window.EVENTS.voice({team:'batolesvet',text:'puls paměti',weight:+0.8}); showAdvice('🌱 Klid je síla.'); };
-    L('btnTopRight').onclick    = () => { window.EVENTS.voice({team:'glyph',text:'→ ☼',weight:+0.6}); window.EVENTS.vision({kind:'symbol',truth:1}); showAdvice('✨ Slova & symboly.'); };
-    L('btnBottomLeft').onclick  = () => { window.EVENTS.voice({team:'pedrovci',text:'cítím změnu',weight:+0.6}); window.EVENTS.mood({calm:+0.05}); showAdvice('❤️ Důvěřuj pocitu.'); };
-    L('btnBottomRight').onclick = () => { window.EVENTS.voice({team:'ai',text:'analýza: východ',weight:+0.7}); window.EVENTS.vision({kind:'path',truth:1}); showAdvice('🧩 Logika vpřed.'); };
-
-    // HUD helper
-    function paintHUD(s){
-      const pct = k => Math.round(100 * Math.max(0, Math.min(1, s.mix[k] / 3)));
-      hud.innerHTML = `🧭 fáze: ${s.label}<br>🧪 mix → B:${pct('B')}% • G:${pct('G')}% • AI:${pct('AI')}% • P:${pct('P')}%<br>• Guardian calm: ${guardian.calm?.toFixed?.(2) ?? '—'}`;
-
-      // dech textu podle Guardian calm
-      const sign = document.getElementById('vaf-sign');
-      if (sign) {
-        const calm = guardian.calm ?? 1;
-        const scale = 0.95 + calm * 0.1;
-        const opacity = 0.6 + calm * 0.4;
-        sign.style.transform = `translateX(-50%) scale(${scale})`;
-        sign.style.opacity = opacity.toFixed(2);
-      }
-    }
-
-    // hlavní smyčka
-    let lastLabel = '';
-    function frame(){
-      xp.tick();
-      learning.tick?.();
-
-      const s = xp.getState();
-      guardian.tick();
-      mind.reflect();
-      skills.decay();
-
-      vaft.setMix(s.mix);
-      vaft.step();
-
-      aura?.setMix?.(s.mix);
-      aura?.tick?.();
-      door?.tick?.(s);
-
-      paintHUD(s);
-
-      if (s.label !== lastLabel) {
-        lastLabel = s.label;
-        buildInventory(s).then(inv => {
-          const safeInv = {
-            items:   inv?.items   ?? [],
-            tipsFor: inv?.tipsFor ?? (() => []),
-            linksFor:inv?.linksFor?? (() => []),
-          };
-          initMap({ canvas: cv, inventory: safeInv });
-        }).catch(err => console.error('Inventory error:', err));
-      }
-
-      requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
-
-    // simulace života
-    let t = 0;
-    setInterval(() => {
-      xp.add({team:'batolesvet', value:Math.abs(Math.sin(t*.33))*2});
-      xp.add({team:'glyph',      value:Math.abs(Math.sin(t*.51))*2});
-      xp.add({team:'ai',         value:Math.abs(Math.sin(t*.77))*2});
-      xp.add({team:'pedrovci',   value:Math.abs(Math.cos(t*.41))*2});
-      if (Math.sin(t*.5) > 0.9) skills.gain?.('vnímavost', 0.02);
-      t += .055;
-    }, 220);
-  </script>
+  <!-- Three.js z CDN (funguje na GitHub Pages) -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script>window.V=33;</script>
+  <script src="main.js?v="+window.V></script>
 </body>
 </html>
