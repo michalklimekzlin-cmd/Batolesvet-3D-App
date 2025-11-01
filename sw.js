@@ -1,40 +1,39 @@
-// Jednoduchý offline cache pro GitHub Pages
-const CACHE = "batole3d-v1";
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./main.js?v=34",
-  "./manifest.json",
-  "./icon512.png",
-  "https://unpkg.com/three@0.160.0/build/three.min.js"
-];
+// sw.js — jednoduchý cache-buster pro PWA
+const CACHE = 'batole-v34'; // zvyšit při každém nasazení
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+self.addEventListener('install', (e) => {
+  self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE).then((c) =>
+      c.addAll([
+        './',
+        './index.html',
+        './main.js?v=34',
+        './manifest.json',
+        './icon512.png',
+      ])
+    )
+  );
 });
 
-self.addEventListener("activate", (e) => {
+self.addEventListener('activate', (e) => {
+  clients.claim();
   e.waitUntil(
-    caches.keys().then(keys =>
+    caches.keys().then((keys) =>
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
     )
   );
 });
 
-self.addEventListener("fetch", (e) => {
+self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
-  // Network-first pro main.js, jinak cache-first
-  if (url.pathname.endsWith("main.js")) {
-    e.respondWith(
-      fetch(e.request).then(res => {
-        const copy = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, copy));
-        return res;
-      }).catch(() => caches.match(e.request))
-    );
-  } else {
-    e.respondWith(
-      caches.match(e.request).then(cached => cached || fetch(e.request))
-    );
-  }
+  e.respondWith(
+    fetch(e.request).then((res) => {
+      if (url.origin === location.origin) {
+        const clone = res.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, clone));
+      }
+      return res;
+    }).catch(() => caches.match(e.request))
+  );
 });
