@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Vivere atque FruiT • v0.31 core</title>
   <link rel="stylesheet" href="style.css?v=0.31">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
   <header class="topbar">
@@ -13,7 +18,6 @@
   </header>
 
   <main class="layout">
-    <!-- levá část = "svět" -->
     <section class="world">
       <canvas id="worldCanvas" aria-label="Svět Vivere atque FruiT"></canvas>
       <div class="world-overlay">
@@ -23,9 +27,7 @@
       </div>
     </section>
 
-    <!-- pravá část = naše okénka -->
     <aside class="sidebar">
-      <!-- hrdinové -->
       <div class="panel" id="heroPanel">
         <h2>Hrdinové</h2>
         <form id="heroForm">
@@ -43,7 +45,6 @@
         <ul id="heroList"></ul>
       </div>
 
-      <!-- meziprostor / engine -->
       <div class="panel" id="enginePanel">
         <h2>Meziprostor (engine)</h2>
         <p class="small">Spojuje 4 rohy světa. Tady bude později Shop / Iskry / WebGuardian.</p>
@@ -51,7 +52,6 @@
         <pre id="engineLog"></pre>
       </div>
 
-      <!-- systém / nápady / změny -->
       <div class="panel" id="ideasPanel">
         <h2>Systém / nápady</h2>
         <textarea id="ideasBox" rows="4" placeholder="Sem si piš nápady, pravidla, změny…"></textarea>
@@ -73,7 +73,6 @@
     </aside>
   </main>
 
-  <!-- skripty -->
   <script src="teams.js?v=0.31"></script>
   <script src="engine.js?v=0.31"></script>
   <script src="app.js?v=0.31"></script>
