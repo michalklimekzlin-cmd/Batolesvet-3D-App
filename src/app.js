@@ -17,21 +17,21 @@ window.addEventListener("DOMContentLoaded", () => {
   const engineBtn = document.getElementById("enginePing");
   const pulseLabel = document.getElementById("worldPulse");
 
-  // init engine
+  // init engine (meziprostor)
   VAF_engine.init("engineLog");
 
-  // nápady z localStorage
+  // načíst uložené nápady
   const savedIdeas = localStorage.getItem("VAF_ideas");
   if (savedIdeas) {
     ideasBox.value = savedIdeas;
     ideasStatus.textContent = "uloženo v prohlížeči ✅";
   }
 
-  // hrdinové
+  // načíst uložené hrdiny
   const heroes = loadHeroes();
   renderHeroes(heroes);
 
-  // moduly
+  // načíst uložené moduly
   renderModules(VAF_engine.loadModules());
 
   // přidání hrdiny
@@ -66,7 +66,7 @@ window.addEventListener("DOMContentLoaded", () => {
       heroList.appendChild(li);
     });
 
-    // mazání hrdiny
+    // mazání hrdinů
     const delBtns = heroList.querySelectorAll(".hero-del");
     delBtns.forEach(btn => {
       btn.addEventListener("click", () => {
@@ -84,6 +84,7 @@ window.addEventListener("DOMContentLoaded", () => {
   function saveHeroes(list) {
     localStorage.setItem("VAF_heroes", JSON.stringify(list));
   }
+
   function loadHeroes() {
     return JSON.parse(localStorage.getItem("VAF_heroes") || "[]");
   }
@@ -94,7 +95,7 @@ window.addEventListener("DOMContentLoaded", () => {
     ideasStatus.textContent = "uloženo ✅ (" + new Date().toLocaleTimeString() + ")";
   });
 
-  // moduly
+  // uložení modulu
   moduleForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const mod = { name: moduleName.value.trim(), state: moduleState.value };
@@ -118,7 +119,7 @@ window.addEventListener("DOMContentLoaded", () => {
     VAF_engine.pulse("ui", { action: "manual-ping" });
   });
 
-  // přepínání panelů
+  // přepínání panelů (tabs)
   const tabButtons = document.querySelectorAll(".tab-btn");
   const panels = document.querySelectorAll(".panel");
   tabButtons.forEach(btn => {
@@ -140,52 +141,16 @@ window.addEventListener("DOMContentLoaded", () => {
     VAF_engine.pulse("world", { ts });
   }, 3000);
 
-  // CANVAS část
+  // ===============================
+  // CANVAS / SVĚT
+  // ===============================
   const canvas = document.getElementById("worldCanvas");
   const ctx = canvas.getContext("2d");
-function isPointerInCore(x, y) {
-  const w = canvas.width, h = canvas.height;
-  const size = Math.min(w, h) * 0.08;
-  const cx = w / 2;
-  const cy = h / 2;
-  const r = size * 1.1;
-  const dx = x - cx;
-  const dy = y - cy;
-  return dx*dx + dy*dy <= r*r;
-}
 
-canvas.addEventListener("pointerdown", (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  if (isPointerInCore(x, y)) {
-    isDraggingCore = true;
-    lastPointerX = x;
-  }
-});
-
-canvas.addEventListener("pointermove", (e) => {
-  if (!isDraggingCore) return;
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  // rozdíl v X → přidáme k rotaci
-  const dx = x - lastPointerX;
-  coreRotation += dx * DRAG_SPEED;
-  lastPointerX = x;
-});
-
-canvas.addEventListener("pointerup", () => {
-  isDraggingCore = false;
-});
-canvas.addEventListener("pointerleave", () => {
-  isDraggingCore = false;
-});
-
-  // proměnná pro rotaci středu
-let coreRotation = 0;
-let isDraggingCore = false;
-let lastPointerX = 0;
-const DRAG_SPEED = 0.005; // čím větší, tím citlivější
+  let coreRotation = 0;          // automatická rotace koule
+  let isDraggingCore = false;    // držím prstem kouli?
+  let lastPointerX = 0;          // minulá pozice prstu
+  const DRAG_SPEED = 0.005;      // citlivost otáčení prstem
 
   function resizeCanvas() {
     canvas.width = canvas.clientWidth;
@@ -219,12 +184,11 @@ const DRAG_SPEED = 0.005; // čím větší, tím citlivější
       ctx.fillText(t.name, p.x - size*1.1, p.y + size + 10);
     });
 
-    // STŘED – otáčející se koule
+    // střed – otáčející se koule
     const cx = w / 2;
     const cy = h / 2;
     const r = size * 1.1;
 
-    // světelný efekt
     const grad = ctx.createRadialGradient(cx - r/4, cy - r/4, r/4, cx, cy, r);
     grad.addColorStop(0, "rgba(13,164,255,0.4)");
     grad.addColorStop(0.5, "rgba(13,164,255,0.15)");
@@ -242,29 +206,69 @@ const DRAG_SPEED = 0.005; // čím větší, tím citlivější
     ctx.stroke();
     ctx.restore();
 
-    // text uprostřed – pevný
+    // text uprostřed – NEotáčí se
     ctx.fillStyle = "#dbe2ff";
     ctx.font = "bold 13px system-ui";
     ctx.textAlign = "center";
     ctx.fillText("Vivere", cx, cy - 8);
     ctx.fillText("atque FruiT", cx, cy + 12);
 
-    // rotace
-    coreRotation += 0.01;
-    if (coreRotation > Math.PI * 2) coreRotation = 0;
+    // automatická rotace (když zrovna netaháš prstem)
+    if (!isDraggingCore) {
+      coreRotation += 0.01;
+      if (coreRotation > Math.PI * 2) coreRotation = 0;
+    }
 
     requestAnimationFrame(drawWorld);
   }
+
+  // zjištění, jestli prst/klik je v kouli
+  function isPointerInCore(x, y) {
+    const w = canvas.width, h = canvas.height;
+    const size = Math.min(w, h) * 0.08;
+    const cx = w / 2;
+    const cy = h / 2;
+    const r = size * 1.1;
+    const dx = x - cx;
+    const dy = y - cy;
+    return dx*dx + dy*dy <= r*r;
+  }
+
+  // ovládání prstem / myší
+  canvas.addEventListener("pointerdown", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    if (isPointerInCore(x, y)) {
+      isDraggingCore = true;
+      lastPointerX = x;
+    }
+  });
+
+  canvas.addEventListener("pointermove", (e) => {
+    if (!isDraggingCore) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const dx = x - lastPointerX;
+    coreRotation += dx * DRAG_SPEED;
+    lastPointerX = x;
+  });
+
+  canvas.addEventListener("pointerup", () => {
+    isDraggingCore = false;
+  });
+  canvas.addEventListener("pointerleave", () => {
+    isDraggingCore = false;
+  });
 
   // inicializace canvasu
   resizeCanvas();
   drawWorld();
   window.addEventListener("resize", () => {
     resizeCanvas();
-    // drawWorld();  // nemusí se volat, běží přes requestAnimationFrame
   });
 
-  // PWA
+  // PWA registrace
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./service-worker.js")
       .then(() => console.log("SW registrován"))
