@@ -179,3 +179,10 @@ window.addEventListener("DOMContentLoaded", () => {
     ctx.fillText("Vivere atque FruiT • core", w/2 - 80, h/2 + 3);
   }
 });
+
+// PWA – registrace service workeru
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js")
+    .then(() => console.log("SW registrován"))
+    .catch((err) => console.warn("SW chyba", err));
+}
