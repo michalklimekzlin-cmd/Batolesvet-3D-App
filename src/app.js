@@ -142,6 +142,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }, 3000);
 
   // ===============================
+  // ===============================
   // CANVAS / SVĚT
   // ===============================
   const canvas = document.getElementById("worldCanvas");
@@ -152,6 +153,9 @@ window.addEventListener("DOMContentLoaded", () => {
   let lastPointerX = 0;          // minulá pozice prstu
   const DRAG_SPEED = 0.005;      // citlivost otáčení prstem
 
+  // dýchání
+  let breathTick = 0;            // časovač na dýchání
+
   function resizeCanvas() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
@@ -160,20 +164,20 @@ window.addEventListener("DOMContentLoaded", () => {
   function drawWorld() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const w = canvas.width, h = canvas.height;
-    const size = Math.min(w, h) * 0.08;
+    const baseSize = Math.min(w, h) * 0.08;
 
     // 4 týmy v rozích
     const teams = window.VAF_teams || [];
     const positions = [
-      { x: size*1.4, y: size*1.4 },
-      { x: w - size*1.4, y: size*1.4 },
-      { x: size*1.4, y: h - size*1.4 },
-      { x: w - size*1.4, y: h - size*1.4 },
+      { x: baseSize*1.4, y: baseSize*1.4 },
+      { x: w - baseSize*1.4, y: baseSize*1.4 },
+      { x: baseSize*1.4, y: h - baseSize*1.4 },
+      { x: w - baseSize*1.4, y: h - baseSize*1.4 },
     ];
     teams.forEach((t, i) => {
       const p = positions[i];
       ctx.beginPath();
-      ctx.arc(p.x, p.y, size, 0, Math.PI*2);
+      ctx.arc(p.x, p.y, baseSize, 0, Math.PI*2);
       ctx.strokeStyle = "rgba(112,255,143,.7)";
       ctx.lineWidth = 2;
       ctx.stroke();
@@ -181,21 +185,38 @@ window.addEventListener("DOMContentLoaded", () => {
       ctx.fill();
       ctx.fillStyle = "#dbe2ff";
       ctx.font = "10px system-ui";
-      ctx.fillText(t.name, p.x - size*1.1, p.y + size + 10);
+      ctx.fillText(t.name, p.x - baseSize*1.1, p.y + baseSize + 10);
     });
 
-    // střed – otáčející se koule
+    // střed
     const cx = w / 2;
     const cy = h / 2;
-    const r = size * 1.1;
 
-    const grad = ctx.createRadialGradient(cx - r/4, cy - r/4, r/4, cx, cy, r);
-    grad.addColorStop(0, "rgba(13,164,255,0.4)");
+    // dýchání – hodnota 0.9 až 1.05
+    breathTick += 0.03;
+    const breath = 1 + Math.sin(breathTick) * 0.05; // 1 ± 0.05
+    const r = baseSize * 1.1 * breath;
+
+    // lehké zachvění (podle dechu – jemný offset)
+    const shakeX = Math.sin(breathTick * 3) * 1.2;  // max ~1px
+    const shakeY = Math.cos(breathTick * 2.2) * 1.2;
+
+    // světelný efekt
+    const grad = ctx.createRadialGradient(
+      cx - r/4,
+      cy - r/4,
+      r/4,
+      cx,
+      cy,
+      r
+    );
+    grad.addColorStop(0, "rgba(13,164,255,0.45)");
     grad.addColorStop(0.5, "rgba(13,164,255,0.15)");
-    grad.addColorStop(1, "rgba(0,0,0,0.3)");
+    grad.addColorStop(1, "rgba(0,0,0,0.25)");
 
+    // koule – točí se
     ctx.save();
-    ctx.translate(cx, cy);
+    ctx.translate(cx + shakeX, cy + shakeY);
     ctx.rotate(coreRotation);
     ctx.beginPath();
     ctx.arc(0, 0, r, 0, Math.PI * 2);
@@ -206,6 +227,71 @@ window.addEventListener("DOMContentLoaded", () => {
     ctx.stroke();
     ctx.restore();
 
+    // text uprostřed – proti směru
+    ctx.save();
+    ctx.translate(cx + shakeX, cy + shakeY);
+    ctx.rotate(-coreRotation * 0.6); // proti směru, ale trochu míň, ať to „dýchá“
+    ctx.fillStyle = "#dbe2ff";
+    ctx.font = "bold 13px system-ui";
+    ctx.textAlign = "center";
+    ctx.fillText("Vivere", 0, -8);
+    ctx.fillText("atque FruiT", 0, 12);
+    ctx.restore();
+
+    // auto rotace (když zrovna netaháš)
+    if (!isDraggingCore) {
+      coreRotation += 0.01;
+      if (coreRotation > Math.PI * 2) coreRotation = 0;
+    }
+
+    requestAnimationFrame(drawWorld);
+  }
+
+  // zjistit, jestli klikám do středu
+  function isPointerInCore(x, y) {
+    const w = canvas.width, h = canvas.height;
+    const baseSize = Math.min(w, h) * 0.08;
+    const cx = w / 2;
+    const cy = h / 2;
+    const r = baseSize * 1.1 * 1.1; // trochu větší kvůli dechu
+    const dx = x - cx;
+    const dy = y - cy;
+    return dx*dx + dy*dy <= r*r;
+  }
+
+  // ovládání prstem / myší
+  canvas.addEventListener("pointerdown", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    if (isPointerInCore(x, y)) {
+      isDraggingCore = true;
+      lastPointerX = x;
+    }
+  });
+
+  canvas.addEventListener("pointermove", (e) => {
+    if (!isDraggingCore) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const dx = x - lastPointerX;
+    coreRotation += dx * DRAG_SPEED;
+    lastPointerX = x;
+  });
+
+  canvas.addEventListener("pointerup", () => {
+    isDraggingCore = false;
+  });
+  canvas.addEventListener("pointerleave", () => {
+    isDraggingCore = false;
+  });
+
+  // start
+  resizeCanvas();
+  drawWorld();
+  window.addEventListener("resize", () => {
+    resizeCanvas();
+  });
     // text uprostřed – NEotáčí se
     ctx.fillStyle = "#dbe2ff";
     ctx.font = "bold 13px system-ui";
