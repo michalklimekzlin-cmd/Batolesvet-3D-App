@@ -1,12 +1,12 @@
-const CACHE_NAME = "vaf-cache-v0.31";
+const CACHE_NAME = "vaf-cache-v0.32";
 const ASSETS = [
   "./",
   "./index.html",
   "./style.css?v=0.31",
   "./manifest.json",
-  "./src/app.js?v=0.31",
-  "./src/engine.js?v=0.31",
-  "./src/teams.js?v=0.31"
+  "./src/app.js?v=0.32",
+  "./src/engine.js?v=0.32",
+  "./src/teams.js?v=0.32"
 ];
 
 self.addEventListener("install", (event) => {
