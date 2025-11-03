@@ -1,4 +1,10 @@
+# Systémové soubory
 .DS_Store
 Thumbs.db
+
+# Node / build nástroje (kdybychom později používali)
 node_modules/
 dist/
+build/
+.cache/
+temp/
