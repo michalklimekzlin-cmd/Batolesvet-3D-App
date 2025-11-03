@@ -125,14 +125,15 @@ window.addEventListener("DOMContentLoaded", () => {
   }, 3000);
 
   // jednoduché "vykreslení" světa – placeholder
-  const canvas = document.getElementById("worldCanvas");
-  const ctx = canvas.getContext("2d");
+const canvas = document.getElementById("worldCanvas");
+const ctx = canvas.getContext("2d");
+
+// inicializace plátna a spuštění animace
+resizeCanvas();
+drawWorld();
+window.addEventListener("resize", () => {
   resizeCanvas();
-  drawWorld(ctx);
-  window.addEventListener("resize", () => {
-    resizeCanvas();
-    drawWorld(ctx);
-  });
+});
 
   function resizeCanvas() {
     canvas.width = canvas.clientWidth;
