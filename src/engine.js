@@ -1,6 +1,5 @@
 // src/engine.js
 const VAF_engine = (() => {
-  const listeners = [];
   let logEl = null;
 
   function init(logId) {
@@ -17,13 +16,8 @@ const VAF_engine = (() => {
     }
   }
 
-  function subscribe(cb) {
-    listeners.push(cb);
-  }
-
   function pulse(from = "world", payload = {}) {
     log(`pulse od: ${from}`);
-    listeners.forEach(cb => cb({ from, payload, at: Date.now() }));
   }
 
   function saveModule(mod) {
@@ -40,5 +34,5 @@ const VAF_engine = (() => {
     return JSON.parse(localStorage.getItem("VAF_modules") || "[]");
   }
 
-  return { init, log, pulse, subscribe, saveModule, loadModules };
+  return { init, log, pulse, saveModule, loadModules };
 })();
