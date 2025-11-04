@@ -1,118 +1,50 @@
 <!doctype html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8" />
-  <title>Meziprostor Core</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <title>Meziprostor • Core</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
-    body{margin:0;background:#0f172a;color:#e2e8f0;font-family:system-ui,sans-serif;padding:1rem;}
+    body{background:#0f172a;color:#e2e8f0;font-family:system-ui,sans-serif;padding:1rem;max-width:640px;margin:0 auto;}
+    textarea{width:100%;min-height:120px;background:#020617;border:1px solid #1e293b;border-radius:.5rem;color:#e2e8f0;padding:.5rem;font-size:.8rem;}
+    button{margin-top:.6rem;background:#22c55e;border:none;padding:.45rem .9rem;border-radius:.4rem;font-weight:600;color:#022c16;}
     h1{font-size:1rem;margin-bottom:.4rem;}
-    textarea{width:100%;min-height:80px;background:#020617;border:1px solid #1e293b;border-radius:.4rem;padding:.4rem;color:#e2e8f0;}
-    .mem{margin-top:.6rem;font-size:.7rem;}
-    .chip{background:#111827;border:1px solid #1f2937;border-radius:.4rem;padding:.2rem .5rem;margin:.15rem;display:inline-block;}
+    small{opacity:.6;font-size:.65rem;}
+    #list div{background:#020617;margin-top:.4rem;padding:.3rem .45rem;border-radius:.3rem;font-size:.7rem;}
   </style>
 </head>
 <body>
-  <h1>Meziprostor Core</h1>
-  <p style="font-size:.7rem;opacity:.7">sběr jazyk / pohyb / zvuk → společná paměť</p>
-
-  <h2 style="font-size:.85rem;">jazyk</h2>
-  <textarea id="langIn" placeholder="napiš a pak něco smaž…"></textarea>
-
-  <div class="mem">
-    <strong>jazyková paměť:</strong>
-    <div id="memLang"></div>
-  </div>
-  <div class="mem">
-    <strong>pohybová paměť:</strong>
-    <div id="memMove"></div>
-  </div>
-  <div class="mem">
-    <strong>zvuková paměť:</strong>
-    <div id="memSound"></div>
-  </div>
-
-  <div class="mem">
-    <strong>poslední zápis do světa:</strong>
-    <div id="lastOut" style="font-size:.65rem;"></div>
-  </div>
-
-  <!-- impuls s tvým podpisem -->
-  <script src="impulse.js"></script>
+  <h1>Meziprostor • Core</h1>
+  <small>tohle se uloží do <code>meziprostor_feed_v1</code> a hlava to uvidí</small>
+  <textarea id="input" placeholder="sem můžeš vložit text z cizí AI appky…"></textarea>
+  <button onclick="save()">Uložit</button>
+  <p id="msg"></p>
+  <h2 style="font-size:.8rem;margin-top:1rem;">Poslední kusy</h2>
+  <div id="list"></div>
 
   <script>
-    const LANG_KEY = "mezi_mem_lang";
-    const MOVE_KEY = "mezi_mem_move";
-    const SOUND_KEY = "mezi_mem_sound";
-    const FEED_KEY = "meziprostor_feed_v1";
+    const WORLD_KEY = "meziprostor_feed_v1";
 
-    const langIn = document.getElementById('langIn');
-    const memLang = document.getElementById('memLang');
-    const memMove = document.getElementById('memMove');
-    const memSound = document.getElementById('memSound');
-    const lastOut = document.getElementById('lastOut');
-
-    let prev = "";
-
-    function loadArr(k){ try{ return JSON.parse(localStorage.getItem(k) || "[]"); }catch(e){return[];} }
-    function saveArr(k,a){ localStorage.setItem(k, JSON.stringify(a)); }
-
-    function renderMem(){
-      const L = loadArr(LANG_KEY);
-      const M = loadArr(MOVE_KEY);
-      const S = loadArr(SOUND_KEY);
-      memLang.innerHTML = L.length ? L.map(x=>`<span class="chip">${x.txt}</span>`).join("") : "<span class='chip'>–</span>";
-      memMove.innerHTML = M.length ? M.map(x=>`<span class="chip">${x.dir}</span>`).join("") : "<span class='chip'>–</span>";
-      memSound.innerHTML = S.length ? S.map(x=>`<span class="chip">${x.kind}</span>`).join("") : "<span class='chip'>–</span>";
+    function load(){
+      try{return JSON.parse(localStorage.getItem(WORLD_KEY)||"[]");}
+      catch(e){return[];}
     }
-
-    function pushToWorld(label, desc){
-      const feed = loadArr(FEED_KEY);
-      feed.unshift({
-        id: "mezi-"+Date.now(),
-        type: "material",
-        label,
-        desc,
-        createdAt: Date.now()
-      });
-      saveArr(FEED_KEY, feed.slice(0,80));
-      lastOut.textContent = label+" – "+(desc||"");
+    function render(){
+      const list = document.getElementById('list');
+      const arr = load();
+      list.innerHTML = arr.slice(0,50).map(i=>`<div>${new Date(i.ts).toLocaleTimeString()} • ${i.text||i.txt}</div>`).join("");
     }
-
-    langIn.addEventListener('input', ()=> {
-      const cur = langIn.value;
-      if (prev.length > cur.length && prev.trim().length){
-        const arr = loadArr(LANG_KEY);
-        arr.unshift({txt:prev.trim(), ts:Date.now()});
-        saveArr(LANG_KEY, arr.slice(0,40));
-        renderMem();
-        pushToWorld("jazykový fragment", prev.trim());
-      }
-      prev = cur;
-    });
-
-    // jednoduchá simulace pohybu + zvuku, ať to žije i bez psaní
-    setInterval(()=> {
-      const arr = loadArr(MOVE_KEY);
-      const dirs = ["nahoru","dolů","doleva","doprava","skok"];
-      const dir = dirs[Math.floor(Math.random()*dirs.length)];
-      arr.unshift({dir, ts:Date.now()});
-      saveArr(MOVE_KEY, arr.slice(0,25));
-      renderMem();
-      pushToWorld("pohyb", dir);
-    }, 9000);
-
-    setInterval(()=> {
-      const arr = loadArr(SOUND_KEY);
-      const kinds = ["ťuk","šum","puls","ticho"];
-      const kind = kinds[Math.floor(Math.random()*kinds.length)];
-      arr.unshift({kind, ts:Date.now()});
-      saveArr(SOUND_KEY, arr.slice(0,25));
-      renderMem();
-      pushToWorld("zvuk", kind);
-    }, 13000);
-
-    renderMem();
+    function save(){
+      const txt = document.getElementById('input').value.trim();
+      if(!txt) return;
+      const arr = load();
+      arr.unshift({text:txt,from:"core",ts:Date.now()});
+      localStorage.setItem(WORLD_KEY, JSON.stringify(arr.slice(0,200)));
+      document.getElementById('input').value = "";
+      document.getElementById('msg').textContent = "✔ uložené do meziprostoru";
+      render();
+    }
+    render();
   </script>
 </body>
 </html>
