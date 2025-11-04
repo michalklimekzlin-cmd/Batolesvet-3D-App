@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
   <meta charset="utf-8">
-  <title>VAFT – Bear</title>
+  <title>VAFT – Medvěd</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     body{background:#0f172a;color:#e2e8f0;font-family:system-ui,sans-serif;padding:1rem;}
@@ -52,6 +52,7 @@
       prev = cur;
     });
 
+    // vezme poslední text z hubu (VAFT-Hub)
     function checkHub(){
       const shared = load(SHARED_AI_KEY);
       if(!shared.length) return;
@@ -67,6 +68,7 @@
     }
     setInterval(checkHub, 7000);
 
+    // občas sám zahučí
     setInterval(()=>{
       const arr = load(ENTITY_KEY);
       arr.unshift({txt:"🛡 medvěd hlídá Vivere", ts:Date.now(), auto:true});
