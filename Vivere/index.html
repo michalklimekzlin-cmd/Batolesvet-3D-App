@@ -22,6 +22,29 @@
   <div id="corePulse"></div>
 
 <script>
+  function exportWorldToGame() {
+  let all = [];
+
+  FEEDS.forEach(k => {
+    const raw = localStorage.getItem(k);
+    if (!raw) return;
+    try {
+      const items = JSON.parse(raw);
+      all = all.concat(items);
+    } catch (e) {}
+  });
+
+  all.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+  const gamePack = {
+    generatedAt: Date.now(),
+    worldRules: ["Přátelství", "Vivere atque frui"],
+    entities: all.slice(0, 40) // vezme nejnovější kousky
+  };
+
+  localStorage.setItem("vaft_game_materials", JSON.stringify(gamePack));
+  alert("🌍 Svět exportován do VAFT-Game!");
+}
   const FEEDS = [
     "meziprostor_feed_v1",
     "vaft_girls_feed",
