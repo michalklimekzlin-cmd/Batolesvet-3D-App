@@ -6,46 +6,24 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     body{margin:0;background:#0b0f14;color:#e2e8f0;font-family:system-ui,sans-serif;}
-    header{padding:1rem;border-bottom:1px solid #1f2937;}
-    #materials{display:flex;flex-wrap:wrap;gap:.7rem;padding:1rem;}
-    .card{background:#111827;border:1px solid #1f2937;border-radius:.6rem;padding:.55rem .7rem;min-width:150px;}
-    .card small{display:block;font-size:.7rem;color:#94a3b8;}
-    h1{font-size:1rem;margin:0;}
+    header{padding:1rem;border-bottom:1px solid #111827;}
+    #materials{display:flex;flex-wrap:wrap;gap:.6rem;padding:1rem;}
+    .card{background:#111827;border:1px solid #1f2937;border-radius:.6rem;padding:.5rem .6rem;flex:1 1 calc(50% - .6rem);min-width:140px;}
+    .card small{display:block;opacity:.5;font-size:.6rem;margin-bottom:.25rem;}
+    .card strong{font-size:.8rem;}
+    #corePulse{padding:0 1rem 1rem 1rem;font-size:.65rem;opacity:.6;}
   </style>
 </head>
 <body>
 <header>
   <h1>Vivere atque FruiT</h1>
-  <button onclick="exportWorldToGame()">Exportovat svět do hry 🎮</button>
   <small>projekce ze všech bytostí</small>
 </header>
 <main id="materials"></main>
-  <div id="corePulse"></div>
+<div id="corePulse"></div>
 
 <script>
-  function exportWorldToGame() {
-  let all = [];
-
-  FEEDS.forEach(k => {
-    const raw = localStorage.getItem(k);
-    if (!raw) return;
-    try {
-      const items = JSON.parse(raw);
-      all = all.concat(items);
-    } catch (e) {}
-  });
-
-  all.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-
-  const gamePack = {
-    generatedAt: Date.now(),
-    worldRules: ["Přátelství", "Vivere atque frui"],
-    entities: all.slice(0, 40) // vezme nejnovější kousky
-  };
-
-  localStorage.setItem("vaft_game_materials", JSON.stringify(gamePack));
-  alert("🌍 Svět exportován do VAFT-Game!");
-}
+  // všechny klíče, které budeme sbírat
   const FEEDS = [
     "meziprostor_feed_v1",
     "vaft_girls_feed",
@@ -55,60 +33,45 @@
     "vaft_star_feed",
     "vaft_ghost_feed",
     "vaft_bear_feed"
-    // napojení na Meziprostor-Core
-function syncWithCore(){
-  const feed = JSON.parse(localStorage.getItem("meziprostor_feed_v1") || "[]");
-  if(feed.length){
-    const last = feed[0];
-    const msg = `${last.label || "?"}: ${last.desc || ""}`;
-    console.log("🌀 meziprostor →", msg);
-    // ukázka: živý výpis na stránce
-    const coreDisplay = document.getElementById("corePulse") || (()=> {
-      const el = document.createElement("div");
-      el.id = "corePulse";
-      el.style = "position:fixed;bottom:10px;right:10px;font-size:.7rem;background:#0a0;border-radius:.5rem;padding:.4rem .6rem;color:#fff;font-family:monospace;";
-      document.body.appendChild(el);
-      return el;
-    })();
-    coreDisplay.textContent = "Meziprostor: " + msg;
-  }
-}
-setInterval(syncWithCore, 4000);
   ];
-  const list = document.getElementById('materials');
 
   function loadFeed(key){
-    const raw = localStorage.getItem(key);
-    if (!raw) return [];
-    try { return JSON.parse(raw); } catch(e){ return []; }
+    try { return JSON.parse(localStorage.getItem(key)||"[]"); }
+    catch(e){ return []; }
   }
 
   function render(){
-    list.innerHTML = "";
+    const main = document.getElementById('materials');
+    const pulse = document.getElementById('corePulse');
+    main.innerHTML = "";
     let all = [];
-    FEEDS.forEach(k => {
+    FEEDS.forEach(k=>{
       const items = loadFeed(k);
-      all = all.concat(items.map(it => ({...it, source:k})));
+      all = all.concat(items.map(it => ({...it, _src:k})));
     });
+
     if (!all.length){
-      list.innerHTML = `<div class="card"><strong>svět čeká</strong><small>zatím nic nepřišlo</small></div>`;
+      main.innerHTML = "<p style='opacity:.6'>zatím nic nevytvořily…</p>";
+      pulse.textContent = "";
       return;
     }
-    all.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    all.forEach(it=>{
-      const el = document.createElement('div');
-      el.className = "card";
-      el.innerHTML = `
-        <strong>${it.label || it.type || "materiál"}</strong>
-        <small>zdroj: ${it.source}</small>
-        ${it.desc ? `<small>${it.desc}</small>` : ""}
-      `;
-      list.appendChild(el);
+
+    all.sort((a,b)=>b.ts - a.ts);
+    all.slice(0,80).forEach(item=>{
+      const div = document.createElement('div');
+      div.className = "card";
+      const text = item.txt || item.text || "(prázdné)";
+      div.innerHTML = `<small>${item._src} • ${new Date(item.ts).toLocaleTimeString()}</small><strong>${text}</strong>`;
+      main.appendChild(div);
     });
+
+    // malé info
+    const counts = FEEDS.map(k => `${k}: ${loadFeed(k).length}`).join(" • ");
+    pulse.textContent = "svět: " + counts;
   }
 
   render();
-  setInterval(render, 4000);
+  setInterval(render, 5000);
 </script>
 </body>
 </html>
