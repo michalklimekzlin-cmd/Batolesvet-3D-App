@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <title>Vivere atque FruiT • hlava</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{margin:0;background:#0b0f14;color:#e2e8f0;font-family:system-ui,sans-serif;}
+    header{padding:1rem;border-bottom:1px solid #1f2937;}
+    #materials{display:flex;flex-wrap:wrap;gap:.7rem;padding:1rem;}
+    .card{background:#111827;border:1px solid #1f2937;border-radius:.6rem;padding:.55rem .7rem;min-width:150px;}
+    .card small{display:block;font-size:.7rem;color:#94a3b8;}
+    h1{font-size:1rem;margin:0;}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Vivere atque FruiT</h1>
+  <small>projekce ze všech bytostí</small>
+</header>
+<main id="materials"></main>
+
+<script>
+  const FEEDS = [
+    "meziprostor_feed_v1",
+    "vaft_girls_feed",
+    "vaft_lilies_feed",
+    "vaft_lady_feed",
+    "vaft_doll_feed",
+    "vaft_star_feed",
+    "vaft_ghost_feed",
+    "vaft_bear_feed"
+  ];
+  const list = document.getElementById('materials');
+
+  function loadFeed(key){
+    const raw = localStorage.getItem(key);
+    if (!raw) return [];
+    try { return JSON.parse(raw); } catch(e){ return []; }
+  }
+
+  function render(){
+    list.innerHTML = "";
+    let all = [];
+    FEEDS.forEach(k => {
+      const items = loadFeed(k);
+      all = all.concat(items.map(it => ({...it, source:k})));
+    });
+    if (!all.length){
+      list.innerHTML = `<div class="card"><strong>svět čeká</strong><small>zatím nic nepřišlo</small></div>`;
+      return;
+    }
+    all.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    all.forEach(it=>{
+      const el = document.createElement('div');
+      el.className = "card";
+      el.innerHTML = `
+        <strong>${it.label || it.type || "materiál"}</strong>
+        <small>zdroj: ${it.source}</small>
+        ${it.desc ? `<small>${it.desc}</small>` : ""}
+      `;
+      list.appendChild(el);
+    });
+  }
+
+  render();
+  setInterval(render, 4000);
+</script>
+</body>
+</html>
