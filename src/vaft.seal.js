@@ -30,4 +30,13 @@
   }
 
   window.addEventListener("load", sealPage);
+  const div = document.createElement('div');
+div.style.position = 'fixed';
+div.style.bottom = '6px';
+div.style.right = '10px';
+div.style.fontSize = '10px';
+div.style.color = '#8f8';
+div.style.opacity = '0.6';
+div.textContent = '🔏 Zapečetěno • ' + hash.slice(0, 10);
+document.body.appendChild(div);
 })();
