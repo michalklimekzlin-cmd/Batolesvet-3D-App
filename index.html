@@ -90,7 +90,14 @@
     </aside>
   </main>
 
-  <!-- skripty – VŽDY dávej verzi, když něco měníš -->
+  <!-- skripty – VŽDY dávej verzi, když něco měníš --><!-- Registrace service workeru pro offline režim -->
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(() => console.log("✅ Service worker registrován"))
+      .catch(err => console.warn("⚠️ Service worker chyba:", err));
+  }
+</script>
   <script src="src/app.js?v=0.35"></script>
 <script src="src/engine.js?v=0.35"></script>
 <script src="src/teams.js?v=0.35"></script>
