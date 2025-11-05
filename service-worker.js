@@ -6,7 +6,8 @@ const ASSETS = [
   "./manifest.json",
   "./src/app.js?v=0.35",
   "./src/engine.js?v=0.35",
-  "./src/teams.js?v=0.35"
+ "./src/teams.js?v=0.35",
+"./src/poutnik.js?v=0.36",
 ];
 
 self.addEventListener("install", (event) => {
