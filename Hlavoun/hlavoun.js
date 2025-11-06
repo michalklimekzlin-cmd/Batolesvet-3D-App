@@ -1,60 +1,91 @@
+// jednoduchý kanál – jestli máš vaft-core, můžeš to pak napojit
 const consoleEl = document.getElementById('hlavounConsole');
-const cmdInput = document.getElementById('hlavounCmd');
+const inputEl = document.getElementById('hlavounCmd');
 const runBtn = document.getElementById('hlavounRun');
+const gridEl = document.getElementById('hlavounGrid');
 const modeBtn = document.getElementById('hlavounMode');
 const noteBtn = document.getElementById('hlavounNote');
 
-let reviaState = localStorage.getItem('revia_mode') || 'angel';
+// 1) vygeneruj 89 buněk
+const CELL_COUNT = 89;
+const cells = [];
+for (let i = 0; i < CELL_COUNT; i++) {
+  const c = document.createElement('div');
+  c.className = 'hlavoun-cell';
+  gridEl.appendChild(c);
+  cells.push(c);
+}
 
-function log(text, type="sys") {
+// helper: přidej řádek do konzole
+function pushLine(txt, kind = 'sys') {
   const p = document.createElement('p');
-  p.innerHTML = `<b>[${type}]</b> ${text}`;
+  p.innerHTML = `<b>[${kind}]</b> ${txt}`;
   consoleEl.appendChild(p);
   consoleEl.scrollTop = consoleEl.scrollHeight;
+  pulseGrid();
 }
 
-function runCommand(cmd) {
-  if (!cmd.trim()) return;
-  log(cmd, "user");
-  if (cmd.toLowerCase().includes("revia")) {
-    log("Analyzuju stav Revie: " + reviaState);
-  } else if (cmd.toLowerCase().includes("mode")) {
-    toggleRevia();
-  } else {
-    log("Zatím neumím reagovat na: " + cmd);
+// 2) náhodné blikání buněk, aby to žilo
+function randomBlink() {
+  const idx = Math.floor(Math.random() * cells.length);
+  const cell = cells[idx];
+  cell.classList.add('on');
+  setTimeout(() => cell.classList.remove('on'), 500 + Math.random() * 900);
+  // opakuj
+  setTimeout(randomBlink, 180 + Math.random() * 320);
+}
+randomBlink();
+
+// 3) pulz celé sítě při nové zprávě
+function pulseGrid() {
+  // rozsvítíme několik za sebou
+  let hops = 8;
+  const used = new Set();
+  function hop() {
+    if (hops-- <= 0) return;
+    let idx = Math.floor(Math.random() * cells.length);
+    // aby se neopakovalo moc stejné
+    if (used.has(idx)) {
+      hop();
+      return;
+    }
+    used.add(idx);
+    cells[idx].classList.add('on');
+    setTimeout(() => cells[idx].classList.remove('on'), 600);
+    setTimeout(hop, 60);
   }
+  hop();
 }
 
-function toggleRevia() {
-  reviaState = reviaState === 'angel' ? 'daemon' : 'angel';
-  localStorage.setItem('revia_mode', reviaState);
-  log("Přepínám Revii na " + reviaState + " mód.");
+// 4) odesílání příkazů
+function handleCmd() {
+  const v = inputEl.value.trim();
+  if (!v) return;
+  pushLine(v, 'you');
+  inputEl.value = '';
+
+  // malá pseudo-reakce
+  setTimeout(() => {
+    if (v.toLowerCase().includes('revia')) {
+      pushLine('Potvrzuji link s Revií. Přepínám stav.', 'hlavoun');
+    } else if (v.toLowerCase().includes('křídlo')) {
+      pushLine('Záznam do křídla je lokální – použij zápis v Revii.', 'hlavoun');
+    } else {
+      pushLine('Rozumím. Zapisuje se do mentální mapy.', 'hlavoun');
+    }
+  }, 280);
 }
 
-function writeNote() {
-  const note = prompt("Co chceš zapsat do křídla?");
-  if (note) {
-    localStorage.setItem('revia_note', note);
-    log("Zapsal jsem do křídla: " + note);
-  } else {
-    log("Zápis zrušen.");
-  }
-}
-
-runBtn.addEventListener('click', () => {
-  runCommand(cmdInput.value);
-  cmdInput.value = '';
+runBtn.addEventListener('click', handleCmd);
+inputEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') handleCmd();
 });
 
-cmdInput.addEventListener('keypress', e => {
-  if (e.key === 'Enter') {
-    runCommand(cmdInput.value);
-    cmdInput.value = '';
-  }
+// 5) tlačítka dole – zatím jen hláška
+modeBtn.addEventListener('click', () => {
+  pushLine('Předávám Revii požadavek na přepnutí angel/daemon.', 'hlavoun');
 });
 
-modeBtn?.addEventListener('click', toggleRevia);
-noteBtn?.addEventListener('click', writeNote);
-
-log("Inicializuji jádro Hlavouna...");
-setTimeout(() => log("Synchronizace s Revii: " + reviaState), 1000);
+noteBtn.addEventListener('click', () => {
+  pushLine('Poznámka: křídlo je dostupné v modulární Revii.', 'hlavoun');
+});
