@@ -53,3 +53,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   pulse();
 });
+
+// 🔄 Revia – trojfázové přepínání (angel / daemon / glyph)
+document.addEventListener("DOMContentLoaded", () => {
+  const main = document.querySelector(".revia-main");
+  const btn = document.getElementById("reviaAskBtn");
+  if (!main || !btn) return;
+
+  const modes = ["angel", "daemon", "glyph"];
+  btn.addEventListener("click", () => {
+    const current = main.getAttribute("data-mode") || "angel";
+    const next = modes[(modes.indexOf(current) + 1) % modes.length];
+    main.setAttribute("data-mode", next);
+
+    const msg =
+      next === "angel"
+        ? "🪽 Revia: světlo dýchá."
+        : next === "daemon"
+        ? "💀 Revia: stín bdí."
+        : "🜂 Revia: kód probouzí svět.";
+    showReviaToast(msg);
+  });
+});
