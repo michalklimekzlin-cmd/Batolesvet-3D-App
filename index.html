@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <!-- 🛡️ Content Security Policy – chrání před vložením cizího kódu -->
-<meta http-equiv="Content-Security-Policy" content="
-  default-src 'self';
-  script-src 'self';
-  style-src 'self' 'unsafe-inline';
-  img-src 'self' data:;
-  connect-src 'self';
-  object-src 'none';
-  base-uri 'self';
-  form-action 'self';
-  frame-ancestors 'none';
-">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data:;
+    connect-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+  ">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Vivere atque FruiT • v0.31</title>
   <link rel="stylesheet" href="style.css?v=0.31">
@@ -60,7 +60,26 @@
           </select>
           <button type="submit">➕ Přidat hrdinu</button>
         </form>
+
         <ul id="heroList"></ul>
+
+        <!-- 🔗 Nová sekce odkazu na Reviu -->
+        <div class="revia-link">
+          <hr style="border:0;height:1px;background:#334;margin:12px 0;">
+          <p>🪽 <strong>Revia</strong> — Strážkyně světla</p>
+          <a href="./Revia/index.html" class="btn" style="
+            display:inline-block;
+            margin-top:6px;
+            padding:8px 14px;
+            border-radius:8px;
+            border:1px solid #224;
+            background:rgba(40,60,90,.5);
+            color:#cfe;
+            text-decoration:none;
+            font-weight:600;
+            backdrop-filter:blur(6px);
+          ">Otevřít Reviu</a>
+        </div>
       </div>
 
       <div class="panel" id="enginePanel">
@@ -90,18 +109,19 @@
     </aside>
   </main>
 
-  <!-- skripty – VŽDY dávej verzi, když něco měníš --><!-- Registrace service workeru pro offline režim -->
-<script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js")
-      .then(() => console.log("✅ Service worker registrován"))
-      .catch(err => console.warn("⚠️ Service worker chyba:", err));
-  }
-</script>
+  <!-- skripty – VŽDY dávej verzi, když něco měníš -->
+  <!-- Registrace service workeru pro offline režim -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./service-worker.js")
+        .then(() => console.log("✅ Service worker registrován"))
+        .catch(err => console.warn("⚠️ Service worker chyba:", err));
+    }
+  </script>
   <script src="src/app.js?v=0.35"></script>
-<script src="src/engine.js?v=0.35"></script>
-<script src="src/teams.js?v=0.35"></script>
-<script src="src/poutnik.js?v=0.36"></script>
-<script src="src/vaft.seal.js?v=0.36"></script>
+  <script src="src/engine.js?v=0.35"></script>
+  <script src="src/teams.js?v=0.35"></script>
+  <script src="src/poutnik.js?v=0.36"></script>
+  <script src="src/vaft.seal.js?v=0.36"></script>
 </body>
 </html>
