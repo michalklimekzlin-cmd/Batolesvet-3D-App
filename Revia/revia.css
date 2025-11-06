@@ -128,13 +128,14 @@ body {
   backdrop-filter: blur(6px);
 }
 
-/* režimy pozadí */
+/* režimy pozadí – TEĎ SPRÁVNÁ CESTA */
 .revia-main[data-mode="angel"] {
-  background-image: url("./assets/revia-bg-angel.jpg");
+  /* obrázek je ve stejné složce jako revia.css → jen název */
+  background-image: url("revia-bg-angel.jpg");
 }
 
 .revia-main[data-mode="daemon"] {
-  background-image: url("./assets/revia-bg-daemon.jpg");
+  background-image: url("revia-bg-daemon.jpg");
 }
 
 /* menší displeje */
