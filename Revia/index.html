@@ -1,36 +1,83 @@
 <!doctype html>
 <html lang="cs">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Revia</title>
-    <link rel="stylesheet" href="revia.css?v=0.3">
-  </head>
-  <body>
-    <main class="revia-main" data-mode="angel">
-      <!-- horní panel -->
-      <header class="revia-topbar">
-        <div class="revia-wing" aria-label="Revia wing"></div>
-        <div class="revia-title">Revia</div>
-      </header>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vivere atque FruiT • v0.31</title>
 
-      <!-- hlavní karta -->
-      <div class="revia-card">
-        <div id="revia-glyph" class="revia-glyph">「Ī’♡</div>
+  <!-- hlavní styl hry -->
+  <link rel="stylesheet" href="../style.css">
+  <!-- styl Revie -->
+  <link rel="stylesheet" href="revia.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a1522">
+  <link rel="apple-touch-icon" href="icon.png">
+</head>
+
+<body>
+  <!-- původní hlavička -->
+  <div class="revia-heart">ΓЇ♡</div>
+  <header class="topbar">
+    <h1>Vivere atque FruiT</h1>
+    <span class="version">v0.31 • živý svět</span>
+  </header>
+
+  <main class="layout">
+    <section class="world">
+      <canvas id="worldCanvas" aria-label="world"></canvas>
+      <div class="world-overlay">
+        <p class="rule">Pravidlo 1: Přátelství</p>
+        <p class="rule">Pravidlo 2: Vivere atque FruiT</p>
+        <p class="pulse" id="worldPulse">●</p>
       </div>
+    </section>
+  </main>
 
-      <!-- spodní lišta -->
-      <div class="revia-bottom">
-        <span class="revia-mini" id="reviaMini">「Ī’♡</span>
-        <button id="reviaHelp" class="revia-help">?</button>
-      </div>
+  <!-- Revia sekce -->
+  <section class="revia-main" id="revia" data-mode="angel">
+    <!-- horní lišta -->
+    <div class="revia-topbar">
+      <div class="revia-wing"></div>
+      <div class="revia-title">Revia</div>
+    </div>
 
-      <!-- přepínač režimu -->
-      <button id="reviaToggle" class="revia-toggle">
-        🌀 Přepnout
-      </button>
-    </main>
+    <!-- mřížka slotů -->
+    <div class="revia-card">
+      <div class="revia-slot"><div class="revia-glyph">{*(•.)}</div></div>
+      <div class="revia-slot"><div class="revia-glyph">☆</div></div>
+      <div class="revia-slot"><div class="revia-glyph">♡</div></div>
+      <div class="revia-slot"><div class="revia-glyph">☽</div></div>
+      <div class="revia-slot"><div class="revia-glyph">☼</div></div>
+      <div class="revia-slot"><div class="revia-glyph">⟁</div></div>
+    </div>
 
-    <script src="revia.js?v=0.3"></script>
-  </body>
+    <!-- spodní panel -->
+    <div class="revia-bottom">
+      <div class="revia-mini">ΓЇ♡</div>
+      <button class="revia-help">?</button>
+    </div>
+
+    <!-- přepínač režimu -->
+    <button class="revia-toggle" onclick="toggleRevia()">Přepnout</button>
+  </section>
+
+  <!-- původní skripty -->
+  <script src="../vaft.loader.js"></script>
+  <script src="../vaft.core.js"></script>
+  <script src="../vaft.heartbeat.js"></script>
+
+  <!-- Revia JS -->
+  <script>
+    function toggleRevia() {
+      const revia = document.getElementById("revia");
+      const current = revia.getAttribute("data-mode");
+      const next = current === "angel" ? "daemon" : "angel";
+      revia.setAttribute("data-mode", next);
+    }
+  </script>
+
+  <script src="revia.js"></script>
+</body>
 </html>
