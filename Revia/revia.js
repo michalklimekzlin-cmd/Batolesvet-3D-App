@@ -118,23 +118,3 @@
       at: new Date().toISOString()
     }));
   }
-
-  // klik na křídlo → otevři zápisník
-  if (wing) {
-    wing.addEventListener('click', () => {
-      loadNotes();
-      showNotes();
-    });
-  }
-
-  if (notesClose) {
-    notesClose.addEventListener('click', hideNotes);
-  }
-
-  if (notesSave) {
-    notesSave.addEventListener('click', () => {
-      saveNotes();
-      hideNotes();
-    });
-  }
-})();
