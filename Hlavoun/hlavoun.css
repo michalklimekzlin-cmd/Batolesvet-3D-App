@@ -1,0 +1,63 @@
+html,body {
+  margin:0; padding:0; width:100%; height:100%;
+  background:#030a14; font-family:-apple-system,system-ui,sans-serif;
+  color:#dff3ff; overflow:hidden;
+}
+
+.hlavoun-main {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:space-between; height:100%;
+  background:radial-gradient(circle at 50% 20%, rgba(36,60,92,0.4), #030a14 85%);
+  transition:background 1s;
+}
+
+.hlavoun-main[data-state="offline"] {
+  background:radial-gradient(circle at 50% 20%, rgba(92,36,36,0.3), #080505 85%);
+}
+
+.hlavoun-top { text-align:center; margin-top:20px; }
+.hlavoun-top h1 { margin:0; font-size:1.8rem; }
+.hlavoun-role { font-size:0.8rem; opacity:0.7; }
+
+.hlavoun-core {
+  flex:1; width:90%; max-width:600px;
+  display:flex; flex-direction:column;
+  justify-content:flex-end; margin-bottom:60px;
+}
+
+.hlavoun-console {
+  flex:1; background:rgba(0,0,0,0.35);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px; padding:10px; overflow-y:auto;
+  box-shadow:inset 0 0 12px rgba(0,0,0,0.4);
+  font-size:0.9rem;
+}
+.hlavoun-console p { margin:4px 0; }
+
+.hlavoun-input { margin-top:10px; display:flex; }
+#hlavounCmd {
+  flex:1; padding:8px 10px; background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px 0 0 10px; color:#e5f5ff;
+}
+#hlavounRun {
+  width:60px; border:none;
+  background:rgba(255,255,255,0.1);
+  color:#e5f5ff; font-weight:700;
+  border-radius:0 10px 10px 0; cursor:pointer;
+}
+#hlavounRun:hover { background:rgba(255,255,255,0.2); }
+
+.hlavoun-foot {
+  position:absolute; bottom:10px; width:100%;
+  display:flex; justify-content:space-evenly;
+}
+.mode-btn, .note-btn {
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(200,240,255,0.2);
+  color:#e5f5ff; padding:8px 16px; border-radius:14px;
+  cursor:pointer; backdrop-filter:blur(4px);
+}
+.mode-btn:hover, .note-btn:hover {
+  background:rgba(255,255,255,0.2);
+}
