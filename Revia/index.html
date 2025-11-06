@@ -1,49 +1,44 @@
 <!doctype html>
 <html lang="cs">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Revia • Vivere atque FruiT</title>
-    <link rel="stylesheet" href="revia.css?v=1.2">
-  </head>
-  <body>
-    <div class="revia-main" data-mode="angel">
-      <!-- horní lišta -->
-      <div class="revia-topbar">
-        <div class="revia-wing" aria-hidden="true"></div>
-        <div class="revia-title">Revia</div>
-      </div>
-
-      <!-- mřížka slotů -->
-      <div class="revia-card">
-        <!-- SLOT 1 – přepíná glyphy -->
-        <button class="revia-slot revia-slot--primary" id="reviaSlot1">
-          <span class="revia-glyph" id="reviaGlyph">「Ī’𞋒</span>
-        </button>
-        <!-- SLOT 2 -->
-        <button class="revia-slot" disabled></button>
-        <!-- SLOT 3 -->
-        <button class="revia-slot" disabled></button>
-        <!-- SLOT 4 -->
-        <button class="revia-slot" disabled></button>
-        <!-- SLOT 5 -->
-        <button class="revia-slot" disabled></button>
-        <!-- SLOT 6 -->
-        <button class="revia-slot" disabled></button>
-      </div>
-
-      <!-- spodní panel -->
-      <div class="revia-bottom">
-        <span class="revia-mini">「Ī’♡</span>
-        <button class="revia-help">?</button>
-      </div>
-
-      <!-- přepínač anděl / démon -->
-      <button class="revia-toggle" id="reviaToggle">
-        🔁 Přepnout
-      </button>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Revia • Vivere atque FruiT</title>
+  <link rel="stylesheet" href="./revia.css?v=0.3">
+</head>
+<body>
+  <div class="revia-main" data-mode="angel">
+    <!-- horní lišta -->
+    <div class="revia-topbar">
+      <div class="revia-wing"></div>
+      <div class="revia-title">Revia</div>
     </div>
 
-    <script src="revia.js?v=1.2"></script>
-  </body>
+    <!-- mřížka 6 slotů -->
+    <div class="revia-card">
+      <!-- 1: přepínací glyph -->
+      <div class="revia-slot" id="reviaSlot1">
+        <span class="revia-glyph" id="reviaGlyph">「Ī’𞋒</span>
+      </div>
+
+      <!-- zbytek zatím prázdný -->
+      <div class="revia-slot" id="reviaSlot2" disabled></div>
+      <div class="revia-slot" id="reviaSlot3" disabled></div>
+      <div class="revia-slot" id="reviaSlot4" disabled></div>
+      <div class="revia-slot" id="reviaSlot5" disabled></div>
+      <div class="revia-slot" id="reviaSlot6" disabled></div>
+    </div>
+
+    <!-- přepínač dole -->
+    <button class="revia-toggle" id="reviaToggle">🔁 Přepnout</button>
+
+    <!-- spodní lišta -->
+    <div class="revia-bottom">
+      <span class="revia-mini">「Ī♡</span>
+      <button class="revia-help">?</button>
+    </div>
+  </div>
+
+  <script src="./revia.js?v=0.3"></script>
+</body>
 </html>
