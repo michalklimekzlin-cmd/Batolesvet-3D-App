@@ -203,3 +203,31 @@ html, body {
   color: #ffd0d0;
   text-shadow: 0 0 10px rgba(255, 80, 80, .6);
 }
+
+body {
+  background: #001220 center/cover no-repeat;
+  color: #cfe;
+  font-family: system-ui, sans-serif;
+  transition: background-image 1s ease-in-out;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.glyph {
+  font-size: 3rem;
+  letter-spacing: 0.2rem;
+  transition: color 1s ease;
+}
+
+button {
+  margin-top: 2rem;
+  background: rgba(255,255,255,0.1);
+  color: #cfe;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 0.6rem 1.2rem;
+  backdrop-filter: blur(6px);
+}
