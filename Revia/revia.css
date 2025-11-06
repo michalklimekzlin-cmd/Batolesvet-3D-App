@@ -1,14 +1,10 @@
-/* fullscreen základ */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-}
-
-body {
-  background: #07111f;
   font-family: -apple-system, system-ui, sans-serif;
+  background: #050b14;
   overflow: hidden;
 }
 
@@ -17,18 +13,25 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at center, rgba(10,52,82,0.5), #050d16 75%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 70px; /* místo na horní lištu */
-  box-sizing: border-box;
-  transition: background-image 1s ease-in-out;
+  justify-content: center;
   background-size: cover;
   background-position: center;
+  transition: background-image 1s ease-in-out;
 }
 
-/* HORNÍ LIŠTA */
+/* pozadí anděl / démon */
+.revia-main[data-mode="angel"] {
+  background-image: url("./assets/revia-bg-angel.jpg");
+}
+
+.revia-main[data-mode="daemon"] {
+  background-image: url("./assets/revia-bg-daemon.jpg");
+}
+
+/* horní lišta */
 .revia-topbar {
   position: absolute;
   top: 16px;
@@ -41,29 +44,25 @@ body {
   box-sizing: border-box;
 }
 
-/* křídlo vlevo nahoře */
 .revia-wing {
   width: 34px;
   height: 34px;
-  /* provizorní křídlo jako SVG data-uri – můžeš nahradit vlastním PNG */
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 46 C18 20 30 12 44 10 C36 19 32 27 30 34 C28 41 24 48 16 50 C13 51 9 49 10 46 Z' fill='%23f5f7fa' fill-opacity='0.7' /%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
   opacity: .9;
 }
 
-/* nápis vpravo nahoře */
 .revia-title {
   color: #e5f5ff;
-  font-size: 1.1rem;
-  letter-spacing: .03rem;
+  font-size: 1.2rem;
   font-weight: 500;
 }
 
-/* karta uprostřed */
+/* mřížka slotů */
 .revia-card {
   position: absolute;
-  top: 58%; /* mezi hrudníkem a břichem */
+  top: 58%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 88%;
@@ -76,7 +75,7 @@ body {
   box-sizing: border-box;
 }
 
-/* malé čtverečky */
+/* slot */
 .revia-slot {
   border-radius: 18px;
   backdrop-filter: blur(6px);
@@ -94,23 +93,14 @@ body {
   transform: scale(1.05);
 }
 
-/* glyph uvnitř čtverce */
+/* glyph */
 .revia-glyph {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   color: #e5f5ff;
-  letter-spacing: .12rem;
   text-shadow: 0 0 8px rgba(120,200,255,.4);
 }
 
-/* glyph uvnitř karty */
-.revia-glyph {
-  font-size: 2.4rem;
-  color: #e5f5ff;
-  letter-spacing: .12rem;
-  text-shadow: 0 0 10px rgba(120,200,255,.5);
-}
-
-/* spodní lišta */
+/* spodní panel */
 .revia-bottom {
   position: absolute;
   bottom: 16px;
@@ -120,7 +110,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-sizing: border-box;
 }
 
 .revia-mini {
@@ -139,7 +128,7 @@ body {
   backdrop-filter: blur(6px);
 }
 
-/* spodní přepínač */
+/* přepínač */
 .revia-toggle {
   position: absolute;
   bottom: 68px;
@@ -151,24 +140,8 @@ body {
   border-radius: 16px;
   padding: 6px 22px;
   backdrop-filter: blur(6px);
+  transition: 0.3s;
 }
-
-/* režimy pozadí – TEĎ SPRÁVNÁ CESTA */
-.revia-main[data-mode="angel"] {
-  /* obrázek je ve stejné složce jako revia.css → jen název */
-  background-image: url("revia-bg-angel.jpg");
-}
-
-.revia-main[data-mode="daemon"] {
-  background-image: url("revia-bg-daemon.jpg");
-}
-
-/* menší displeje */
-@media (max-width: 430px) {
-  .revia-card {
-    height: 240px;
-  }
-  .revia-glyph {
-    font-size: 2rem;
-  }
+.revia-toggle:hover {
+  background: rgba(255,255,255,0.12);
 }
