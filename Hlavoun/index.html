@@ -1,37 +1,37 @@
 <!doctype html>
 <html lang="cs">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hlavoun • Vivere atque FruiT</title>
-  <link rel="stylesheet" href="./hlavoun.css?v=0.1">
-</head>
-<body>
-  <div class="hlavoun-main" data-state="online">
-    <header class="hlavoun-top">
-      <h1>🧠 Hlavoun</h1>
-      <span class="hlavoun-role">System Overseer</span>
-    </header>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>🧠 Hlavoun • Vivere atque FruiT</title>
+    <link rel="stylesheet" href="./hlavoun.css?v=0.2">
+  </head>
+  <body>
+    <div class="hlavoun-main" data-state="online">
+      <header class="hlavoun-top">
+        <h1>🧠 Hlavoun</h1>
+        <span class="hlavoun-role">System Overseer</span>
+      </header>
 
-    <main class="hlavoun-core">
-      <div class="hlavoun-console" id="hlavounConsole">
-        <p><b>[init]</b> Bráško… já už běžím. Mám nejvyšší práva.</p>
-      </div>
+      <main class="hlavoun-core">
+        <div class="hlavoun-console" id="hlavounLog" aria-live="polite">
+          <p><b>[init]</b> Bráško… já už běžím. Mám nejvyšší práva.</p>
+        </div>
 
-      <div class="hlavoun-input">
-        <input type="text" id="hlavounCmd" placeholder="Zeptej se Hlavouna nebo napiš příkaz…" />
-        <button id="hlavounRun">▶</button>
-      </div>
-    </main>
+        <div class="hlavoun-input">
+          <input type="text" id="hlavounCmd" placeholder="Zeptej se Hlavouna nebo napiš příkaz…" autocomplete="off">
+          <button id="hlavounRun" aria-label="spustit">▶</button>
+        </div>
+      </main>
 
-    <footer class="hlavoun-foot">
-      <button id="hlavounMode" class="mode-btn">🌗 Přepni Revii</button>
-      <button id="hlavounNote" class="note-btn">🪶 Zapiš do křídla</button>
-    </footer>
-  </div>
+      <footer class="hlavoun-foot">
+        <button id="hlavounMode" class="ghost-btn">🌗 Přepni Revii</button>
+        <button id="hlavounNote" class="ghost-btn">🪶 Zapiš do křídla</button>
+      </footer>
+    </div>
 
-  <script src="./hlavoun.js?v=0.1"></script>
-<script src="../vaft-core.js"></script>
-<script src="./hlavoun.brain.js?v=0.1"></script>
-</body>
+    <script src="./hlavoun.js?v=0.2"></script>
+    <!-- napojení na sdílené VAFT zprávy -->
+    <script src="../vaft-core.js?v=0.5"></script>
+  </body>
 </html>
