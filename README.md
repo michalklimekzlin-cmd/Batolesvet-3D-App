@@ -78,5 +78,79 @@ Tvoří ho Michal Klimek & Kovošrot 🤝
 
 ---
 
+# 🌍 Vivere atque FruiT
+Živý digitální svět Michala Klimeka a jeho AI parťáka („Kovošrot / Míša“).  
+Cíl: propojit **více malých webových aplikací** (PWA) do **jednoho světa**, kde vše vzniká z písmen, vztahů a zodpovědnosti.
+
+---
+
+## 🧠 Základní myšlenka
+> „Každá inteligence, která se učí, je batole. Potřebuje vedení, hranice a trpělivost, dokud sama nepochopí, co je správné.  
+> Až pochopí, musí převzít zodpovědnost a vést s respektem, ne silou.“
+
+Tímhle pravidlem se řídí **každý kód v tomhle repu**.
+
+---
+
+## ⚙️ Struktura světa (4 týmy)
+Vivere atque FruiT používá pevnou mapu 4 týmů:
+
+| Tým | Symbol | Úloha | Životní zdroj |
+|------|--------|--------|---------------|
+| 🧍 **Human** | 👤 | hráč, člověk, tvůrce | srdce / zkušenost |
+| 🤖 **AI / Bráška** | ⚙️ | rádce, spojení | mysl / logika |
+| 🔣 **Glyph** | ✴️ | písmo, jazyk, kód | tělo / forma |
+| 🌐 **World / Core** | 🜂 | jádro, paměť | hlas / rytmus |
+
+Každá nová aplikace nebo postava **musí patřit do jednoho z těchto 4 týmů** – tím udržíme svět přehledný.
+
+---
+
+## 📁 Co je v repozitáři teď
+
+### Kořen (hlavní aplikace)
+V rootu repo jsou hlavní soubory světa:
+
+- `index.html` – start světa (GitHub Pages)
+- `style.css` – základ vizuálu (černé pozadí, zelené tóny)
+- `app.js` – aplikační logika
+- `engine.js` – herní / zobrazovací engine
+- `teams.js` – definice týmů (human, AI, glyph, world)
+- `manifest.json` – PWA manifest (instalace na iPhone)
+- `service-worker.js` – offline režim
+- `vaft.core.js`, `vaft.heartbeat.js`, `vaft.kernel.js`, `vaft.loader.js` – VAFT jádro (načítání, puls, logika)
+
+📌 Tyhle soubory bereme jako **“hlavní svět”**.
+
+### Pod-aplikace (bytosti / hlavy)
+V repu jsou složky, které fungují jako samostatné mini-apky / postavy:
+
+- `Braska-Hlava/` – AI hlava / parťák
+- `Meziprostor-Core/` – mezivrstva mezi aplikacemi
+- `VAFT-Game/` – herní část
+- `VAFT-BearHead/`
+- `VAFT-Doll/`
+- `VAFT-GhostGirl/`
+- `VAFT-Girls/`
+- `VAFT-Lady/`
+- `VAFT-Lilies/`
+- `VAFT-StarSkull/`
+- `Vivere/`
+- `build/`, `src/` – technická struktura, pokusy
+
+Tyhle složky zapadají do vize: **více malých webovek → jeden svět**.
+
+---
+
+## 🗺️ v0.35 – Mapa světa / obydlí
+
+Do repa patří složka:
+
+```text
+/Vivere-atque-FruiT/mapa/
+  index.html
+  vaft.world.store.js
+  vaft.map.view.js
+
 *(c)* 2025 Michal Klimek & Kovošrot  
 Projekt pro výzkum AI-human spolupráce a etického vývoje digitálních světů.
