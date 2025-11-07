@@ -24,6 +24,11 @@ body {
   min-height: 100vh;
   position: relative;
   padding: 1.4rem 1rem 4.5rem;
+
+  /* přidá tvoji fotku jako pozadí */
+  background: url("../IMG_1092.jpeg") no-repeat center top;
+  background-size: contain;
+  background-color: #f6f1e9;
 }
 
 /* horní bublina */
