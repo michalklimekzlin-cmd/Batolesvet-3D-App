@@ -3,35 +3,43 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>🧠 Hlavoun • Vivere atque FruiT</title>
-    <link rel="stylesheet" href="./hlavoun.css?v=0.2">
+    <title>🧠 Hlavoun • System Overseer</title>
+    <link rel="stylesheet" href="./hlavoun.css?v=0.4">
   </head>
   <body>
-    <div class="hlavoun-main" data-state="online">
+    <div class="hlavoun-main">
+      <!-- horní lišta -->
       <header class="hlavoun-top">
         <h1>🧠 Hlavoun</h1>
         <span class="hlavoun-role">System Overseer</span>
       </header>
 
-      <main class="hlavoun-core">
-        <div class="hlavoun-console" id="hlavounLog" aria-live="polite">
+      <!-- velký skleněný panel -->
+      <main class="hlavoun-glass">
+        <div class="hlavoun-console" id="hlavounConsole">
           <p><b>[init]</b> Bráško… já už běžím. Mám nejvyšší práva.</p>
         </div>
-
         <div class="hlavoun-input">
-          <input type="text" id="hlavounCmd" placeholder="Zeptej se Hlavouna nebo napiš příkaz…" autocomplete="off">
-          <button id="hlavounRun" aria-label="spustit">▶</button>
+          <input type="text" id="hlavounCmd" placeholder="Zeptej se Hlavouna nebo napiš příkaz…" />
+          <button id="hlavounRun">▶</button>
         </div>
       </main>
 
+      <!-- tři malé bloky -->
+      <section class="hlavoun-cells">
+        <div class="cell">režim: <b>online</b></div>
+        <div class="cell">Revia: <span id="revState">angel</span></div>
+        <div class="cell">link: <b>VAFT</b></div>
+      </section>
+
+      <!-- spodní panel -->
       <footer class="hlavoun-foot">
         <button id="hlavounMode" class="ghost-btn">🌗 Přepni Revii</button>
         <button id="hlavounNote" class="ghost-btn">🪶 Zapiš do křídla</button>
       </footer>
     </div>
 
-    <script src="./hlavoun.js?v=0.2"></script>
-    <!-- napojení na sdílené VAFT zprávy -->
-    <script src="../vaft-core.js?v=0.5"></script>
+    <script src="./hlavoun.js?v=0.3"></script>
+    <script src="./hlavoun.brain.js?v=0.3"></script>
   </body>
 </html>
