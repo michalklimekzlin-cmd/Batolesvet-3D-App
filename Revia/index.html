@@ -6,6 +6,23 @@
     <title>Revia • Vivere atque FruiT</title>
     <!-- naše CSS -->
     <link rel="stylesheet" href="./revia.css?v=0.5">
+  <style>
+  /* zmenší a lépe usadí revia background, ať jsou vidět ruce */
+  body {
+    background-size: auto 92vh;   /* místo cover – trochu oddálíme */
+    background-position: center 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  /* na menších telefonech malinko víc oddálit */
+  @media (max-width: 480px) {
+    body {
+      background-size: auto 88vh;
+      background-position: center 0;
+    }
+  }
+</style>
   </head>
   <body>
     <!-- hlavní plátno revie -->
