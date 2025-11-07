@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vivere atque FruiT • Mapa</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #cfe;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+    }
+    header {
+      padding: 10px 14px;
+      background: rgba(0,0,0,.7);
+      backdrop-filter: blur(6px);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    #mapa {
+      width: 100vw;
+      height: calc(100vh - 46px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+    .quad {
+      position: relative;
+      border: 1px solid rgba(255,255,255,.03);
+      overflow: hidden;
+      background: radial-gradient(circle at center, rgba(8,14,20,.25), #000 70%);
+    }
+    .quad h2 {
+      position: absolute;
+      top: 4px;
+      left: 6px;
+      font-size: .6rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      opacity: .5;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>Vivere atque FruiT • Mapa týmů / obydlí</span>
+    <small id="vaft-state" style="opacity:.6;font-size:.65rem;">NAČÍTÁM…</small>
+  </header>
+  <div id="mapa">
+    <div class="quad" id="team-human" data-team="human"><h2>Human</h2></div>
+    <div class="quad" id="team-ai" data-team="ai"><h2>AI / Bráška</h2></div>
+    <div class="quad" id="team-glyph" data-team="glyph"><h2>Glyph</h2></div>
+    <div class="quad" id="team-world" data-team="world"><h2>World / Core</h2></div>
+  </div>
+
+  <!-- 1) nejdřív společný store -->
+  <script src="./vaft.world.store.js"></script>
+  <!-- 2) pak vykreslení -->
+  <script src="./vaft.map.view.js"></script>
+</body>
+</html>
