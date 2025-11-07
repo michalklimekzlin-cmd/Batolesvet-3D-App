@@ -99,3 +99,18 @@
   global.VAFT = global.VAFT || {};
   global.VAFT.store = VAFT_STORE;
 })(window);
+
+// Jizva – tvoje herní postava
+window.VAFT.store.addCharacterToTeam('world', {
+  id: 'jizva-bear',
+  name: 'Jizva',
+  character: 'medvedi hrac sveta, partner revia a hlavouna, umi temny i hodny rezim',
+  x: 62,
+  y: 58,
+  home: {
+    type: 'strážní doupě',
+    level: 2,
+    glyph: 'URSA-Σ',
+    seal: 'CONST:URSAMINOR'
+  }
+});
