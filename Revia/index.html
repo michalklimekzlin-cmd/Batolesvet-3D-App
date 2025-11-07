@@ -4,46 +4,50 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Revia • Vivere atque FruiT</title>
-    <!-- naše CSS -->
+
+    <!-- Styl -->
     <link rel="stylesheet" href="./revia.css?v=0.5">
-  <style>
-  /* zmenší a lépe usadí revia background, ať jsou vidět ruce */
-  <style>
-  /* Optimalizace pozadí pro iPhone 14 a podobné mobily */
-  body {
-    background-size: auto 84vh;   /* výška menší = víc prostoru pro ruce */
-    background-position: center 8vh; /* lehce posunuto dolů */
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-  }
 
-  @media (min-height: 780px) and (max-height: 950px) {
-    body {
-      background-size: auto 80vh;
-      background-position: center 10vh;
-    }
-  }
+    <style>
+      /* 🌌 Optimalizace pozadí – aby byly vidět ruce (iPhone 14 / mobile) */
+      body {
+        background-size: auto 70vh;         /* menší výška pro celé tělo */
+        background-position: center 18vh;   /* posun nahoru */
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-color: #000;
+      }
 
-  @media (orientation: landscape) {
-    body {
-      background-size: 100vw auto;
-      background-position: center;
-    }
-  }
-</style>
+      /* iPhone Pro / SE drobné doladění */
+      @media (max-height: 820px) {
+        body {
+          background-size: auto 68vh;
+          background-position: center 20vh;
+        }
+      }
 
-  /* na menších telefonech malinko víc oddálit */
-  @media (max-width: 480px) {
-    body {
-      background-size: auto 88vh;
-      background-position: center 0;
-    }
-  }
-</style>
+      /* Na větších displejích (iPad, PC) */
+      @media (min-height: 900px) {
+        body {
+          background-size: auto 78vh;
+          background-position: center 15vh;
+        }
+      }
+
+      /* Na menších telefonech (např. iPhone SE) */
+      @media (max-width: 480px) {
+        body {
+          background-size: auto 88vh;
+          background-position: center 0;
+        }
+      }
+    </style>
   </head>
+
   <body>
-    <!-- hlavní plátno revie -->
+    <!-- 🩶 hlavní plátno Revie -->
     <div class="revia-main" data-mode="angel">
+      
       <!-- horní lišta -->
       <div class="revia-topbar">
         <button class="revia-wing" id="revWing" aria-label="otevřít zápisník"></button>
@@ -85,8 +89,8 @@
       <div class="revia-toast" id="revToast" aria-live="polite"></div>
     </div>
 
-    <!-- naše logika -->
+    <!-- 🧠 skripty -->
     <script src="./revia.js?v=0.5"></script>
-  <script src="../vaft-core.js"></script>
+    <script src="../vaft-core.js"></script>
   </body>
 </html>
