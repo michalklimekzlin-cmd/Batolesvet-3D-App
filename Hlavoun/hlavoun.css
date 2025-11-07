@@ -115,12 +115,56 @@ html, body {
   cursor: pointer;
 }
 
-/* tři malé bloky pod panelem */
+/* tři malé bloky – posunuté dolů */
 .hlavoun-cells {
-  z-index: 4;
+  position: fixed;           /* drží dole nad tlačítky */
+  left: 14px;
+  right: 14px;
+  bottom: 92px;
   display: flex;
   gap: 12px;
-  margin-top: 2px;
+  z-index: 9;
+}
+
+/* spodní panel */
+.hlavoun-foot {
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  bottom: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  z-index: 10;
+}
+
+.hlavoun-cells .cell {
+  flex: 1;
+  background: rgba(2,12,20,.55);
+  border: 1px solid rgba(157,201,238,.25);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 9px 12px 8px;
+  color: #dfeeff;
+  font-size: .72rem;
+  min-height: 54px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  text-shadow: 0 2px 8px rgba(0,0,0,.55);
+}
+
+/* spodní panel */
+.hlavoun-foot {
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  bottom: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  z-index: 10;
 }
 
 .hlavoun-cells .cell {
