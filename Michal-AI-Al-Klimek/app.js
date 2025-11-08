@@ -1,4 +1,3 @@
-// Michal-AI-Al-Klimek / app.js
 document.addEventListener("DOMContentLoaded", () => {
   const STORAGE_KEY = "michal-ai-al-klimek-glyphs";
 
@@ -16,40 +15,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
   slots.forEach(slot => {
     const slotId = slot.dataset.slot;
-    const span = slot.querySelector(".glyph-text");
-    if (!slotId || !span) return;
+    const textEl = slot.querySelector(".glyph-text");
+    if (!slotId || !textEl) return;
 
-    // když už tam něco je v localStorage, ukaž to
+    // předvyplnit z localStorage
     if (savedGlyphs[slotId]) {
-      span.textContent = savedGlyphs[slotId];
+      textEl.textContent = savedGlyphs[slotId];
     }
 
-    // klik = přepsat
-    slot.addEventListener("click", () => {
-      const current = savedGlyphs[slotId] || "";
-      const value = prompt("Zadej glyph / znak / kód:", current);
-      if (value === null) return;
-
+    // iPhone má rád blur / input
+    const save = () => {
+      const value = textEl.textContent.trim();
       savedGlyphs[slotId] = value;
-      span.textContent = value;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(savedGlyphs));
+    };
+
+    textEl.addEventListener("blur", save);
+    textEl.addEventListener("input", () => {
+      // průběžné ukládání
+      save();
+    });
+
+    // aby klepnutí na celý slot dalo focus dovnitř
+    slot.addEventListener("click", () => {
+      textEl.focus();
+      // kurzor na konec
+      const range = document.createRange();
+      range.selectNodeContents(textEl);
+      range.collapse(false);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
     });
   });
-
-  // dýchání středu
-  const center =
-    document.querySelector(".center-character") ||
-    document.querySelector(".vaft-name");
-
-  if (center) {
-    let scale = 1;
-    let direction = 1;
-    setInterval(() => {
-      scale += direction * 0.005;
-      if (scale > 1.05 || scale < 0.95) direction *= -1;
-      center.style.transform = `translate(-50%, -50%) scale(${scale})`;
-    }, 50);
-  }
 
   // tlačítko přeměny
   const transformBtn = document.getElementById("transformBtn");
