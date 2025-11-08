@@ -17,7 +17,7 @@ body {
 .screen {
   position: relative;
   min-height: 100vh;
-  background: url("./3A9A6092-29CC-415F-8849-42E1725C474B.png") no-repeat center center;
+  background: url("../7B8F707C-4A0B-4F7A-B3EC-621BCFE498CE.png") no-repeat center center;
   background-size: contain; /* aby kresba nebyla oříznutá */
   background-color: #000; /* pro jistotu kolem */
   overflow: hidden;
