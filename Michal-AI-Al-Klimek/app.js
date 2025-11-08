@@ -1,7 +1,8 @@
+// MICHAL-AI-AL-KLIMEK / app.js
 document.addEventListener("DOMContentLoaded", () => {
   const STORAGE_KEY = "michal-ai-al-klimek-glyphs";
 
-  // naše dva výchozí emoty
+  // horní přepínací glyphy
   const GOOD_GLYPH = "'Īง";
   const BAD_GLYPH = "(ؔ•۵•ؔ)ؤ";
 
@@ -9,7 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let savedGlyphs = {};
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) savedGlyphs = JSON.parse(raw);
+    if (raw) {
+      savedGlyphs = JSON.parse(raw);
+    }
   } catch (e) {
     console.warn("Nemůžu načíst uložené glyphy:", e);
   }
@@ -21,13 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const textEl = slot.querySelector(".glyph-text");
     if (!slotId || !textEl) return;
 
-    // 🔸 speciální případ: horní přepínací
+    // horní přepínací slot
     if (slotId === "left-1") {
-      // podívej se, co bylo uložené
       const current = savedGlyphs[slotId] || GOOD_GLYPH;
       textEl.textContent = current;
 
-      // kliknutím přepínáme hodný/zlý
       slot.addEventListener("click", () => {
         const now = textEl.textContent.trim();
         const next = now === GOOD_GLYPH ? BAD_GLYPH : GOOD_GLYPH;
@@ -36,10 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(savedGlyphs));
       });
 
-      return; // dál nepokračujeme, tenhle slot není editovatelný
+      return; // dál už na tenhle slot nic
     }
 
-    // 🔸 ostatní sloty jsou dopisovací
+    // ostatní sloty = psací
     if (savedGlyphs[slotId]) {
       textEl.textContent = savedGlyphs[slotId];
     }
@@ -50,10 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(savedGlyphs));
     };
 
-    textEl.addEventListener("blur", save);
     textEl.addEventListener("input", save);
+    textEl.addEventListener("blur", save);
 
-    // aby šlo ťuknout na celý čtvereček
+    // klik = focus dovnitř
     slot.addEventListener("click", () => {
       textEl.focus();
       const range = document.createRange();
@@ -65,13 +66,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // tlačítko přeměny
+  // tlačítko – přepíná pozadí
   const transformBtn = document.getElementById("transformBtn");
   if (transformBtn) {
     transformBtn.addEventListener("click", () => {
-      document.body.classList.toggle("alt-mode");
-      transformBtn.classList.add("pressed");
-      setTimeout(() => transformBtn.classList.remove("pressed"), 300);
+      document.body.classList.toggle("alt-bg");
+      transformBtn.style.transform = "scale(0.94)";
+      setTimeout(() => (transformBtn.style.transform = "scale(1)"), 180);
     });
   }
 });
