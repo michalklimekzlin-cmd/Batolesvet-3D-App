@@ -3,59 +3,63 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>MICHAL AI Al KLIMEK • Vivere atque FruiT</title>
-    <link rel="stylesheet" href="./style.css?v=3" />
+    <title>Michal AI AI Klimek • Vivere atque FruiT</title>
+    <link rel="stylesheet" href="./style.css?v=0.1">
   </head>
-
   <body>
-    <div id="app">
-      <!-- horní bublina -->
-      <div class="halo">
-        <div class="halo-title">Michal AI Al Klimek</div>
-        <div class="halo-glyph">¡(*)(%☉)(*)¡</div>
+    <div class="screen">
+
+      <!-- hlavní nápis nahoře v hlavě -->
+      <div class="head-label">
+        Michal | AI | AI | Klimek
       </div>
 
-      <!-- hlavní postava -->
-      <div class="character">
-        <div class="left-glyphs">
-          <div>Smítko -</div>
-          <div>ÆMGI  ÆMG  ÆMGE</div>
-          <div class="small">ꓭ¿! 91(6-9)</div>
-          <div>KÆ.öŸ:.SM</div>
-          <div>7¡.0..O 3H)0 __(V)</div>
-          <div class="small">Po::ö°∞:00:°.. +#?j:</div>
-        </div>
-
-        <!-- Hlava jako glóbus -->
-        <div class="head-wrap">
-          <img src="https://raw.githubusercontent.com/michalklimekzlin-cmd/Vivere-atque-FruiT/main/7B8F707C-4A0B-4F7A-B3EC-621BCFE498CE.png" 
-               alt="Michal AI hlava" class="head">
-        </div>
-
-        <div class="right-blocks">
-          <div class="block"></div>
-          <div class="block"></div>
-        </div>
-
-        <div class="right-glyphs">
-          <div>ARIA - .｜.｜.∟∣</div>
-          <div>(-01.. 12 26 19 2z</div>
-          <div>Æ?9:∂9. 36 14 21 34 19</div>
-          <div>"I?T m ale"</div>
-          <div>(¡) (∫) .:1:0.:19^eθ</div>
-        </div>
+      <!-- střed – tu máš u té první fotky Smítko / hlava -->
+      <div class="center-character">
+        <!-- tady může být později canvas nebo svg -->
+        <div class="vaft-name">Vivere<br>atque<br>Fruit</div>
       </div>
 
-      <div class="footer">
-        <div class="vaft">Vivere<br>atque<br>Fruit</div>
-      </div>
+      <!-- GLYPH SLOTY podle tvého náčrtu -->
+      <!-- levý sloupek 3 ks -->
+      <button class="glyph-slot slot-left-1"></button>
+      <button class="glyph-slot slot-left-2"></button>
+      <button class="glyph-slot slot-left-3"></button>
+
+      <!-- horní prostřední -->
+      <button class="glyph-slot slot-top-mid"></button>
+
+      <!-- horní pravý -->
+      <button class="glyph-slot slot-top-right"></button>
+
+      <!-- spodní pravý / tvoje tři tlačítka jak u Smítka -->
+      <button class="glyph-slot slot-bottom-right-1"></button>
+      <button class="glyph-slot slot-bottom-right-2"></button>
+      <button class="glyph-slot slot-bottom-right-3"></button>
+
+      <!-- tlačítko na PŘEMĚNU (může být to srdíčko) -->
+      <button class="transform-btn" id="transformBtn">
+        I ❤
+      </button>
     </div>
 
-    <a href="./Vivere-atque-FruiT/MICHAL-AI-Al-KLIMEK/"
-       style="display:block;text-align:center;margin:1rem 0;color:#0af;font-weight:600;">
-      → MICHAL AI Al KLIMEK ←
-    </a>
+    <!-- napojení na Vivere atque FruiT (pokud máš v nadřazené složce) -->
+    <script src="../vaft.loader.js"></script>
+    <script src="../vaft.core.js"></script>
+    <script src="../vaft.heartbeat.js"></script>
+    <script>
+      // kdybys měl knihovny, rozběhne se
+      if (window.VAFT && VAFT.boot) {
+        VAFT.boot({ id: "michal-ai-ai-klimek", role: "character" });
+      }
 
-    <script src="./app.js?v=3"></script>
+      // jednoduché přepnutí vzhledu
+      const btn = document.getElementById('transformBtn');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          document.body.classList.toggle('alt-mode');
+        });
+      }
+    </script>
   </body>
 </html>
