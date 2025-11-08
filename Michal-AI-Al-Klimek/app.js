@@ -1,6 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
   const STORAGE_KEY = "michal-ai-al-klimek-glyphs";
 
+  // naše dva výchozí emoty
+  const GOOD_GLYPH = "'Īง";
+  const BAD_GLYPH = "(ؔ•۵•ؔ)ؤ";
+
   // načti uložené glyphy
   let savedGlyphs = {};
   try {
@@ -10,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.warn("Nemůžu načíst uložené glyphy:", e);
   }
 
-  // všechny sloty
   const slots = document.querySelectorAll(".glyph-slot");
 
   slots.forEach(slot => {
@@ -18,12 +21,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const textEl = slot.querySelector(".glyph-text");
     if (!slotId || !textEl) return;
 
-    // předvyplnit z localStorage
+    // 🔸 speciální případ: horní přepínací
+    if (slotId === "left-1") {
+      // podívej se, co bylo uložené
+      const current = savedGlyphs[slotId] || GOOD_GLYPH;
+      textEl.textContent = current;
+
+      // kliknutím přepínáme hodný/zlý
+      slot.addEventListener("click", () => {
+        const now = textEl.textContent.trim();
+        const next = now === GOOD_GLYPH ? BAD_GLYPH : GOOD_GLYPH;
+        textEl.textContent = next;
+        savedGlyphs[slotId] = next;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(savedGlyphs));
+      });
+
+      return; // dál nepokračujeme, tenhle slot není editovatelný
+    }
+
+    // 🔸 ostatní sloty jsou dopisovací
     if (savedGlyphs[slotId]) {
       textEl.textContent = savedGlyphs[slotId];
     }
 
-    // iPhone má rád blur / input
     const save = () => {
       const value = textEl.textContent.trim();
       savedGlyphs[slotId] = value;
@@ -31,15 +51,11 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     textEl.addEventListener("blur", save);
-    textEl.addEventListener("input", () => {
-      // průběžné ukládání
-      save();
-    });
+    textEl.addEventListener("input", save);
 
-    // aby klepnutí na celý slot dalo focus dovnitř
+    // aby šlo ťuknout na celý čtvereček
     slot.addEventListener("click", () => {
       textEl.focus();
-      // kurzor na konec
       const range = document.createRange();
       range.selectNodeContents(textEl);
       range.collapse(false);
