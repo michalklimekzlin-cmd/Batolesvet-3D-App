@@ -205,3 +205,28 @@ if ("serviceWorker" in navigator) {
     .then(() => console.log("SW registrován"))
     .catch((err) => console.warn("SW chyba", err));
 }
+
+// ===== chat do Meziprostoru (Hlavoun + Pikoš) =====
+function sendToHlavoun() {
+  const inp = document.getElementById('hlavoun-input');
+  if (!inp || !inp.value.trim()) return;
+
+  const text = inp.value.trim();
+
+  // zobrazit v chatu jako "Ty:"
+  if (typeof appendHlavounMsg === 'function') {
+    appendHlavounMsg('user', text);
+  }
+
+  inp.value = '';
+
+  // pošli to mozku
+  if (window.HlavounSystem && typeof window.HlavounSystem.think === 'function') {
+    window.HlavounSystem.think(text);
+  }
+
+  // pošli to děcku
+  if (window.Pikos && typeof window.Pikos.talk === 'function') {
+    window.Pikos.talk(text);
+  }
+}
