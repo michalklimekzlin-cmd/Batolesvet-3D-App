@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Vivere atque FruiT • MapWorld</title>
+    <link rel="stylesheet" href="./style.css?v=1">
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="title">Vivere atque FruiT • MapWorld</div>
+        <div class="subtitle">Test vykreslení domu a stromů</div>
+      </header>
+      <canvas id="map" width="420" height="720"></canvas>
+      <div class="panel">
+        <button id="add-tree-btn">➕ Přidat strom u baráku</button>
+        <button id="spell-btn">🪄 Kouzlo: "2 stromy u baráku"</button>
+      </div>
+    </div>
+
+    <!-- napojení na kořen repa -->
+    <script src="../vaft.loader.js"></script>
+    <script src="../vaft.kernel.js"></script>
+    <script src="../vaft-core.js"></script>
+    <script src="../vaft.heartbeat.js"></script>
+    <script src="../vaft.fuel.js"></script>
+    <script src="../vaft.spell.js"></script>
+    <script src="../teams.js"></script>
+    <script src="../engine.js"></script>
+
+    <!-- náš svět -->
+    <script src="./vaft.world.map.js?v=1"></script>
+
+    <script>
+      // spustíme jádro
+      if (window.VAFT && typeof VAFT.boot === "function") {
+        VAFT.boot();
+      }
+      if (window.VAFT && VAFT.fuel && typeof VAFT.fuel.init === "function") {
+        VAFT.fuel.init();
+      }
+
+      // spustíme náš mapový svět
+      if (window.VAFT && VAFT.mapWorld && typeof VAFT.mapWorld.init === "function") {
+        VAFT.mapWorld.init();
+      }
+
+      // tlačítka
+      document.getElementById("add-tree-btn").addEventListener("click", function() {
+        if (window.VAFT && VAFT.world && typeof VAFT.world.spawn === "function") {
+          VAFT.world.spawn({ type: "tree", count: 1, near: "house" });
+        }
+      });
+
+      document.getElementById("spell-btn").addEventListener("click", function() {
+        if (window.VAFT && VAFT.spell) {
+          VAFT.spell.cast("2 stromy u baráku");
+        }
+      });
+    </script>
+  </body>
+</html>
