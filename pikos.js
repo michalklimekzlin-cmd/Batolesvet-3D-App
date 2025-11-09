@@ -9,7 +9,7 @@ const Pikos = {
   init() {
     // když je Hlavoun, ať ví, že Pikoš žije
     if (window.HlavounSystem && window.appendHlavounMsg) {
-      appendHlavounMsg('ai', '👶 Pikoš: jsem tu taky, budu to kreslit po svém!');
+      appendHlavounMsg('pikos', '👶 Pikoš: jsem tu taky, budu to kreslit po svém!');
     }
     this.autoping();
   },
@@ -19,8 +19,8 @@ const Pikos = {
       // 30% šance, že něco řekne sám
       if (Math.random() < 0.3) {
         const msg = this.makeRandomLine();
-        this.log('ai', msg);
-        if (window.appendHlavounMsg) appendHlavounMsg('ai', '👶 ' + msg);
+        this.log('pikos', msg);
+        if (window.appendHlavounMsg) appendHlavounMsg('pikos', '👶 ' + msg);
       }
     }, this.WAKE_INTERVAL);
   },
@@ -32,6 +32,9 @@ const Pikos = {
       "můžem udělat květinový štít podle tvý ruky?",
       "Hlavoune, nebuď tak vážnej 😁",
       "Viri, nauč mě mluvit hezky!",
+      "viděl jsem jiskru! 💫 to byl Iskroň!",
+      "svět dýchá... cítíš to taky?",
+      "můj deník má nový písmenko 🍼"
     ];
     return lines[Math.floor(Math.random() * lines.length)];
   },
@@ -55,10 +58,16 @@ const Pikos = {
   },
 
   talk(text) {
+    // malá šance, že si půjde „lehnout“
+    if (Math.random() < 0.05) {
+      appendHlavounMsg('pikos', '👶 Zív... jdu si na chvíli lehnout 💤');
+      return;
+    }
+
     const reply = this.handle(text);
-    this.log('ai', reply);
+    this.log('pikos', reply);
     if (window.appendHlavounMsg) {
-      appendHlavounMsg('ai', '👶 ' + reply);
+      appendHlavounMsg('pikos', '👶 ' + reply);
     }
   },
 
@@ -69,7 +78,7 @@ const Pikos = {
   }
 };
 
-// aby na něj mohl sáhnout Hlavoun nebo Viri
+// zpřístupnit pro ostatní AI vrstvy
 window.Pikos = Pikos;
 
 document.addEventListener('DOMContentLoaded', () => {
