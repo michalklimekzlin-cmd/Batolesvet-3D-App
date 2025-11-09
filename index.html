@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Vivere atque FruiT</title>
     <meta name="theme-color" content="#000814" />
-    <!-- když budeš chtít, můžeš mít i externí style.css -->
     <link rel="stylesheet" href="./style.css?v=0.31">
     <style>
       body {
@@ -13,15 +12,10 @@
         background: radial-gradient(circle at top, #000814 0%, #000 48%, #000 100%);
         color: #fff;
         font-family: system-ui, -apple-system, sans-serif;
-        padding-bottom: 70px; /* místo pro spodní VAFT hub */
+        padding-bottom: 70px;
       }
-      .topbar {
-        padding: 12px 14px 4px;
-      }
-      .title {
-        font-size: 20px;
-        font-weight: 700;
-      }
+      .topbar { padding: 12px 14px 4px; }
+      .title { font-size: 20px; font-weight: 700; }
       .badge {
         display: inline-flex;
         align-items: center;
@@ -33,13 +27,8 @@
         font-size: 11px;
         margin-right: 6px;
       }
-      .section {
-        padding: 6px 14px 0;
-      }
-      .section-title {
-        font-weight: 600;
-        margin-bottom: 4px;
-      }
+      .section { padding: 6px 14px 0; }
+      .section-title { font-weight: 600; margin-bottom: 4px; }
       .btn {
         background: rgba(6,105,255,.14);
         border: 1px solid rgba(117,189,255,.5);
@@ -81,13 +70,12 @@
         margin-top: 4px;
         cursor: pointer;
       }
-      /* obal pro 3D svět */
       .world3d-wrap {
         height: 320px;
-        margin: 4px 14px 0;
+        margin: 10px 14px;
         border-radius: 12px;
         overflow: hidden;
-        border: 1px solid rgba(255,255,255,.02);
+        border: 1px solid rgba(255,255,255,.04);
         background: rgba(0,0,0,.25);
       }
       .world3d-wrap iframe {
@@ -97,61 +85,55 @@
       }
     </style>
   </head>
+
   <body>
-    <!-- HLAVA -->
+    <!-- Horní panel -->
     <div class="topbar">
       <div class="badge">🌿 Poutník</div>
       <div class="title">Vivere atque FruiT</div>
       <div style="font-size:11px;opacity:.55;">v0.31 · živý základ</div>
     </div>
 
-    <!-- 3D STŘED SVĚTA (to co jsme řešili) -->
+    <!-- 3D svět -->
     <div class="world3d-wrap">
-      <iframe src="./VAFT-Center3D/index.html"></iframe>
+      <iframe src="./Vivere-atque-FruiT/Vivere-atque-FruiT/VAFT-Center3D/index.html"></iframe>
     </div>
 
-    <!-- PRAVIDLA / PULS -->
+    <!-- Pravidla -->
     <div class="section">
       <div class="section-title">Pravidlo 1: Přátelství</div>
       <div class="section-title">Pravidlo 2: Vivere atque frui</div>
       <div style="margin-top:4px;font-size:12px;">❤️ svět: puls <span id="vaft-pulse">12:32:11</span></div>
     </div>
 
-    <!-- REVIA – jen jedna akce nahoře -->
+    <!-- Revia -->
     <div class="section" style="margin-top:12px;">
       <div class="section-title">Revia</div>
       <button class="btn" onclick="openApp('./Revia/')">🔷 Otevřít Revii</button>
     </div>
 
-    <!-- TÝM -->
+    <!-- Tým -->
     <div class="section" style="margin-top:16px;margin-bottom:80px;">
       <div class="section-title">Tým</div>
       <div class="team-card">
         <div style="font-size:12px;opacity:.65;margin-bottom:4px;">Human (Piko)</div>
         <button class="hero-button" onclick="alert('Sem přijde výběr/postava')">＋ Přidat hrdinu</button>
-
-        <!-- TVOJE PŘESUNUTÁ KARTA ↓↓↓ -->
         <div class="hero-app" onclick="openApp('./Michal-AI-Al-Klimek/')">
           🤖 <span>MICHAL AI AI KLIMEK</span>
         </div>
       </div>
     </div>
 
-    <!-- rámec pro načítání podaplikací -->
-    <!-- 3D STŘED SVĚTA -->
-<div class="world3d-wrap" style="height:320px; margin:10px 14px; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,.04); background:rgba(0,0,0,.25);">
-  <iframe src="./Vivere-atque-FruiT/Vivere-atque-FruiT/VAFT-Center3D/index.html" style="width:100%; height:100%; border:0;"></iframe></div>
+    <!-- Rámec -->
+    <iframe id="app-frame" style="display:none;"></iframe>
 
-    <!-- VAFT HUB -->
+    <!-- VAFT Hub -->
     <script src="./vaft.hub.js?v=1"></script>
     <script>
-      function openApp(url){
+      function openApp(url) {
         const frame = document.getElementById('app-frame');
-        if (frame) {
-          frame.src = url;
-        } else {
-          window.location.href = url;
-        }
+        if (frame) frame.src = url;
+        else window.location.href = url;
       }
 
       // jednoduchý živý puls
@@ -159,10 +141,11 @@
         const el = document.getElementById('vaft-pulse');
         if (!el) return;
         const d = new Date();
-        const h = String(d.getHours()).padStart(2,'0');
-        const m = String(d.getMinutes()).padStart(2,'0');
-        const s = String(d.getSeconds()).padStart(2,'0');
-        el.textContent = `${h}:${m}:${s}`;
+        el.textContent = d.toLocaleTimeString('cs-CZ', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
       }, 1000);
     </script>
   </body>
