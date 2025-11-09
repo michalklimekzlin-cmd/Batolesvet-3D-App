@@ -1,42 +1,15 @@
 {
   "name": "Vivere atque FruiT",
-  "short_name": "Lilie",
-  "description": "Offline deník přírody, mini-mapa a úkoly v živém světě Vivere atque FruiT.",
+  "short_name": "VAFT",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#0b0d0f",
-  "orientation": "portrait-primary",
+  "theme_color": "#020617",
   "icons": [
     {
-      "src": "assets/icons/lily-128.png",
-      "sizes": "128x128",
-      "type": "image/png"
-    },
-    {
-      "src": "assets/icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "assets/icons/icon-512.png",
+      "src": "https://michalklimekzlin-cmd.github.io/Vivere-atque-FruiT/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
-    }
-  ],
-  "categories": ["nature", "journal", "exploration", "vaft"],
-  "shortcuts": [
-    {
-      "name": "Otevřít deník Lilie",
-      "short_name": "Deník",
-      "url": "./index.html#poutnik",
-      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Zapsat nový zážitek",
-      "short_name": "Nový zápis",
-      "url": "./index.html#new",
-      "icons": [{ "src": "assets/icons/lily-128.png", "sizes": "128x128" }]
     }
   ]
 }
