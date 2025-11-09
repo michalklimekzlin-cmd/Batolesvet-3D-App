@@ -251,3 +251,12 @@ html, body {
   .revia-slot { width: 100px; height: 100px; }
   .revia-glyph { font-size: 1.9rem; }
 }
+
+/* 🎯 iPhone 14 / 14 Pro na výšku */
+@media screen and (max-width: 400px) and (min-height: 820px) and (max-height: 900px) {
+  .revia-main {
+    background-size: contain !important;
+    background-position: center top !important;
+    background-attachment: scroll !important;
+  }
+}
