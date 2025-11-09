@@ -1,35 +1,56 @@
-// vaft.hub.js
-// launcher pro celý tvůj repozitář Vivere-atque-FruiT
-// nic nemaže, jen do hlavní stránky přidá panel s odkazy na všechny tvoje podapky
-
+// vaft.hub.js (skupinová verze)
 (function() {
   if (document.getElementById("vaft-hub")) return;
 
-  // seznam složek podle toho, co máš v repu
-  // když přidáš další složku, jen ji sem připíšeš
-  const APPS = [
-    { name: "Vivere (hlavní)", desc: "hlavní svět", url: "./Vivere/" },
-    { name: "Braska-Hlava", desc: "bráška AI hlava", url: "./Braska-Hlava/" },
-    { name: "Hlavoun", desc: "hlavoun modul", url: "./Hlavoun/" },
-    { name: "Meziprostor-Core", desc: "meziprostor", url: "./Meziprostor-Core/" },
-    { name: "Michal-AI-Al-Klimek", desc: "tvoje AI appka", url: "./Michal-AI-Al-Klimek/" },
-    { name: "VAFT-LetterLab", desc: "písmena / obchod", url: "./VAFT-LetterLab/" },
-    { name: "VAFT-MapWorld", desc: "pokud ji máš", url: "./VAFT-MapWorld/" },
-    { name: "VAFT-BearHead", desc: "medvědí hlava", url: "./VAFT-BearHead/" },
-    { name: "VAFT-Doll", desc: "doll modul", url: "./VAFT-Doll/" },
-    { name: "VAFT-Game", desc: "hra", url: "./VAFT-Game/" },
-    { name: "VAFT-GhostGirl", desc: "ghost girl", url: "./VAFT-GhostGirl/" },
-    { name: "VAFT-Girls", desc: "girls", url: "./VAFT-Girls/" },
-    { name: "VAFT-Jizva", desc: "jizva modul", url: "./VAFT-Jizva/" },
-    { name: "VAFT-Lady", desc: "lady modul", url: "./VAFT-Lady/" },
-    { name: "VAFT-Lilies", desc: "lilies", url: "./VAFT-Lilies/" },
-    { name: "VAFT-StarSkull", desc: "star skull", url: "./VAFT-StarSkull/" },
-    { name: "mapa", desc: "2D mapa", url: "./mapa/" },
-    { name: "mapa-3d", desc: "3D mapa", url: "./mapa-3d/" },
-    { name: "build", desc: "build náhled", url: "./build/" },
+  // 1) definice skupin podle toho, co máš v repu
+  const GROUPS = [
+    {
+      name: "🧠 Core / AI / Hlava",
+      items: [
+        { name: "Braska-Hlava", url: "./Braska-Hlava/", desc: "AI hlava" },
+        { name: "Hlavoun", url: "./Hlavoun/", desc: "tvoje hlava" },
+        { name: "Michal-AI-Al-Klimek", url: "./Michal-AI-Al-Klimek/", desc: "osobní AI appka" },
+        { name: "Meziprostor-Core", url: "./Meziprostor-Core/", desc: "meziprostor" }
+      ]
+    },
+    {
+      name: "🛠 VAFT moduly",
+      items: [
+        { name: "VAFT-LetterLab", url: "./VAFT-LetterLab/", desc: "písmena → obchod" },
+        { name: "VAFT-Game", url: "./VAFT-Game/", desc: "herní část" },
+        { name: "VAFT-Doll", url: "./VAFT-Doll/", desc: "doll modul" },
+        { name: "VAFT-BearHead", url: "./VAFT-BearHead/", desc: "medvědí hlava" },
+        { name: "VAFT-Lady", url: "./VAFT-Lady/", desc: "lady" },
+        { name: "VAFT-Jizva", url: "./VAFT-Jizva/", desc: "jizva" }
+      ]
+    },
+    {
+      name: "🌍 Mapy / světy",
+      items: [
+        { name: "Vivere", url: "./Vivere/", desc: "hlavní svět" },
+        { name: "mapa", url: "./mapa/", desc: "2D mapa" },
+        { name: "mapa-3d", url: "./mapa-3d/", desc: "3D mapa" },
+        { name: "VAFT-MapWorld", url: "./VAFT-MapWorld/", desc: "dům + stromy" }
+      ]
+    },
+    {
+      name: "🎭 Postavy / vizuál",
+      items: [
+        { name: "VAFT-GhostGirl", url: "./VAFT-GhostGirl/", desc: "ghost girl" },
+        { name: "VAFT-Girls", url: "./VAFT-Girls/", desc: "girls" },
+        { name: "VAFT-Lilies", url: "./VAFT-Lilies/", desc: "lilies" },
+        { name: "VAFT-StarSkull", url: "./VAFT-StarSkull/", desc: "star skull" }
+      ]
+    },
+    {
+      name: "⚗️ Build / test",
+      items: [
+        { name: "build", url: "./build/", desc: "build náhled" }
+      ]
+    }
   ];
 
-  // vytvoříme panel
+  // 2) vytvoření panelu
   const hub = document.createElement("div");
   hub.id = "vaft-hub";
   hub.innerHTML = `
@@ -38,9 +59,9 @@
         position: fixed;
         bottom: 10px;
         right: 10px;
-        width: 240px;
+        width: 260px;
         max-height: 70vh;
-        background: rgba(0,0,0,.8);
+        background: rgba(0,0,0,.78);
         border: 1px solid rgba(156,200,255,.15);
         border-radius: 14px;
         backdrop-filter: blur(12px);
@@ -57,29 +78,44 @@
         align-items: center;
         padding: 8px 10px 3px;
       }
-      #vaft-hub-title {
-        font-size: 12px;
-        font-weight: 600;
-      }
+      #vaft-hub-title { font-size: 12px; font-weight: 600; }
       #vaft-hub-body {
         overflow-y: auto;
-        padding: 6px 8px 6px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
+        padding: 4px 6px 6px;
       }
-      .vaft-hub-app {
-        background: rgba(255,255,255,.01);
+      .vaft-group {
+        margin-bottom: 6px;
         border: 1px solid rgba(255,255,255,.01);
-        border-radius: 9px;
-        padding: 4px 5px 3px;
+        border-radius: 10px;
+        background: rgba(255,255,255,.01);
+      }
+      .vaft-group-header {
+        padding: 5px 6px 4px;
+        font-size: 11px;
+        font-weight: 500;
+        display: flex;
+        justify-content: space-between;
         cursor: pointer;
       }
-      .vaft-hub-app-name { font-size: 12px; }
-      .vaft-hub-app-desc { font-size: 10px; opacity: .6; }
+      .vaft-group-body {
+        display: none;
+        padding: 4px 4px 6px;
+        display: none;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .vaft-app {
+        background: rgba(255,255,255,.01);
+        border: 1px solid rgba(255,255,255,.01);
+        border-radius: 7px;
+        padding: 3px 5px 2px;
+        cursor: pointer;
+      }
+      .vaft-app-name { font-size: 11px; }
+      .vaft-app-desc { font-size: 9px; opacity: .5; }
       #vaft-hub-footer {
         border-top: 1px solid rgba(255,255,255,.02);
-        padding: 5px 8px 8px;
+        padding: 5px 6px 7px;
         display: flex;
         gap: 5px;
         flex-wrap: wrap;
@@ -104,7 +140,7 @@
       }
     </style>
     <div id="vaft-hub-header">
-      <div id="vaft-hub-title">VAFT – tvoje appky</div>
+      <div id="vaft-hub-title">Vivere atque FruiT • přehled</div>
       <button id="vaft-hub-collapse">–</button>
     </div>
     <div id="vaft-hub-body"></div>
@@ -118,28 +154,50 @@
 
   const body = hub.querySelector("#vaft-hub-body");
 
-  APPS.forEach(app => {
-    const div = document.createElement("div");
-    div.className = "vaft-hub-app";
-    div.dataset.url = app.url;
-    div.innerHTML = `
-      <div class="vaft-hub-app-name">${app.name}</div>
-      <div class="vaft-hub-app-desc">${app.desc}</div>
-    `;
-    div.addEventListener("click", () => openApp(app.url));
-    body.appendChild(div);
+  // 3) naplnění skupin
+  GROUPS.forEach(group => {
+    const g = document.createElement("div");
+    g.className = "vaft-group";
+
+    const gh = document.createElement("div");
+    gh.className = "vaft-group-header";
+    gh.innerHTML = `<span>${group.name}</span><span>＋</span>`;
+    g.appendChild(gh);
+
+    const gb = document.createElement("div");
+    gb.className = "vaft-group-body";
+    group.items.forEach(app => {
+      const a = document.createElement("div");
+      a.className = "vaft-app";
+      a.dataset.url = app.url;
+      a.innerHTML = `
+        <div class="vaft-app-name">${app.name}</div>
+        <div class="vaft-app-desc">${app.desc || ""}</div>
+      `;
+      a.addEventListener("click", () => openApp(app.url));
+      gb.appendChild(a);
+    });
+    g.appendChild(gb);
+
+    gh.addEventListener("click", () => {
+      const isOpen = gb.style.display === "flex";
+      gb.style.display = isOpen ? "none" : "flex";
+      gh.querySelector("span:last-child").textContent = isOpen ? "＋" : "－";
+    });
+
+    body.appendChild(g);
   });
 
-  // collapse
+  // collapse celé hub okno
   hub.querySelector("#vaft-hub-collapse").addEventListener("click", () => {
     const b = hub.querySelector("#vaft-hub-body");
     const f = hub.querySelector("#vaft-hub-footer");
     const hidden = b.style.display === "none";
-    b.style.display = hidden ? "flex" : "none";
+    b.style.display = hidden ? "block" : "none";
     f.style.display = hidden ? "flex" : "none";
   });
 
-  // akce vespod
+  // tlačítka dole
   hub.querySelectorAll(".vaft-hub-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const act = btn.dataset.action;
@@ -150,20 +208,17 @@
   });
 
   function openApp(url) {
-    // pokud máš v hlavním indexu <iframe id="app-frame">, použije to ten iframe
     const frame = document.getElementById("app-frame");
     if (frame) {
       frame.src = url;
     } else {
-      // jinak prostě přejdi do složky
       window.location.href = url;
     }
   }
 
   function showFuel() {
     if (window.VAFT && VAFT.fuel && typeof VAFT.fuel.getBag === "function") {
-      const bag = VAFT.fuel.getBag();
-      alert("Palivo (písmena):\n" + JSON.stringify(bag, null, 2));
+      alert("Palivo:\n" + JSON.stringify(VAFT.fuel.getBag(), null, 2));
     } else {
       alert("Palivo není načtené.");
     }
@@ -178,18 +233,14 @@
   }
 
   function addTree() {
-    // zkus sjednocené API z vaft.all.js
     if (window.VAFT && VAFT.ALL && typeof VAFT.ALL.spawn === "function") {
       VAFT.ALL.spawn({ type: "tree", count: 1, near: "house" });
-      return;
-    }
-    // fallback – zkus přímo VAFT.world
-    if (window.VAFT && VAFT.world && typeof VAFT.world.spawn === "function") {
+    } else if (window.VAFT && VAFT.world && typeof VAFT.world.spawn === "function") {
       VAFT.world.spawn({ type: "tree", count: 1, near: "house" });
-      return;
+    } else {
+      alert("Nemám modul světa pro strom.");
     }
-    alert("Nemám modul světa pro vykreslení stromu.");
   }
 
-  console.log("VAFT HUB: načteno z hlavního adresáře.");
+  console.log("VAFT HUB (skupiny): aktivní");
 })();
