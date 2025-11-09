@@ -8,8 +8,73 @@ VAFT.letters = (function() {
     { id: "ai-core", name: "AI jádro", letters: ["A","I"], cooldown: 6000, last: 0 }
   ];
 
-  let bag = loadBag();
+  // místo: let bag = loadBag();
+function getBag() {
+  if (window.VAFT && VAFT.fuel && typeof VAFT.fuel.getBag === "function") {
+    return VAFT.fuel.getBag();
+  }
+  return {};
+}
 
+// když přidáváme písmena z uzlu:
+function addLetters(lettersArr) {
+  if (window.VAFT && VAFT.fuel && typeof VAFT.fuel.addLetters === "function") {
+    VAFT.fuel.addLetters(lettersArr);
+  }
+  renderLetterBar();
+}
+
+// když platíme slovem:
+function consumeWord(word) {
+  if (window.VAFT && VAFT.fuel && typeof VAFT.fuel.consumeWord === "function") {
+    VAFT.fuel.consumeWord(word);
+  }
+  renderLetterBar();
+}
+
+  function consumeWord(word) {
+  if (window.VAFT && VAFT.fuel && typeof VAFT.fuel.consumeWord === "function") {
+    VAFT.fuel.consumeWord(word);
+  }
+  renderLetterBar();
+}
+
+// 💡 sem vlož ten blok ↓↓↓
+
+// místo: let bag = loadBag();
+function getBag() {
+  if (window.VAFT && VAFT.fuel && typeof VAFT.fuel.getBag === "function") {
+    return VAFT.fuel.getBag();
+  }
+  return {};
+}
+
+// když přidáváme písmena z uzlu:
+function addLetters(lettersArr) {
+  if (window.VAFT && VAFT.fuel && typeof VAFT.fuel.addLetters === "function") {
+    VAFT.fuel.addLetters(lettersArr);
+  }
+  renderLetterBar();
+}
+
+// když platíme slovem:
+function consumeWord(word) {
+  if (window.VAFT && VAFT.fuel && typeof VAFT.fuel.consumeWord === "function") {
+    VAFT.fuel.consumeWord(word);
+  }
+  renderLetterBar();
+}
+
+// 💡 konec bloku ↑↑↑
+
+// a hned pod tím může být zbytek:
+const recipes = [
+  { id: "build_house2", word: "DUM", label: "Vylepšit dům (DUM)", desc: "Odemkne lepší budovu." },
+  { id: "lab_upgrade", word: "LAB", label: "Upgrade laboratoře (LAB)", desc: "Lepší výzkum." },
+  { id: "ai_bros", word: "MIZA", label: "Posílit AI brášku (MIZA)", desc: "Propojení s AI týmem." },
+  { id: "vivere", word: "VIVERE", label: "Vivere boost (VIVERE)", desc: "Symbolické vylepšení světa." }
+];
+  
   const recipes = [
     { id: "build_house2", word: "DUM", label: "Vylepšit dům (DUM)", desc: "Odemkne lepší budovu." },
     { id: "lab_upgrade", word: "LAB", label: "Upgrade laboratoře (LAB)", desc: "Lepší výzkum." },
