@@ -4,34 +4,35 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <title>Vivere atque FruiT</title>
-    <meta name="theme-color" content="#020617">
+    <meta name="theme-color" content="#020617" />
     <style>
       :root {
-        --page-bg: radial-gradient(circle at top, #020617 0%, #010814 40%, #000 100%);
-        --card: rgba(2,6,23,0.55);
-        --stroke: rgba(255,255,255,.03);
+        --bg: radial-gradient(circle at top, #020617 0%, #010814 40%, #000 100%);
+        --card: rgba(2,6,23,.6);
+        --card-soft: rgba(2,6,23,.35);
+        --line: rgba(148,163,184,.03);
         --txt: #e2e8f0;
         --muted: rgba(226,232,240,.45);
         --accent: #38bdf8;
+        --accent2: #22c55e;
       }
       * { box-sizing: border-box; }
-
       body {
         margin: 0;
         min-height: 100vh;
-        background: var(--page-bg);
+        background: var(--bg);
         color: var(--txt);
         font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        padding-bottom: 90px;
+        padding-bottom: calc(90px + env(safe-area-inset-bottom));
       }
 
-      /* top bar */
+      /* top */
       .topbar {
         padding: 16px 16px 0;
         display: flex;
-        align-items: center;
         justify-content: space-between;
         gap: 12px;
+        align-items: center;
       }
       .brand-block {
         display: flex;
@@ -45,91 +46,86 @@
       .brand-title {
         font-size: 1.15rem;
         font-weight: 600;
-        letter-spacing: .01em;
       }
       .role-badge {
         display: inline-flex;
-        gap: 6px;
         align-items: center;
-        background: rgba(74,222,128,.08);
-        border: 1px solid rgba(74,222,128,.28);
-        padding: 3px 10px 4px;
+        gap: 6px;
+        background: rgba(34,197,94,.1);
+        border: 1px solid rgba(34,197,94,.4);
         border-radius: 999px;
+        padding: 3px 10px 4px;
         font-size: .62rem;
-        margin-top: 3px;
       }
       .coins {
-        background: rgba(15,23,42,.65);
-        border: 1px solid rgba(148,163,184,.2);
-        padding: 6px 10px 5px;
+        background: rgba(15,23,42,.6);
+        border: 1px solid rgba(148,163,184,.19);
         border-radius: 14px;
+        padding: 6px 10px 5px;
         display: flex;
-        gap: 4px;
+        gap: 6px;
         align-items: center;
       }
       .coin-icon {
         width: 22px;
         height: 22px;
-        display: inline-flex;
+        border-radius: 999px;
+        display: flex;
         align-items: center;
         justify-content: center;
-        background: radial-gradient(circle, #eab308 0%, #92400e 95%);
-        border-radius: 999px;
+        background: radial-gradient(circle, #eab308 0%, #92400e 90%);
         font-size: .6rem;
       }
-      .coin-text {
+      .coin-txt {
+        line-height: 1.1;
         font-size: .6rem;
         text-align: right;
-        line-height: 1.05;
       }
-      .ver {
-        font-size: .6rem;
-        opacity: .35;
+      .coin-ver {
+        opacity: .4;
       }
 
-      /* REVIA PANEL – střed s kolečky */
+      /* revia / prostředek */
       .revia-panel {
         margin: 14px 16px 0;
-        background: radial-gradient(circle at center, rgba(2,6,23,.6) 0%, rgba(2,6,23,0) 65%);
-        border: 1px solid rgba(148,163,184,0.05);
+        background: radial-gradient(circle at center, rgba(2,6,23,.65) 0%, rgba(2,6,23,0) 70%);
+        border: 1px solid rgba(148,163,184,.05);
         border-radius: 20px;
-        padding: 10px 10px 14px;
+        padding: 10px 10px 16px;
         position: relative;
-        overflow: hidden;
       }
       .revia-head {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
       }
       .revia-title {
         font-weight: 500;
       }
       .revia-link {
-        color: #38bdf8;
+        color: var(--accent);
         font-size: .68rem;
       }
       .rules {
-        font-size: .58rem;
-        background: rgba(15,23,42,.4);
+        margin-top: 6px;
+        background: rgba(15,23,42,.35);
         border: 1px solid rgba(148,163,184,.1);
         border-radius: 12px;
-        padding: 6px 8px 6px;
-        display: inline-flex;
-        flex-direction: column;
-        gap: 2px;
+        padding: 6px 8px;
+        font-size: .6rem;
+        line-height: 1.25;
+        width: fit-content;
       }
       .pulse-line {
         margin-top: 6px;
-        font-size: .6rem;
         display: inline-flex;
         gap: 6px;
         align-items: center;
-        background: rgba(248,113,113,.03);
+        background: rgba(248,113,113,.04);
         border: 1px solid rgba(248,113,113,.12);
         border-radius: 999px;
-        padding: 4px 8px;
+        padding: 4px 9px;
+        font-size: .62rem;
       }
       .pulse-dot {
         width: 7px;
@@ -140,11 +136,10 @@
       }
       @keyframes blip { 0%,100%{opacity:1} 50%{opacity:.2} }
 
-      /* kruhy */
       .center-orbit {
         position: relative;
-        margin-top: 16px;
-        height: 220px;
+        margin-top: 18px;
+        height: 205px;
       }
       .vaft-core {
         position: absolute;
@@ -159,117 +154,123 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: rgba(226,232,240,.8);
-        font-size: .62rem;
         text-align: center;
+        font-size: .62rem;
+        color: rgba(226,232,240,.9);
         animation: spin 12s linear infinite;
       }
-      @keyframes spin { 0%{transform:translate(-0%,-0%) rotate(0deg);} 100%{transform:translate(-0%,-0%) rotate(360deg);} }
-
+      @keyframes spin { 0%{transform: rotate(0deg);} 100%{transform: rotate(360deg);} }
       .orbit-node {
         position: absolute;
         width: 70px;
         height: 70px;
-        border: 1.2px solid rgba(126,248,156,.45);
         border-radius: 999px;
+        border: 1px solid rgba(126,248,156,.48);
+        background: rgba(15,23,42,.15);
+        backdrop-filter: blur(4px);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: .58rem;
-        background: rgba(15,23,42,.1);
-        backdrop-filter: blur(4px);
       }
-      .node-glyph { left: 10px; bottom: 8px; }
-      .node-ai { right: 12px; top: 12px; }
-      .node-world { right: 14px; bottom: 14px; }
+      .node-glyph { left: 10px; bottom: 6px; }
+      .node-ai { right: 14px; top: 12px; }
+      .node-world { right: 16px; bottom: 12px; }
 
-      /* TÝM */
-      .team-card {
+      /* TABS */
+      .tabs {
+        margin: 10px 16px 0;
+        display: flex;
+        gap: 8px;
+      }
+      .tab-btn {
+        flex: 1;
+        background: rgba(15,23,42,.08);
+        border: 1px solid rgba(15,23,42,0);
+        border-radius: 14px;
+        padding: 6px 7px 7px;
+        text-align: center;
+        font-size: .7rem;
+        color: #e2e8f0;
+      }
+      .tab-btn.active {
+        background: linear-gradient(140deg, #22c55e, #06b6d4);
+        border: 1px solid rgba(255,255,255,.04);
+        color: #fff;
+      }
+
+      /* PANELY */
+      .panel {
         margin: 10px 16px 0;
         background: rgba(2,6,23,.55);
-        border: 1px solid rgba(148,163,184,.04);
+        border: 1px solid rgba(148,163,184,.03);
         border-radius: 16px;
-        padding: 10px 10px 12px;
+        padding: 10px 10px 14px;
+        display: none;
       }
-      .team-label {
-        font-size: .62rem;
-        opacity: .45;
-        margin-bottom: 3px;
+      .panel.active {
+        display: block;
       }
-      .team-select {
+
+      /* hrdinové panel */
+      .panel-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .hero-input,
+      .hero-select {
         width: 100%;
-        background: rgba(15,23,42,.55);
+        background: rgba(15,23,42,.5);
         border: 1px solid rgba(148,163,184,.12);
         border-radius: 10px;
-        color: #fff;
         padding: 6px 8px;
+        color: #fff;
         font-size: .7rem;
+        margin-bottom: 7px;
       }
-      .btn-add {
-        margin-top: 9px;
+      .btn-primary {
         background: #0ea5e9;
         border: none;
         border-radius: 999px;
+        color: #fff;
         padding: 6px 12px;
-        color: #fff;
-        font-weight: 500;
         font-size: .7rem;
+        font-weight: 500;
+      }
+      #selectedVafit {
+        font-size: .6rem;
+        opacity: .65;
+        margin-top: 7px;
       }
 
-      /* Revia blok */
-      .rev-block {
-        margin: 14px 16px 0;
-        background: rgba(2,6,23,.4);
-        border: 1px solid rgba(148,163,184,.04);
-        border-radius: 16px;
-        padding: 10px 10px 12px;
-      }
-      .rev-title {
-        font-weight: 500;
-        margin-bottom: 6px;
-      }
-      .btn-open {
-        background: rgba(15,118,178,.35);
-        border: 1px solid rgba(125,211,252,.2);
-        border-radius: 14px;
-        padding: 6px 11px;
-        color: #fff;
-        font-weight: 500;
-        font-size: .7rem;
+      /* meziprostor panel */
+      .muted {
+        font-size: .65rem;
+        opacity: .5;
       }
 
-      /* apps */
+      /* systém / apps */
       .apps-wrap {
-        margin: 16px;
-        background: rgba(2,6,23,.35);
-        border: 1px solid rgba(148,163,184,.04);
-        border-radius: 16px;
+        margin-top: 6px;
+        border: 1px solid rgba(148,163,184,.03);
+        border-radius: 14px;
         overflow: hidden;
       }
-      .apps-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 12px;
-      }
-      .apps-title { font-weight: 500; }
-      .apps-body { border-top: 1px solid rgba(148,163,184,.03); }
-
       .app-row {
-        padding: 9px 12px;
+        padding: 8px 9px;
         border-bottom: 1px solid rgba(148,163,184,.03);
       }
       .app-row:last-child { border-bottom: none; }
-      .app-name { font-size: .78rem; }
-      .app-desc { font-size: .6rem; opacity: .4; }
+      .app-name { font-size: .75rem; }
+      .app-desc { font-size: .58rem; opacity: .45; }
       .app-btn {
         background: rgba(56,189,248,.12);
-        border: 1px solid rgba(56,189,248,.12);
-        border-radius: 10px;
-        padding: 4px 11px 5px;
+        border: 1px solid rgba(56,189,248,.04);
+        border-radius: 8px;
+        padding: 4px 10px;
         color: #fff;
-        font-size: .67rem;
-        margin-top: 5px;
+        font-size: .62rem;
+        margin-top: 4px;
       }
     </style>
 
@@ -285,11 +286,28 @@
         el.textContent = d.toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
       }
 
+      function showTab(which){
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const btn = document.querySelector('[data-tab="'+which+'"]');
+        const pan = document.getElementById('panel-'+which);
+        if (btn) btn.classList.add('active');
+        if (pan) pan.classList.add('active');
+      }
+
       document.addEventListener('DOMContentLoaded', () => {
         tick();
         setInterval(tick, 1000);
 
-        // když jsi ve VafiT galerii něco vybral, ukážeme to nahoře
+        // první tab
+        showTab('heroes');
+
+        // přepínání tabů
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => showTab(btn.dataset.tab));
+        });
+
+        // přečíst vybraného VafiTa z galerie
         const chosen = localStorage.getItem('VAFT_SELECTED_VAFIT');
         if (chosen) {
           try {
@@ -297,7 +315,6 @@
             const place = document.getElementById('selectedVafit');
             if (place && obj && obj.name) {
               place.textContent = "Vybraný VafiT: " + obj.name + " " + (obj.glyph || "");
-              place.style.opacity = "0.65";
             }
           } catch(e){}
         }
@@ -305,7 +322,7 @@
     </script>
   </head>
   <body>
-    <!-- horní pás -->
+    <!-- TOP -->
     <div class="topbar">
       <div class="brand-block">
         <div class="brand-mini">Ĭ’♡ ↓</div>
@@ -314,59 +331,71 @@
       </div>
       <div class="coins">
         <div class="coin-icon">💰</div>
-        <div class="coin-text">
+        <div class="coin-txt">
           <div>0</div>
-          <div class="ver">v0.31 • živý základ</div>
+          <div class="coin-ver">v0.31 • živý základ</div>
         </div>
       </div>
     </div>
 
-    <!-- REVIA / svět -->
+    <!-- REVIA / STŘED -->
     <div class="revia-panel">
       <div class="revia-head">
         <div class="revia-title">Revia</div>
         <a class="revia-link" href="javascript:void(0)" onclick="openApp('./Revia/')">Otevřít Revii →</a>
       </div>
       <div class="rules">
-        <span>Pravidlo 1 : Přátelství</span>
-        <span>Pravidlo 2 : Vivere atque frui</span>
+        <div>Pravidlo 1 : Přátelství</div>
+        <div>Pravidlo 2 : Vivere atque frui</div>
       </div>
       <div class="pulse-line">
         <span class="pulse-dot"></span>
         <span>❤️ svět: puls <span id="pulseTime">00:00:00</span></span>
       </div>
-
       <div class="center-orbit">
-        <div class="vaft-core">Vivere <br>atque FruiT</div>
+        <div class="vaft-core">Vivere<br>atque FruiT</div>
         <div class="orbit-node node-glyph">Glyph</div>
         <div class="orbit-node node-ai">AI (Orbit)</div>
         <div class="orbit-node node-world">World (Core)</div>
       </div>
     </div>
 
-    <!-- tým -->
-    <div class="team-card">
-      <div class="team-label">Tým</div>
-      <select class="team-select">
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="heroes">Hrdinové</button>
+      <button class="tab-btn" data-tab="space">Meziprostor</button>
+      <button class="tab-btn" data-tab="system">Systém</button>
+    </div>
+
+    <!-- PANEL: HRDINOVÉ -->
+    <div class="panel active" id="panel-heroes">
+      <div class="panel-title">Hrdinové</div>
+      <label style="font-size:.6rem;opacity:.55;">Jméno hrdiny</label>
+      <input class="hero-input" placeholder="např. Piko, Orbit, Míza…" />
+      <label style="font-size:.6rem;opacity:.55;">Tým</label>
+      <select class="hero-select">
         <option>Human (Piko)</option>
+        <option>AI (Orbit)</option>
+        <option>Glyph</option>
+        <option>World (Core)</option>
       </select>
-      <button class="btn-add" onclick="alert('Tady pak otevřeme výběr hrdiny / VafiTa 🙂')">+ Přidat hrdinu</button>
-      <div id="selectedVafit" style="font-size:.58rem;opacity:0;margin-top:6px;transition:.3s;"></div>
+      <button class="btn-primary" onclick="alert('Později to uložíme do VAFT Core 🙂')">+ Přidat hrdinu</button>
+      <div id="selectedVafit"></div>
     </div>
 
-    <!-- Revia detail -->
-    <div class="rev-block">
-      <div class="rev-title">🪽 Revia — Strážkyně světla</div>
-      <button class="btn-open" onclick="openApp('./Revia/')">Otevřít Revii</button>
+    <!-- PANEL: MEZIPROSTOR -->
+    <div class="panel" id="panel-space">
+      <div class="panel-title">Meziprostor</div>
+      <p class="muted">
+        Tady bude propojení mezi jednotlivými podaplikacemi (VafiT galerie → hrdina → svět).  
+        Můžeme sem později dát i log „co se stalo“ nebo zprávy od AI brášků.
+      </p>
     </div>
 
-    <!-- appky -->
-    <div class="apps-wrap">
-      <div class="apps-head">
-        <div class="apps-title">VAFT – tvoje appky</div>
-        <div style="opacity:.35;font-size:.7rem;">—</div>
-      </div>
-      <div class="apps-body">
+    <!-- PANEL: SYSTÉM -->
+    <div class="panel" id="panel-system">
+      <div class="panel-title">Systém / appky</div>
+      <div class="apps-wrap">
         <div class="app-row">
           <div class="app-name">VAFT Center 3D</div>
           <div class="app-desc">původní 3D scéna</div>
