@@ -1,6 +1,6 @@
-/* 🌌 Revia v0.6 – vizuální update a optimalizace pro iPhone */
+/* 🌌 Revia v0.7 – plně dynamická verze pro iPhone + světelné přechody */
 
-/* fullscreen */
+/* základ */
 html, body {
   margin: 0;
   padding: 0;
@@ -11,26 +11,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Optimalizace pozadí – aby byl celý obrázek vidět */
-body {
-  background-size: contain;
-  background-position: center top;
-  background-repeat: no-repeat;
-  background-attachment: scroll;
-  background-color: #000;
-}
-
-/* pro iOS a mobilní zařízení */
-@supports (-webkit-touch-callout: none) {
-  body {
-    background-size: contain;
-    background-position: center top;
-    background-attachment: scroll;
-  }
-}
-
-/* ✨ efekt přepínání a světel */
-/* 🌠 Dynamická optimalizace pozadí – vždy celý obrázek */
+/* 🔮 hlavní plátno – automatický optimalizer */
 .revia-main {
   position: relative;
   width: 100%;
@@ -40,40 +21,32 @@ body {
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  transition: background-image 1s ease-in-out, filter 1s ease-in-out;
+  transition: background-image 1s ease-in-out, filter 1s ease-in-out, background-size 1s;
+  filter: brightness(1.08) saturate(1.1);
 }
 
-/* démon */
+/* 🩶 režimy */
 .revia-main[data-mode="daemon"] {
   background-image: url("./revia-bg-daemon.jpg");
-  filter: brightness(0.88) saturate(1.15);
+  filter: brightness(0.88) saturate(1.2);
 }
-
-/* anděl */
 .revia-main[data-mode="angel"] {
   filter: brightness(1.08) saturate(1.1);
 }
 
-/* přizpůsobení výšce obrazovky */
+/* 📱 dynamické přizpůsobení poměru stran */
 @media (max-aspect-ratio: 9/16) {
   .revia-main {
-    background-size: contain;      /* pokud je displej hodně vysoký (např. iPhone) */
+    background-size: contain;      
     background-position: center top;
+    background-attachment: scroll;
   }
 }
-
 @media (min-aspect-ratio: 16/9) {
   .revia-main {
-    background-size: cover;        /* na širších zařízeních (iPad, PC) */
+    background-size: cover;
     background-position: center center;
   }
-
-.revia-main[data-mode="daemon"] {
-  background-image: url("./revia-bg-daemon.jpg");
-  filter: brightness(0.88) saturate(1.15);
-}
-.revia-main[data-mode="angel"] {
-  filter: brightness(1.08) saturate(1.1);
 }
 
 /* horní lišta */
@@ -87,8 +60,13 @@ body {
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
+  opacity: 0;
+  animation: fadeInTop 1.6s ease forwards 0.5s;
 }
-
+@keyframes fadeInTop {
+  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(-10px); }
+}
 .revia-title {
   color: #e9f4ff;
   font-size: 1.2rem;
@@ -132,18 +110,14 @@ body {
   box-sizing: border-box;
   transition: left .4s ease;
 }
-.revia-notes.open {
-  left: 10px;
-}
+.revia-notes.open { left: 10px; }
 .notes-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 6px;
 }
-.notes-head span {
-  font-weight: 500;
-}
+.notes-head span { font-weight: 500; }
 #notesClose {
   background: transparent;
   border: none;
@@ -261,21 +235,11 @@ body {
   pointer-events: none;
   transition: opacity .25s;
 }
-.revia-toast.show {
-  opacity: 1;
-}
+.revia-toast.show { opacity: 1; }
 
 /* menší displej */
 @media (max-width: 430px) {
-  .revia-card {
-    bottom: 21%;
-    gap: 10px;
-  }
-  .revia-slot {
-    width: 100px;
-    height: 100px;
-  }
-  .revia-glyph {
-    font-size: 1.9rem;
-  }
+  .revia-card { bottom: 21%; gap: 10px; }
+  .revia-slot { width: 100px; height: 100px; }
+  .revia-glyph { font-size: 1.9rem; }
 }
