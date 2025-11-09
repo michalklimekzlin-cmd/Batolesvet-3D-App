@@ -113,6 +113,28 @@ function selectVafit(id) {
   const activeBtn = [...document.querySelectorAll('.vafit-btn')].find(b => b.dataset.vafit === id);
   if (activeBtn) activeBtn.classList.add('active');
 
+  // vypsat info
+  infoTitle.textContent = v.name;
+  infoBody.textContent = v.story;
+  infoSub.textContent = "Vivere atque FruiT • " + v.id + " • připraveno na rozšíření";
+  infoBgGlyph.textContent = v.glyph;
+
+  // 3 dohromady
+  tripleStack.innerHTML = "";
+  v.trio.forEach(g => {
+    const span = document.createElement('span');
+    span.textContent = g;
+    tripleStack.appendChild(span);
+  });
+
+  // 🔐 uložit výběr, aby si ho mohl přečíst hlavní svět
+  localStorage.setItem('VAFT_SELECTED_VAFIT', JSON.stringify(v));
+}
+  // aktivní tlačítko
+  document.querySelectorAll('.vafit-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = [...document.querySelectorAll('.vafit-btn')].find(b => b.dataset.vafit === id);
+  if (activeBtn) activeBtn.classList.add('active');
+
   infoTitle.textContent = v.name;
   infoBody.textContent = v.story;
   infoSub.textContent = "Vivere atque FruiT • " + v.id + " • připraveno na rozšíření";
