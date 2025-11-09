@@ -176,10 +176,12 @@
         margin-top: 5px;
       }
     </style>
+
     <script>
       function openApp(url){
         window.location.href = url;
       }
+
       // malý puls času
       function tick(){
         const el = document.getElementById('pulseTime');
@@ -196,6 +198,7 @@
       });
     </script>
   </head>
+
   <body>
     <header>
       <span class="role">🌿 Poutník</span>
@@ -236,27 +239,33 @@
       <button class="app-btn" style="width:100%;" onclick="openApp('./Revia/')">Otevřít Revii</button>
     </div>
 
+    <!-- 🔹 TVOJE APLIKACE -->
     <div class="apps-wrap">
       <div class="apps-head">
         <div class="apps-title">VAFT – tvoje appky</div>
         <div style="opacity:.35;font-size:.7rem;">—</div>
       </div>
+
       <div class="apps-body">
         <div class="app-row">
           <div style="font-size:.8rem;">VAFT Center 3D</div>
           <div style="opacity:.3;font-size:.6rem;">původní 3D scéna</div>
           <button class="app-btn" onclick="openApp('./VAFT-Center3D/')">Otevřít</button>
         </div>
+
         <div class="app-row">
           <div style="font-size:.8rem;">Kometa 3I / ATLAS</div>
           <div style="opacity:.3;font-size:.6rem;">atlas dráhy (work in progress)</div>
           <button class="app-btn" onclick="openApp('./VAFT-Comet/')">Otevřít</button>
-        <div class="app-row">
-  <div style="font-size:.8rem;">VafiT galerie</div>
-  <div style="opacity:.3;font-size:.6rem;">výběr a příběhy VafiTů</div>
-  <button class="app-btn" onclick="openApp('./VafiT-gallery/index.html')">Otevřít</button>
-</div>
         </div>
+
+        <!-- 🔸 Nové tlačítko: VafiT galerie -->
+        <div class="app-row">
+          <div style="font-size:.8rem;">VafiT galerie</div>
+          <div style="opacity:.3;font-size:.6rem;">výběr a příběhy VafiTů</div>
+          <button class="app-btn" onclick="openApp('./VafiT-gallery/index.html')">Otevřít</button>
+        </div>
+
         <div class="app-row">
           <div style="font-size:.8rem;">Další modul</div>
           <div style="opacity:.3;font-size:.6rem;">sem přidáš další složku</div>
