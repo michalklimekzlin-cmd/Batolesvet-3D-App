@@ -5,31 +5,74 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Vivere atque FruiT</title>
     <meta name="theme-color" content="#000814" />
-    <link rel="stylesheet" href="./style.css?v=0.31">
     <style>
+      :root {
+        --panel: rgba(255,255,255,.015);
+        --line: rgba(255,255,255,.035);
+        --txt-sub: rgba(255,255,255,.6);
+      }
       body {
         margin: 0;
         background: radial-gradient(circle at top, #000814 0%, #000 48%, #000 100%);
         color: #fff;
         font-family: system-ui, -apple-system, sans-serif;
-        padding-bottom: 70px;
+        padding-bottom: 80px; /* pro spodní VAFT hub */
       }
-      .topbar { padding: 12px 14px 4px; }
-      .title { font-size: 20px; font-weight: 700; }
+      .topbar {
+        padding: 12px 14px 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      }
       .badge {
         display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        background: rgba(255,255,255,.05);
-        border: 1px solid rgba(255,255,255,.03);
+        background: rgba(46,130,76,.35);
+        border: 1px solid rgba(178,255,211,.15);
         border-radius: 999px;
         padding: 2px 10px 3px;
         font-size: 11px;
-        margin-right: 6px;
+        gap: 4px;
       }
-      .section { padding: 6px 14px 0; }
-      .section-title { font-weight: 600; margin-bottom: 4px; }
-      .btn {
+      .title-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .title {
+        font-size: 19px;
+        font-weight: 700;
+      }
+      .ver { font-size: 11px; opacity: .55; }
+      /* 3D rámeček */
+      .world3d-wrap {
+        height: 320px;
+        margin: 10px 14px 4px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,.04);
+        background: rgba(0,0,0,.25);
+      }
+      .world3d-wrap iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+      /* boxy */
+      .section {
+        margin: 8px 14px 0;
+      }
+      .section-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      .rules-box {
+        background: rgba(0,0,0,.28);
+        border: 1px solid rgba(255,255,255,.015);
+        border-radius: 12px;
+        padding: 7px 10px 6px;
+      }
+      .rev-btn {
         background: rgba(6,105,255,.14);
         border: 1px solid rgba(117,189,255,.5);
         border-radius: 10px;
@@ -39,6 +82,34 @@
         display: inline-flex;
         gap: 6px;
         align-items: center;
+      }
+      /* záložky */
+      .tabs {
+        display: flex;
+        gap: 6px;
+        margin: 10px 14px 0;
+      }
+      .tab {
+        flex: 1;
+        text-align: center;
+        background: rgba(255,255,255,.018);
+        border: 1px solid transparent;
+        border-radius: 999px;
+        padding: 6px 0 5px;
+        font-size: 13px;
+        color: rgba(255,255,255,.6);
+      }
+      .tab.active {
+        background: linear-gradient(120deg, #11d6ff 0%, #3a71ff 80%);
+        color: #000;
+        border-color: rgba(255,255,255,.2);
+      }
+      .tab-content {
+        margin: 8px 14px 0;
+        background: rgba(0,0,0,.25);
+        border: 1px solid rgba(255,255,255,.015);
+        border-radius: 12px;
+        padding: 10px 10px 10px;
       }
       .team-card {
         background: rgba(255,255,255,.018);
@@ -70,83 +141,131 @@
         margin-top: 4px;
         cursor: pointer;
       }
-      .world3d-wrap {
-        height: 320px;
-        margin: 10px 14px;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid rgba(255,255,255,.04);
-        background: rgba(0,0,0,.25);
-      }
-      .world3d-wrap iframe {
+      input, select {
         width: 100%;
-        height: 100%;
-        border: 0;
+        background: rgba(255,255,255,.02);
+        border: 1px solid rgba(255,255,255,.03);
+        border-radius: 10px;
+        padding: 7px 8px 6px;
+        color: #fff;
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+      label {
+        font-size: 12px;
+        color: rgba(255,255,255,.6);
       }
     </style>
   </head>
-
   <body>
-    <!-- Horní panel -->
+    <!-- HLAVA -->
     <div class="topbar">
-      <div class="badge">🌿 Poutník</div>
-      <div class="title">Vivere atque FruiT</div>
-      <div style="font-size:11px;opacity:.55;">v0.31 · živý základ</div>
+      <div class="title-wrap">
+        <div class="badge">🌿 Poutník</div>
+        <div class="title">Vivere atque FruiT</div>
+      </div>
+      <div class="ver">v0.31 · živý základ</div>
     </div>
 
-    <!-- 3D svět -->
+    <!-- 3D STŘED -->
     <div class="world3d-wrap">
-      <iframe src="./Vivere-atque-FruiT/Vivere-atque-FruiT/VAFT-Center3D/index.html"></iframe>
+      <!-- důležité: cesta podle tvého repa -->
+      <iframe src="./Vivere-atque-FruiT/VAFT-Center3D/index.html"></iframe>
     </div>
 
-    <!-- Pravidla -->
+    <!-- PRAVIDLA -->
     <div class="section">
-      <div class="section-title">Pravidlo 1: Přátelství</div>
-      <div class="section-title">Pravidlo 2: Vivere atque frui</div>
-      <div style="margin-top:4px;font-size:12px;">❤️ svět: puls <span id="vaft-pulse">12:32:11</span></div>
+      <div class="rules-box">
+        <div>Pravidlo 1: Přátelství</div>
+        <div>Pravidlo 2: Vivere atque frui</div>
+        <div style="margin-top:4px;font-size:12px;">❤️ svět: puls <span id="vaft-pulse">00:00:00</span></div>
+      </div>
     </div>
 
-    <!-- Revia -->
-    <div class="section" style="margin-top:12px;">
-      <div class="section-title">Revia</div>
-      <button class="btn" onclick="openApp('./Revia/')">🔷 Otevřít Revii</button>
+    <!-- REVIA -->
+    <div class="section" style="margin-top:10px;">
+      <div class="section-title">Revia — Strážkyně světla</div>
+      <button class="rev-btn" onclick="openApp('./Revia/')">🔷 Otevřít Revii</button>
     </div>
 
-    <!-- Tým -->
-    <div class="section" style="margin-top:16px;margin-bottom:80px;">
-      <div class="section-title">Tým</div>
+    <!-- ZÁLOŽKY -->
+    <div class="tabs">
+      <div class="tab active" data-tab="heroes">Hrdinové</div>
+      <div class="tab" data-tab="mez">Meziprostor</div>
+      <div class="tab" data-tab="sys">Systém</div>
+    </div>
+
+    <!-- OBSAH ZÁLOŽEK -->
+    <div id="tab-heroes" class="tab-content">
+      <div class="section-title" style="margin-bottom:6px;">Hrdinové</div>
+      <label>Jméno hrdiny</label>
+      <input type="text" placeholder="např. Piko, Orbit, Míza…">
+      <label>Tým</label>
+      <select>
+        <option>Human (Piko)</option>
+        <option>AI (Orbit)</option>
+        <option>Glyph</option>
+        <option>World (Core)</option>
+      </select>
+      <button class="hero-button" onclick="alert('Přidáme do budoucna do localStorage 😎')">＋ Přidat hrdinu</button>
+
       <div class="team-card">
-        <div style="font-size:12px;opacity:.65;margin-bottom:4px;">Human (Piko)</div>
-        <button class="hero-button" onclick="alert('Sem přijde výběr/postava')">＋ Přidat hrdinu</button>
+        <div style="font-size:12px;opacity:.65;margin-bottom:4px;">Tvoje jednotky</div>
         <div class="hero-app" onclick="openApp('./Michal-AI-Al-Klimek/')">
           🤖 <span>MICHAL AI AI KLIMEK</span>
         </div>
       </div>
     </div>
 
-    <!-- Rámec -->
+    <div id="tab-mez" class="tab-content" style="display:none;">
+      <div class="section-title" style="margin-bottom:6px;">Meziprostor</div>
+      <p style="font-size:13px;opacity:.7;">
+        Tady budou propojení světů (V, i, v, e…) a později i přeskakování mezi podaplikacemi.
+      </p>
+      <button class="rev-btn" onclick="openApp('./Meziprostor-Core/')">🌌 Otevřít Meziprostor</button>
+    </div>
+
+    <div id="tab-sys" class="tab-content" style="display:none;">
+      <div class="section-title" style="margin-bottom:6px;">Systém</div>
+      <p style="font-size:13px;opacity:.6;">Tady budou nastavení, cache, PWA, heartbeat, VAFT moduly…</p>
+      <button class="rev-btn" onclick="openApp('./VAFT-MapWorld/')">🗺 Otevřít mapu světa</button>
+    </div>
+
+    <!-- rámec pro načítání podaplikací -->
     <iframe id="app-frame" style="display:none;"></iframe>
 
-    <!-- VAFT Hub -->
+    <!-- VAFT HUB (tvůj) -->
     <script src="./vaft.hub.js?v=1"></script>
     <script>
-      function openApp(url) {
+      function openApp(url){
         const frame = document.getElementById('app-frame');
-        if (frame) frame.src = url;
-        else window.location.href = url;
+        if (frame) {
+          frame.src = url;
+        } else {
+          window.location.href = url;
+        }
       }
 
-      // jednoduchý živý puls
+      // puls
       setInterval(() => {
         const el = document.getElementById('vaft-pulse');
         if (!el) return;
         const d = new Date();
-        el.textContent = d.toLocaleTimeString('cs-CZ', {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        });
+        el.textContent = d.toLocaleTimeString('cs-CZ', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
       }, 1000);
+
+      // přepínání tabů
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(t => {
+        t.addEventListener('click', () => {
+          tabs.forEach(x => x.classList.remove('active'));
+          t.classList.add('active');
+          const id = t.dataset.tab;
+          document.getElementById('tab-heroes').style.display = (id === 'heroes') ? 'block' : 'none';
+          document.getElementById('tab-mez').style.display = (id === 'mez') ? 'block' : 'none';
+          document.getElementById('tab-sys').style.display = (id === 'sys') ? 'block' : 'none';
+        });
+      });
     </script>
   </body>
 </html>
