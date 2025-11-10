@@ -159,6 +159,32 @@
       <div class="sys-app"><div class="sys-app-name">VAFT-Network</div><button class="sys-app-btn" onclick="openApp('./VAFT-Network/')">Otevřít</button></div>
     </div>
 
+    <div class="panel" id="panel-vent" style="display:none;">
+  <div class="panel-title">Ventil / výstup sítě</div>
+  <div class="vent-controls" style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+    <select id="vent-filter-agent" style="min-width:120px;">
+      <option value="">— Všechny agenty —</option>
+      <option value="Hlavoun">Hlavoun</option>
+      <option value="Viri">Viri</option>
+      <option value="Pikos">Pikos</option>
+      <option value="Vivere">Vivere</option>
+      <option value="?">?</option>
+    </select>
+    <select id="vent-filter-type" style="min-width:120px;">
+      <option value="">— Všechny typy —</option>
+      <option value="signal">signal</option>
+      <option value="heartbeat">heartbeat</option>
+      <option value="diagnostic">diagnostic</option>
+      <option value="output">output</option>
+      <option value="custom">custom</option>
+    </select>
+    <button id="vent-clear" class="btn-small">Vyčistit</button>
+    <button id="vent-export" class="btn-small">Export JSON</button>
+  </div>
+  <div id="vent-summary" style="opacity:.8;font-size:.8rem;margin-bottom:8px;"></div>
+  <div id="vent-feed" style="max-height:48vh;overflow:auto;padding:6px;border-radius:10px;background:rgba(10,12,15,.45);border:1px solid rgba(255,255,255,.03)"></div>
+</div>
+    
     <!-- ZÁKLADNÍ SCRIPTY -->
     <script>
       function openApp(url){ window.location.href = url; }
