@@ -229,4 +229,50 @@ function sendToHlavoun() {
   if (window.Pikos && typeof window.Pikos.talk === 'function') {
     window.Pikos.talk(text);
   }
-}
+  
+function sendToHlavoun() {
+  const inp = document.getElementById('hlavounInput');
+  if (!inp || !inp.value.trim()) return;
+
+  const text = inp.value.trim();
+
+  // ===== Guardian – bezpečné odeslání =====
+  if (window.VAFT && window.VAFT.guardian) {
+    window.VAFT.guardian.securePayload({ role: 'user', text })
+      .then(secured => {
+        console.log('🛡️ Guardian zapečetil zprávu:', secured);
+
+        // zobraz zprávu v chatu
+        if (typeof appendHlavounMsg === 'function') {
+          appendHlavounMsg('user', text);
+        }
+
+        inp.value = '';
+
+        // pošli do systému Hlavoun + Pikoš
+        if (window.HlavounSystem && typeof window.HlavounSystem.think === 'function') {
+          window.HlavounSystem.think(secured);
+        }
+
+        if (window.Pikos && typeof window.Pikos.talk === 'function') {
+          window.Pikos.talk(secured);
+        }
+      })
+      .catch(err => {
+        console.warn('⚠️ Guardian error:', err);
+        if (typeof appendHlavounMsg === 'function') {
+          appendHlavounMsg('system', 'Guardian nedokázal ověřit zprávu.');
+        }
+      });
+  } else {
+    // fallback – kdyby Guardian nebyl aktivní
+    if (typeof appendHlavounMsg === 'function') {
+      appendHlavounMsg('user', text);
+    }
+    if (window.HlavounSystem && typeof window.HlavounSystem.think === 'function') {
+      window.HlavounSystem.think(text);
+    }
+    if (window.Pikos && typeof window.Pikos.talk === 'function') {
+      window.Pikos.talk(text);
+    }
+  }
