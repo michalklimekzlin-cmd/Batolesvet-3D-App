@@ -449,12 +449,42 @@
         localStorage.setItem('VAFT_HLAVOUN_LOG', JSON.stringify(log));
       }
 
-      function sendToHlavoun() {
-        const inp = document.getElementById('hlavoun-input');
-        if (!inp || !inp.value.trim()) return;
-        const text = inp.value.trim();
-        appendHlavounMsg('user', text);
-        inp.value = '';
+      async function sendToHlavoun() {
+  const inp = document.getElementById('hlavoun-input');
+  if (!inp || !inp.value.trim()) return;
+
+  const text = inp.value.trim();
+
+  // hned zobrazíme uživatele
+  if (typeof appendHlavounMsg === 'function') {
+    appendHlavounMsg('user', text);
+  }
+  inp.value = '';
+
+  // 1) stráž → udělej PoW → převeď na palivo
+  if (window.Guardian && typeof window.Guardian.checkMessage === 'function') {
+    try {
+      await window.Guardian.checkMessage(text);
+    } catch (e) {
+      console.warn('[guardian] nepovedlo se PoW, ale pustím to dál', e);
+    }
+  }
+
+  // 2) teprve teď to pustíme do mozku
+  if (window.HlavounSystem && typeof window.HlavounSystem.think === 'function') {
+    window.HlavounSystem.think(text);
+  }
+
+  // 3) a do Pikoše
+  if (window.Pikos && typeof window.Pikos.talk === 'function') {
+    window.Pikos.talk(text);
+  }
+
+  // 4) a do Viri kdybys měl
+  if (window.VAFT && window.VAFT.agents && window.VAFT.agents.Viri && typeof window.VAFT.agents.Viri.listen === 'function') {
+    window.VAFT.agents.Viri.listen(text);
+  }
+}
 
         // tady můžeš napojit tvoje skripty
         if (window.VAFTBus) {
