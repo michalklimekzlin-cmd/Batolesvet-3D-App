@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "challenge": {
+    "defaultDifficulty": 18,
+    "maxDifficulty": 28,
+    "minDifficulty": 14,
+    "ttlSeconds": 60
+  },
+  "scoring": {
+    "initialScore": 0,
+    "rateWindowSeconds": 60,
+    "rateThreshold": 10,
+    "breachThreshold": 25,
+    "lockdownThreshold": 50
+  },
+  "honeypot": {
+    "enabled": true,
+    "slowResponseMs": 2500,
+    "logRetentionDays": 30,
+    "iskryPerAttempt": 0.1
+  },
+  "ledger": {
+    "iskraUnitName": "Iskra",
+    "rewardFactor": 1.0
+  },
+  "policies": {
+    "autoLockdownOnBreachCount": 3,
+    "maxRequestsPerMinute": 120
+  },
+  "notes": "Dolaď values podle provozu a výkonu."
+}
