@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>VAFT Network</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="title">🕸️ VAFT Network</div>
+      <div class="sub">živá síť Vivere atque FruiT</div>
+    </div>
+
+    <div class="main">
+      <!-- sem si náš skript dosadí panely -->
+      <div id="panel-nodes" class="panel">
+        <div class="panel-title">Síť uzlů</div>
+        <p class="muted">Načítám síť…</p>
+        <div id="vaft-nodes"></div>
+        <div id="vaft-nodes-outer"></div>
+        <div id="vaft-nodes-mirror"></div>
+        <div id="vaft-nodes-origin"></div>
+      </div>
+    </div>
+
+    <!-- náš jeden velký skript -->
+    <script src="./vaft.network.js"></script>
+  </body>
+</html>
