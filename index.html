@@ -455,54 +455,44 @@
 
   const text = inp.value.trim();
 
-  // hned zobrazíme uživatele
+  // 1) zobraz do chatu
   if (typeof appendHlavounMsg === 'function') {
     appendHlavounMsg('user', text);
   }
   inp.value = '';
 
-  // 1) stráž → udělej PoW → převeď na palivo
+  // 2) stráž / PoW → přeměna na palivo
   if (window.Guardian && typeof window.Guardian.checkMessage === 'function') {
     try {
       await window.Guardian.checkMessage(text);
     } catch (e) {
-      console.warn('[guardian] nepovedlo se PoW, ale pustím to dál', e);
+      console.warn('[guardian] PoW neprošlo, ale pustím dál', e);
     }
   }
 
-  // 2) teprve teď to pustíme do mozku
+  // 3) pošli do Hlavouna
   if (window.HlavounSystem && typeof window.HlavounSystem.think === 'function') {
     window.HlavounSystem.think(text);
   }
 
-  // 3) a do Pikoše
+  // 4) pošli do Pikoše
   if (window.Pikos && typeof window.Pikos.talk === 'function') {
     window.Pikos.talk(text);
   }
 
-  // 4) a do Viri kdybys měl
+  // 5) pošli do Viri
   if (window.VAFT && window.VAFT.agents && window.VAFT.agents.Viri && typeof window.VAFT.agents.Viri.listen === 'function') {
     window.VAFT.agents.Viri.listen(text);
   }
+
+  // 6) staré dráty (zůstávají)
+  if (window.VAFTBus) {
+    window.VAFTBus.handleUserMessage(text);
+  }
+  if (window.AgentBus) {
+    window.AgentBus.handleUserMessage(text);
+  }
 }
-
-        // tady můžeš napojit tvoje skripty
-        if (window.VAFTBus) {
-          window.VAFTBus.handleUserMessage(text);
-        }
-        if (window.HlavounSystem) {
-          window.HlavounSystem.think(text);
-        }
-        if (window.AgentBus) {
-          window.AgentBus.handleUserMessage(text);
-        }
-      }
-
-      function sendQuickToHlavoun(text){
-        const inp = document.getElementById('hlavoun-input');
-        inp.value = text;
-        sendToHlavoun();
-      }
 
       // lazy načtení sítě = kvůli iPhone
       let networkLoaded = false;
