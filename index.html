@@ -505,6 +505,107 @@
       });
     </script>
 
+    <script>
+  // 16 světů podle našeho plánu
+  const VAFT_WORLDS = [
+    { id: 'viventia',  label: 'Viventia',  letter: 'V', desc: 'životní proud, základní svět' },
+    { id: 'ignis',     label: 'Ignis',     letter: 'i', desc: 'oheň, energie, Pikoš vibes' },
+    { id: 'virtus',    label: 'Virtus',    letter: 'v', desc: 'síla, odvaha, kov – to bude na tetování' },
+    { id: 'essentia',  label: 'Essentia',  letter: 'e', desc: 'podstata, vnitřek světa' },
+
+    { id: 'radius',    label: 'Radius',    letter: 'r', desc: 'okruhy, propojení, síť' },
+    { id: 'emovere',   label: 'Emovere',   letter: 'e', desc: 'emoce, vztahy, rodina – hodí se k pravidlu 1' },
+    { id: 'aetheris',  label: 'Aetheris',  letter: 'a', desc: 'vzdušný / duchovní svět – může tam být Míza' },
+    { id: 'tempora',   label: 'Tempora',   letter: 't', desc: 'čas, pulsy, heartbeat světa' },
+
+    { id: 'quaerentia',label: 'Quaerentia',letter: 'q', desc: 'hledání, tvoření příběhů' },
+    { id: 'unum',      label: 'Unum',      letter: 'u', desc: 'jednota, společný kanál' },
+    { id: 'exsolum',   label: 'Exsolum',   letter: 'F', desc: 'u tebe velké F – svět odchodu, rozšíření' },
+    { id: 'flamma',    label: 'Flamma',    letter: 'r', desc: 'jiskra, inspirace, rychlé nápady' },
+
+    { id: 'reverentia',label: 'Reverentia',letter: 'u', desc: 'úcta, ochranná vrstva' },
+    { id: 'umbra',     label: 'Umbra',     letter: 'i', desc: 'stín, logování, to co neukazuju všem' },
+    { id: 'imaginis',  label: 'Imaginis',  letter: 'T', desc: 'obraz, glyph, tetování' },
+    { id: 'fructum',   label: 'Fructum',   letter: '★', desc: 'plod, výsledek, výstup do hry' },
+  ];
+
+  function renderWorldsPanel() {
+    const box = document.getElementById('vaft-worlds-grid');
+    if (!box) return;
+    box.innerHTML = '';
+    VAFT_WORLDS.forEach(w => {
+      const div = document.createElement('div');
+      div.className = 'vaft-world-tile';
+      div.style.background = 'rgba(7,11,16,.45)';
+      div.style.border = '1px solid rgba(150,180,210,.15)';
+      div.style.borderRadius = '14px';
+      div.style.padding = '10px 8px 9px';
+      div.style.cursor = 'pointer';
+      div.style.display = 'flex';
+      div.style.flexDirection = 'column';
+      div.style.gap = '4px';
+      div.onclick = () => selectWorld(w);
+      div.innerHTML = `
+        <div style="font-size:.65rem;opacity:.55;">${w.letter}</div>
+        <div style="font-weight:600;">${w.label}</div>
+        <div style="font-size:.62rem;opacity:.5;">${w.desc}</div>
+      `;
+      box.appendChild(div);
+    });
+  }
+
+  function selectWorld(world) {
+    const detail = document.getElementById('vaft-world-detail');
+    if (detail) {
+      detail.innerHTML = `
+        <div style="font-size:.75rem;opacity:.65;">Vybraný svět</div>
+        <div style="font-size:1.05rem;font-weight:600;margin-bottom:4px;">${world.label}</div>
+        <div style="font-size:.7rem;opacity:.7;margin-bottom:6px;">${world.desc}</div>
+        <div style="font-size:.65rem;opacity:.5;">letter: ${world.letter} • id: ${world.id}</div>
+      `;
+    }
+
+    // pošli do našeho busu, ať to vidí Hlavoun / Viri / Pikoš
+    const payload = {
+      type: 'world.selected',
+      world: world,
+      ts: Date.now()
+    };
+
+    // 1) náš nový VAFT bus (pokud je)
+    if (window.VAFT && window.VAFT.bus && typeof window.VAFT.bus.emit === 'function') {
+      window.VAFT.bus.emit('world.selected', payload);
+    }
+
+    // 2) starší dráty
+    if (window.HlavounSystem && typeof window.HlavounSystem.think === 'function') {
+      window.HlavounSystem.think('uživatel otevřel svět: ' + world.label);
+    }
+    if (window.VAFT && window.VAFT.agents) {
+      if (window.VAFT.agents.Viri && typeof window.VAFT.agents.Viri.save === 'function') {
+        // Viri si to může ukládat do své paměti
+        const hist = window.VAFT.agents.Viri.load?.('worldHistory') || [];
+        hist.push(payload);
+        window.VAFT.agents.Viri.save('worldHistory', hist);
+      }
+      if (window.VAFT.agents.Pikos && typeof window.VAFT.agents.Pikos.output === 'function') {
+        // Pikoš může poslat do hry
+        window.VAFT.agents.Pikos.output({
+          type: 'vaft.world.open',
+          worldId: world.id,
+          label: world.label,
+          ts: Date.now()
+        });
+      }
+    }
+  }
+
+  // až se načte stránka, vykreslíme světy
+  document.addEventListener('DOMContentLoaded', () => {
+    renderWorldsPanel();
+  });
+</script>
+    
     <!-- tady je mozek – tvé stávající soubory -->
     <script src="./app.js"></script>
     <script src="./hlavoun.js"></script>
