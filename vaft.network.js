@@ -2,7 +2,7 @@
 (function (window, document) {
   console.log("%c[VAFT-Network] startuje...", "color:#7fffd4");
 
-  // Pomocný EventBus
+  // malá interní sběrnice, pokud ještě není
   const BUS = (window.VAFT && window.VAFT.bus) || (() => {
     const listeners = {};
     return {
@@ -10,10 +10,11 @@
       emit: (t, d) => (listeners[t] || []).forEach(f => f(d)),
     };
   })();
+
   window.VAFT = window.VAFT || {};
   window.VAFT.bus = BUS;
 
-  // Kde se uzly vykreslí
+  // panel v DOMu
   let panel = document.getElementById("vaft-nodes");
   if (!panel) {
     panel = document.createElement("div");
@@ -24,19 +25,18 @@
   panel.style.flexWrap = "wrap";
   panel.style.gap = "8px";
 
-  // Barvy podle rolí
+  // barvy uzlů
   const COLORS = {
     Hlavoun: "#7ec8ff",
     Viri: "#9fff84",
-    Pikos: "#ffc979",
+    Pikos: "#ffb347",
     Vivere: "#c28bff",
-    Secret: "#ff78a8"
+    "?": "#ff78a8"
   };
 
-  // Šablona uzlu
+  // vytvoření uzlu
   function makeNode(name, color) {
     const el = document.createElement("div");
-    el.className = "vaft-node";
     Object.assign(el.style, {
       border: `1px solid ${color}66`,
       background: "rgba(10,15,20,.4)",
@@ -57,52 +57,53 @@
     return el;
   }
 
-  // Logika uzlu
+  // vytvoření agenta
   function makeAgent(name, color) {
     const node = makeNode(name, color);
     const state = { brain: "ticho", memory: [], heart: 0 };
-    const update = (k, v) => {
+    const upd = (k, v) => {
       const el = document.getElementById(`${name}-${k}`);
       if (el) el.textContent = v;
     };
 
-    // Mozek: reaguje na zprávy
+    // myšlení agenta
     function think(msg) {
       state.brain = msg.text || msg.type || "signál";
       state.memory.push(msg);
-      update("brain", state.brain);
-      update("mem", state.memory.length);
+      upd("brain", state.brain);
+      upd("mem", state.memory.length);
       localStorage.setItem(`VAFT_${name}_MEM`, JSON.stringify(state.memory));
       BUS.emit("vaft.signal", { from: name, msg });
-      update("vent", "vysláno");
+      upd("vent", "vysláno");
     }
 
-    // Motor (heartbeat)
+    // puls srdce a motor
     setInterval(() => {
-      const t = new Date().toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-      update("motor", t);
+      const t = new Date().toLocaleTimeString("cs-CZ", {
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+      upd("motor", t);
       state.heart++;
-      update("heart", state.heart);
+      upd("heart", state.heart);
       BUS.emit("heartbeat", { name, heart: state.heart });
     }, 4000 + Math.random() * 1500);
 
+    // reaguj na cizí signál
     BUS.on("vaft.signal", data => {
-      if (data.from !== name && Math.random() < 0.4) think({ text: `${data.from}→${name}` });
+      if (data.from !== name && Math.random() < 0.4) {
+        think({ text: `${data.from}→${name}` });
+      }
     });
 
     return { name, think };
   }
 
-  // Vytvoření uzlů
-  const agents = [
-    makeAgent("Hlavoun", COLORS.Hlavoun),
-    makeAgent("Viri", COLORS.Viri),
-    makeAgent("Pikos", COLORS.Pikos),
-    makeAgent("Vivere", COLORS.Vivere),
-    makeAgent("?", COLORS.Secret)
-  ];
+  // inicializace agentů
+  ["Hlavoun", "Viri", "Pikos", "Vivere", "?"].forEach(n =>
+    makeAgent(n, COLORS[n])
+  );
 
-  // Iniciální pozdrav
+  // spuštění sítě
   setTimeout(() => {
     BUS.emit("vaft.signal", { from: "Vivere", text: "Síť spuštěna" });
   }, 2000);
