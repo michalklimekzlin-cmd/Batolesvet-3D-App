@@ -331,12 +331,45 @@
 </div>
 
 <!-- PANEL: SVĚTY -->
+<!-- PANEL: SVĚTY -->
 <div class="panel" id="panel-worlds">
   <div class="panel-title">Světy Vivere atque FruiT</div>
-  <p style="opacity:.6;font-size:.72rem;margin-bottom:10px;">
+  <p style="opacity:.6;font-size:.72rem;margin-bottom:.5rem">
     Každé písmeno tvoří svět. Klikni na svět a já to pošlu Hlavounovi / Viri / Pikošovi.
   </p>
+
+  <div class="world-grid">
+    <button class="world-card" data-world="core">
+      🌍 World (Core)
+      <span class="world-note">střed světa</span>
+    </button>
+    <button class="world-card" data-world="human">
+      🟧 Pikoš / Human
+      <span class="world-note">hráč / člověk</span>
+    </button>
+    <button class="world-card" data-world="ai">
+      🤖 AI (Orbit)
+      <span class="world-note">rádce / signál</span>
+    </button>
+    <button class="world-card" data-world="glyph">
+      🌀 Glyph
+      <span class="world-note">znaky, kód</span>
+    </button>
+    <button class="world-card" data-world="vaft">
+      ✨ Vivere atque FruiT
+      <span class="world-note">hlavní vrstva</span>
+    </button>
+    <button class="world-card" data-world="letters">
+      🔡 Svět písmen
+      <span class="world-note">každé písmeno svět</span>
+    </button>
+  </div>
+
+  <div id="world-target" class="world-target">
+    Vyber svět nahoře a pošlu ho Hlavounovi.
+  </div>
 </div>
+<!-- 👉 TEPRVE TEĎ SCRIPT, NE DŘÍV -->
 
 <!-- 👉 TEPRVE TEĎ SCRIPT, NE DŘÍV -->
 <script>
@@ -1165,6 +1198,22 @@ if ('serviceWorker' in navigator) {
     btn.addEventListener('click', () => {
       const targetId = btn.getAttribute('data-tab'); // heroes / space / system / nodes / worlds
       vaftSwitchPanel(targetId);
+    });
+  });
+</script>
+<!-- ... tvoje ostatní panely ... -->
+
+<!-- tady dolů -->
+<script>
+  const worldCards = document.querySelectorAll('.world-card');
+  const worldTarget = document.getElementById('world-target');
+
+  worldCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const name = card.textContent.trim();
+      if (worldTarget) {
+        worldTarget.textContent = '📡 Posílám: ' + name + ' → Hlavoun / Viri / Pikoš';
+      }
     });
   });
 </script>
