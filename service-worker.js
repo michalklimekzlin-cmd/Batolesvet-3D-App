@@ -1,5 +1,5 @@
-// ===== Vivere atque FruiT • Service Worker (stabilní verze) =====
-const CACHE_NAME = 'vaft-cache-v3'; // při změně obsahu zvyš číslo
+// ===== Vivere atque FruiT • Service Worker (rychlá verze) =====
+const CACHE_NAME = 'vaft-cache-v4'; // zvýšeno z v3 → donutí to stáhnout znova
 const ASSETS = [
   './',
   './index.html',
@@ -11,16 +11,29 @@ const ASSETS = [
   './manifest.json'
 ];
 
-// instalace (stáhne základní soubory)
+// instalace – spustit hned, cachování běží "best effort"
 self.addEventListener('install', event => {
-  console.log('[SW] instalace...');
+  console.log('[SW] instalace (rychlá)...');
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => {
+      // když něco nejde stáhnout, ať se to celé nezasekne
+      return Promise.all(
+        ASSETS.map(url =>
+          fetch(url)
+            .then(res => {
+              if (res.ok) cache.put(url, res.clone());
+            })
+            .catch(() => {
+              console.warn('[SW] nepodařilo se stáhnout:', url);
+            })
+        )
+      );
+    })
   );
-  self.skipWaiting(); // hned aktivuj
 });
 
-// aktivace (vymaž staré cache)
+// aktivace – smaž staré cache
 self.addEventListener('activate', event => {
   console.log('[SW] aktivace...');
   event.waitUntil(
@@ -35,27 +48,22 @@ self.addEventListener('activate', event => {
       )
     )
   );
-  clients.claim(); // aktivuj pro všechny stránky
+  self.clients.claim();
 });
 
-// fetch (chovej se chytře – nejdřív cache, pak síť)
+// fetch – NETWORK FIRST → když nejde síť, vem cache
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(resp => {
-      // když je v cache → dej hned, jinak zkus síť
-      return (
-        resp ||
-        fetch(event.request)
-          .then(response => {
-            // ulož novou verzi do cache pro příště
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, copy);
-            });
-            return response;
-          })
-          .catch(() => resp) // když nejsi online, použij starou
-      );
-    })
+    fetch(event.request)
+      .then(response => {
+        // ulož si čerstvou verzi
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(() => {
+        // offline / chyba → zkus cache
+        return caches.match(event.request);
+      })
   );
 });
