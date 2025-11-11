@@ -1126,5 +1126,47 @@ if ('serviceWorker' in navigator) {
   }
 </style>
  <script src="../vaft-swloader.js"></script>
-  </body>
+  <script>
+  // ochrana proti moc rychlému klikání
+  let vaftTabLock = false;
+  const VAFT_TAB_DELAY = 350;
+
+  function vaftSwitchPanel(targetId) {
+    if (vaftTabLock) return;
+    vaftTabLock = true;
+
+    // 1) schovej všechny panely
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+
+    // 2) ukaž panel podle ID, které máme v HTML (panel-heroes, panel-space...)
+    const targetPanel = document.getElementById('panel-' + targetId);
+    if (targetPanel) {
+      targetPanel.classList.add('active');
+    }
+
+    // 3) přepni aktivní tlačítko
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const tabId = btn.getAttribute('data-tab');
+      if (tabId === targetId) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // 4) po malé době zase povol klikání
+    setTimeout(() => {
+      vaftTabLock = false;
+    }, VAFT_TAB_DELAY);
+  }
+
+  // navázání na tvoje tlačítka dole
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-tab'); // heroes / space / system / nodes / worlds
+      vaftSwitchPanel(targetId);
+    });
+  });
+</script>
+</body>
 </html>
