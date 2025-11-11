@@ -683,7 +683,6 @@
     });
   }
 <script>
-// bezpečnější registrace service workeru (žádný loop)
 if ('serviceWorker' in navigator) {
   let alreadyRefreshed = false;
 
@@ -692,15 +691,18 @@ if ('serviceWorker' in navigator) {
       .then(reg => {
         console.log('[SW] registrován');
 
-        // čekáme na novou verzi
         reg.addEventListener('updatefound', () => {
           const newWorker = reg.installing;
           if (!newWorker) return;
 
           newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller && !alreadyRefreshed) {
+            if (
+              newWorker.state === 'installed' &&
+              navigator.serviceWorker.controller &&
+              !alreadyRefreshed
+            ) {
               alreadyRefreshed = true;
-              console.log('[SW] nová ke verze aktivní, aktualizuji...');
+              console.log('[SW] nová verze aktivní, reload');
               setTimeout(() => window.location.reload(), 1000);
             }
           });
@@ -709,5 +711,6 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.warn('[SW] Chyba registrace:', err));
   });
 }
+</script>
 </body>
-</html/>
+</html>
