@@ -288,7 +288,30 @@
       <button class="btn-primary" onclick="saveHero()">+ Přidat hrdinu</button>
       <div id="selectedVafit"></div>
       <div id="heroesList" class="list-sm">Zatím nemáš uložené hrdiny.</div>
-    </div>
+   <script>
+let vaftTabLock = false;
+const VAFT_TAB_DELAY = 350;
+
+function vaftSwitchPanel(targetId) {
+  if (vaftTabLock) return;
+  vaftTabLock = true;
+
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('panel-' + targetId);
+  if (target) target.classList.add('active');
+
+  setTimeout(() => vaftTabLock = false, VAFT_TAB_DELAY);
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const targetId = btn.getAttribute('data-tab');
+    vaftSwitchPanel(targetId);
+  });
+});
+</script>
+</body>
+</html>
 
     <!-- PANEL: MEZIPROSTOR -->
     <div class="panel" id="panel-space">
