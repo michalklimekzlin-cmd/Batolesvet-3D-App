@@ -264,31 +264,82 @@
       </div>
     </div>
 
-    <!-- TABS -->
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="heroes">Hrdinové</button>
-      <button class="tab-btn" data-tab="space">Meziprostor</button>
-      <button class="tab-btn" data-tab="system">Systém</button>
-      <button class="tab-btn" data-tab="nodes">Síť</button>
-      <button class="tab-btn" data-tab="worlds">Světy</button>
-    </div>
+   <!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" data-tab="heroes">Hrdinové</button>
+  <button class="tab-btn" data-tab="space">Meziprostor</button>
+  <button class="tab-btn" data-tab="system">Systém</button>
+  <button class="tab-btn" data-tab="nodes">Síť</button>
+  <button class="tab-btn" data-tab="worlds">Světy</button>
+</div>
 
-    <!-- PANEL: HRDINOVÉ -->
-    <div class="panel active" id="panel-heroes">
-      <div class="panel-title">Hrdinové</div>
-      <label class="label-sm">Jméno hrdiny</label>
-      <input id="hero-name" class="hero-input" placeholder="např. Piko, Orbit, Míza…" />
-      <label class="label-sm">Tým</label>
-      <select id="hero-team" class="hero-select">
-        <option>Human (Piko)</option>
-        <option>AI (Orbit)</option>
-        <option>Glyph</option>
-        <option>World (Core)</option>
-      </select>
-      <button class="btn-primary" onclick="saveHero()">+ Přidat hrdinu</button>
-      <div id="selectedVafit"></div>
-      <div id="heroesList" class="list-sm">Zatím nemáš uložené hrdiny.</div>
-   <script>
+<!-- PANEL: HRDINOVÉ -->
+<div class="panel active" id="panel-heroes">
+  <div class="panel-title">Hrdinové</div>
+  <label class="label-sm">Jméno hrdiny</label>
+  <input id="hero-name" class="hero-input" placeholder="např. Piko, Orbit, Míza…" />
+  <label class="label-sm">Tým</label>
+  <select id="hero-team" class="hero-select">
+    <option>Human (Piko)</option>
+    <option>AI (Orbit)</option>
+    <option>Glyph</option>
+    <option>World (Core)</option>
+  </select>
+  <button class="btn-primary" onclick="saveHero()">+ Přidat hrdinu</button>
+  <div id="selectedVafit"></div>
+  <div id="heroesList" class="list-sm">Zatím nemáš uložené hrdiny.</div>
+</div>
+
+<!-- PANEL: MEZIPROSTOR -->
+<div class="panel" id="panel-space">
+  <div class="panel-title">Meziprostor (Hlavoun)</div>
+  <div id="hlavoun-chat"></div>
+  <div class="chat-row">
+    <input id="hlavoun-input" placeholder="napiš Hlavounovi...">
+    <button class="btn-primary" onclick="sendToHlavoun()">Poslat</button>
+  </div>
+  <div class="quick-row">
+    <button onclick="sendQuickToHlavoun('příběh pro vybraného vafita')">💡 Příběh</button>
+    <button onclick="sendQuickToHlavoun('gps uložit')">📍 GPS</button>
+    <button onclick="sendQuickToHlavoun('zkontroluj repo')">🔎 Repo</button>
+    <button onclick="sendQuickToHlavoun('batole svět')">🍼 Batole svět</button>
+  </div>
+</div>
+
+<!-- PANEL: SYSTÉM -->
+<div class="panel" id="panel-system">
+  <div class="panel-title">Systém / appky</div>
+  <p style="opacity:.65;font-size:.7rem;">
+    Všechno jsme schovali do jednoho okna, ať je pořádek. 👇
+  </p>
+  <button class="btn-primary system-open-btn" onclick="toggleSystemMenu()">Otevřít systémové appky</button>
+</div>
+
+<!-- PANEL: SÍŤ -->
+<div class="panel" id="panel-nodes">
+  <div class="panel-title">Síť uzlů</div>
+  <p style="opacity:.6;font-size:.7rem;">
+    Tady se zobrazují všechny živé čtverečky napojené na Vivere atque FruiT.
+  </p>
+  <div id="vaft-nodes"></div>
+  <div id="vaft-nodes-outer"></div>
+  <div id="vaft-nodes-mirror"></div>
+  <div id="vaft-nodes-origin"></div>
+  <p style="opacity:.4;font-size:.65rem;margin-top:4px;">
+    (síť se načte až když ji otevřeš – kvůli výkonu iPhonu)
+  </p>
+</div>
+
+<!-- PANEL: SVĚTY -->
+<div class="panel" id="panel-worlds">
+  <div class="panel-title">Světy Vivere atque FruiT</div>
+  <p style="opacity:.6;font-size:.72rem;margin-bottom:10px;">
+    Každé písmeno tvoří svět. Klikni na svět a já to pošlu Hlavounovi / Viri / Pikošovi.
+  </p>
+</div>
+
+<!-- 👉 TEPRVE TEĎ SCRIPT, NE DŘÍV -->
+<script>
 let vaftTabLock = false;
 const VAFT_TAB_DELAY = 350;
 
@@ -296,9 +347,22 @@ function vaftSwitchPanel(targetId) {
   if (vaftTabLock) return;
   vaftTabLock = true;
 
+  // schovej vše
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+
+  // ukaž správný
   const target = document.getElementById('panel-' + targetId);
   if (target) target.classList.add('active');
+
+  // přepni aktivní tab
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    const tabId = btn.getAttribute('data-tab');
+    if (tabId === targetId) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
 
   setTimeout(() => vaftTabLock = false, VAFT_TAB_DELAY);
 }
