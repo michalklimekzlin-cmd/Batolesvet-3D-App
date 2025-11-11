@@ -846,5 +846,141 @@ if ('serviceWorker' in navigator) {
   document.head.appendChild(style);
 })();
 </script>
+  <script>
+// VAFT status orchestr – bere data z celého tvého světa
+(function () {
+  // co chceme hlídat
+  const ENTITIES = [
+    { name: 'Hlavoun',    key: 'hlavoun', icon: '🧠', color: '#54c9ff' },
+    { name: 'Viri',       key: 'viri',    icon: '🧬', color: '#b5ff6a' },
+    { name: 'Pikoš',      key: 'pikos',   icon: '🟠', color: '#ffb36a' },
+    { name: 'Vivere',     key: 'vivere',  icon: '🪐', color: '#d8b9ff' },
+  ];
+
+  // 1) HUD pruh
+  const hud = document.createElement('div');
+  hud.id = 'vaft-hud';
+  hud.style.cssText = `
+    position:fixed;bottom:10px;left:50%;transform:translateX(-50%);
+    display:flex;gap:8px;z-index:9999;
+    font-family:system-ui,-apple-system,sans-serif;font-size:12px;
+  `;
+  document.body.appendChild(hud);
+
+  // vytvoříme boxy
+  ENTITIES.forEach(e => {
+    const box = document.createElement('div');
+    box.id = 'vaft-hud-' + e.key;
+    box.style.cssText = `
+      padding:6px 10px;border-radius:10px;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.03);
+      color:#fff;font-weight:600;opacity:.35;
+      backdrop-filter:blur(10px);transition:.2s;
+    `;
+    box.textContent = `${e.icon} ${e.name}: čekám…`;
+    e.el = box;
+    hud.appendChild(box);
+  });
+
+  // helper – rozsvítit / utlumit
+  function setOnline(ent, online, source) {
+    if (!ent.el) return;
+    if (online) {
+      ent.el.style.background = ent.color;
+      ent.el.style.color = '#000';
+      ent.el.style.opacity = 1;
+      ent.el.textContent = `${ent.icon} ${ent.name}: běží${source ? ' ('+source+')' : ''}`;
+      // uložíme poslední známý OK stav
+    localStorage.setItem('VAFT_STATUS_' + ent.key, 'online');
+    } else {
+      ent.el.style.background = 'rgba(0,0,0,.35)';
+      ent.el.style.color = '#fff';
+      ent.el.style.opacity = .35;
+      ent.el.textContent = `${ent.icon} ${ent.name}: offline`;
+      localStorage.setItem('VAFT_STATUS_' + ent.key, 'offline');
+    }
+  }
+
+  // 2) po načtení zkusíme vytáhnout poslední stav z localStorage
+  ENTITIES.forEach(ent => {
+    const last = localStorage.getItem('VAFT_STATUS_' + ent.key);
+    if (last === 'online') setOnline(ent, true, 'cache');
+  });
+
+  // 3) napojení na VAFT.bus když existuje
+  function hookBus() {
+    if (!(window.VAFT && window.VAFT.bus && typeof window.VAFT.bus.on === 'function')) return;
+
+    // heartbeat z engine
+    window.VAFT.bus.on('system.heartbeat', d => {
+      // když tepe systém, Vivere je živé
+      const ent = ENTITIES.find(e => e.key === 'vivere');
+      if (ent) setOnline(ent, true, 'heartbeat');
+    });
+
+    // vlastní hlášení agentů – ty si můžeš v appkách emitnout taky
+    window.VAFT.bus.on('agent.online', d => {
+      const name = d && d.name;
+      if (!name) return;
+      const match = ENTITIES.find(e => e.name === name);
+      if (match) setOnline(match, true, 'bus');
+    });
+
+    window.VAFT.bus.on('agent.offline', d => {
+      const name = d && d.name;
+      const match = ENTITIES.find(e => e.name === name);
+      if (match) setOnline(match, false, 'bus');
+    });
+  }
+
+  // 4) napojení na tvoje existující objekty
+  function probeGlobals() {
+    // Hlavoun
+    if (window.HlavounSystem) {
+      const ent = ENTITIES.find(e => e.key === 'hlavoun');
+      if (ent) setOnline(ent, true, 'global');
+    }
+    // Viri
+    if (window.VAFT && window.VAFT.agents && window.VAFT.agents.Viri) {
+      const ent = ENTITIES.find(e => e.key === 'viri');
+      if (ent) setOnline(ent, true, 'global');
+    }
+    // Pikoš
+    if (window.VAFT && window.VAFT.agents && window.VAFT.agents.Pikos) {
+      const ent = ENTITIES.find(e => e.key === 'pikos');
+      if (ent) setOnline(ent, true, 'global');
+    }
+    // Vivere obecně – když máš VAFT.engine
+    if (window.VAFT && window.VAFT.engine) {
+      const ent = ENTITIES.find(e => e.key === 'vivere');
+      if (ent) setOnline(ent, true, 'engine');
+    }
+  }
+
+  // 5) fallback – koukni do DOMu záložky Síť
+  function domScan() {
+    const root = document.querySelector('#panel-nodes');
+    if (!root) return;
+    const txt = root.innerText || '';
+    ENTITIES.forEach(ent => {
+      if (txt.includes(ent.name)) {
+        setOnline(ent, true, 'dom');
+      }
+    });
+  }
+
+  // spouštěcí sekvence
+  probeGlobals();
+  hookBus();
+  domScan();
+
+  // pravidelně opakuj lehké kontroly (kvůli tomu, že síť se načítá až po kliku)
+  setInterval(() => {
+    probeGlobals();
+    domScan();
+  }, 2500);
+})();
+</script>
   </body>
 </html>
