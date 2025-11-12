@@ -855,6 +855,63 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 })();
 </script>
 
+</script>
+
+<!-- 🔰 RESCUE LAYER: kořen jede i když pod-světy vrací 404 -->
+<script>
+(function () {
+  const OPTIONAL_HTML = [
+    './Revia/index.html',
+    './Braska-Hlava/index.html',
+    './Hlavoun/index.html',
+    './Meziprostor-Core/index.html',
+    './VAFT-Network/index.html'
+  ];
+
+  const isOptional = (url) => {
+    try {
+      const u = new URL(url, location.href).href;
+      return OPTIONAL_HTML.some(p => u.endsWith(p));
+    } catch { return false; }
+  };
+
+  const log = (msg) => {
+    try { window.VAFT_CHYBOZROUT && window.VAFT_CHYBOZROUT.log('⚠️ ' + msg); } catch {}
+    console.log('[RESCUE]', msg);
+  };
+
+  const origFetch = window.fetch.bind(window);
+  window.fetch = async function (input, init) {
+    const url = typeof input === 'string' ? input : (input?.url || '');
+    try {
+      const res = await origFetch(input, init);
+      if (res.status === 404 && isOptional(url)) {
+        log('404 na ' + url + ' → dávám placeholder, kořen běží dál');
+        const body = '<!doctype html><meta charset="utf-8">' +
+          '<div data-vaft-placeholder="1" style="display:none">VAFT_PLACEHOLDER</div>';
+        return new Response(body, { status: 200, headers: { 'Content-Type': 'text/html' } });
+      }
+      return res;
+    } catch (e) {
+      if (isOptional(url)) {
+        log('Chyba načítání ' + url + ' → dávám placeholder');
+        const body = '<!doctype html><div data-vaft-placeholder="1" style="display:none"></div>';
+        return new Response(body, { status: 200, headers: { 'Content-Type': 'text/html' } });
+      }
+      throw e;
+    }
+  };
+
+  window.addEventListener('unhandledrejection', (ev) => {
+    log('Unhandled promise: ' + (ev.reason && ev.reason.message || ev.reason));
+    ev.preventDefault();
+  });
+  window.addEventListener('error', (ev) => {
+    log('Chyba: ' + ev.message);
+  });
+})();
+</script>
+
 <!-- 💡 TADY vlož ten RepairNet -->
 <script src="./chybozrout-opravar/repairnet.js?v=10"></script>
 
