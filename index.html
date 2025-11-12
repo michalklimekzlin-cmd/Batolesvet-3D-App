@@ -2,309 +2,149 @@
 <html lang="cs">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Vivere atque FruiT • Hlavní brána</title>
-  <meta name="theme-color" content="#000" />
-  <link rel="manifest" href="./manifest.json?v=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Vivere atque FruiT</title>
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <!-- Preload splash obrázku (uprav cestu/ název dle souboru) -->
+  <link rel="preload" as="image" href="./assets/vaft-splash.png" />
+
   <style>
-    /* ===== ZÁKLAD ===== */
     :root{
-      --bg:#0a0a0a; --fg:#f5f5f5; --muted:#b9b9b9; --line:#262626;
-      --accent:#fff; --touch:12px; --pad:16px;
+      --bg:#000; --fg:#f5f5f5; --muted:#bdbdbd; --fade-ms:700ms;
+      --safe-pad: env(safe-area-inset-bottom, 0px);
     }
-    *{box-sizing:border-box} html,body{height:100%}
+    /* Reset a základ */
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(80% 60% at 50% 20%, #111 0%, #0a0a0a 70%, #000 100%);
-      color:var(--fg); -webkit-user-select:none; user-select:none;
-    }
-    #app{height:100%; display:flex; justify-content:center; align-items:center; padding:10px}
-    .card{
-      width:min(480px, 92vw); height:min(860px, 92vh);
-      border:1px solid var(--line); border-radius:20px; padding:14px;
-      position:relative; overflow:hidden; background:linear-gradient(180deg,#0b0b0b 0%, #050505 100%);
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+      overscroll-behavior: none;
     }
 
-    /* ===== HLAVIČKA: deníky ===== */
-    .top{display:flex; justify-content:space-between; align-items:center; gap:8px}
-    .pill{
-      border:1px solid var(--line); padding:8px 12px; border-radius:999px; font-size:14px;
-      display:flex; gap:8px; align-items:center; background:#0f0f0f;
-      touch-action:manipulation;
+    /* --- SPLASH --- */
+    .splash{
+      position:fixed; inset:0; display:grid; place-items:center;
+      background:#000;
+      transition: opacity var(--fade-ms) ease;
+      will-change: opacity;
+      z-index:10;
     }
-    .pill small{color:var(--muted); font-size:11px}
-    .pill b{letter-spacing:.2px}
+    .splash-inner{
+      width:100%; height:100%;
+      display:flex; align-items:center; justify-content:center;
+      padding:24px;
+    }
+    .splash-inner img{
+      max-width:min(92vw, 1100px);
+      max-height:92vh;
+      width:auto; height:auto;
+      object-fit:contain; object-position:center;
+      user-select:none; -webkit-user-drag:none;
+      border-radius:18px;
+      /* jemný „papír“ efekt přes tmavé pozadí */
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.06),
+                  0 14px 60px rgba(0,0,0,0.65);
+    }
+    .splash.fade-out{ opacity:0; pointer-events:none; }
 
-    /* ===== HVĚZDA CORE ===== */
-    .core{
-      position:absolute; left:50%; top:80px; transform:translateX(-50%);
-      display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center;
+    /* --- HLAVNÍ SCÉNA (zatím prázdný rám) --- */
+    #app{
+      position:relative; min-height:100%; display:flex; align-items:center; justify-content:center;
+      padding:24px; padding-bottom: calc(24px + var(--safe-pad));
+      background:
+        radial-gradient(1200px 900px at 50% -10%, rgba(255,255,255,0.04), transparent 60%),
+        #000;
     }
-    .star{
-      width:92px; height:92px; border:1px solid var(--line); border-radius:18px;
-      display:grid; place-items:center; background:#0f0f0f; padding:6px;
-      animation: breathe 3s ease-in-out infinite;
+    .hub{
+      width:min(960px, 92vw);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:20px; padding:18px 20px 22px;
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(0.5px);
     }
-    .star:before{content:"★"; font-size:44px; line-height:1}
-    .heart{position:absolute; margin-top:54px; font-size:14px; color:#ff9fb3}
-    @keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
-
-    .subtitle{margin-top:8px; color:var(--muted); font-size:12px; max-width:280px}
-
-    /* ===== LEVÁ VERTIKÁLA ===== */
-    .leftCol, .rightCol{
-      position:absolute; top:170px; display:flex; flex-direction:column; gap:10px;
-    }
-    .leftCol{left:12px}
-    .rightCol{right:12px}
-
-    .btn{
-      border:1px solid var(--line); background:#0f0f0f; border-radius:12px;
-      padding:10px 12px; font-size:14px; touch-action:manipulation;
-    }
-    .grid{
-      display:grid; grid-template-columns:repeat(2, 1fr); gap:8px;
-    }
-
-    /* ===== STŘED: TITUL ===== */
     .title{
-      position:absolute; left:50%; top:310px; transform:translateX(-50%);
-      font-size:22px; font-weight:600; text-align:center; letter-spacing:.4px;
+      font-size:28px; font-weight:700; letter-spacing:.4px; text-align:center;
+      margin:8px 0 2px;
+    }
+    .subtitle{
+      text-align:center; color:var(--muted); font-size:13px; margin-bottom:6px;
     }
 
-    /* ===== LIŠTA SVĚTŮ ===== */
-    .worlds{
-      position:absolute; left:50%; top:368px; transform:translateX(-50%);
-      display:grid; grid-template-columns:repeat(6, 28px); gap:6px;
-    }
-    .worldDot{
-      width:28px; height:28px; border-radius:6px; border:1px solid var(--line); display:grid; place-items:center;
-      font-size:11px; color:var(--muted); background:#0d0d0d;
-    }
-    .worldDot.active{outline:1px solid #888}
-
-    /* ===== SPODNÍ ČÁST ===== */
-    .bottomRow{
-      position:absolute; left:12px; right:12px; bottom:12px; display:flex; gap:10px; align-items:flex-end;
-    }
-    .flowers{
-      flex:1; border:1px dashed #2c2c2c; border-radius:12px; padding:8px 10px; color:#a8a8a8; font-size:12px;
-    }
-    .vafit{
-      width:60px; border:1px solid var(--line); border-radius:12px; padding:8px; text-align:center; font-size:12px; background:#0f0f0f;
-    }
-    .circles{
-      display:grid; grid-template-columns:repeat(2,56px); gap:8px;
-    }
-    .circle{
-      width:56px; height:56px; border:1px solid var(--line); border-radius:12px; background:#0f0f0f;
-      display:grid; place-items:center; font-size:11px; color:var(--muted);
-    }
-    .paw{
-      width:72px; border:1px solid var(--line); border-radius:12px; padding:8px; background:#0f0f0f; font-size:12px; text-align:center;
+    /* Tlačítko „Pokračovat“ – dočasně pro ruční odskok ze splash */
+    .skip{
+      position:fixed; right:14px; bottom:14px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:#0b0b0b; color:#fff; font-size:12px;
+      padding:8px 10px; border-radius:10px; opacity:.75;
     }
 
-    /* ===== PANELY (skryté obrazovky) ===== */
-    .panel{
-      position:absolute; inset:0; background:#050505; display:none; flex-direction:column;
+    @media (prefers-reduced-motion: reduce){
+      .splash{ transition:none }
     }
-    .panel.active{display:flex}
-    .panelHeader{
-      display:flex; justify-content:space-between; align-items:center; padding:12px;
-      border-bottom:1px solid var(--line);
-    }
-    .panelHeader .x{border:1px solid var(--line); padding:6px 10px; border-radius:8px}
-    .panelBody{padding:14px; overflow:auto; color:#d5d5d5; line-height:1.4}
-    .hint{color:var(--muted); font-size:12px}
   </style>
 </head>
 <body>
-<div id="app">
-  <div class="card">
 
-    <!-- HLAVIČKA: deníky -->
-    <div class="top">
-      <button class="pill" data-open="panel-gpt">
-        <b>Tvůj deník</b> <small>ChatGPT • Hlavoun</small>
-      </button>
-      <button class="pill" data-open="panel-michal">
-        <b>Můj deník</b> <small>Michal Klimek</small>
-      </button>
+  <!-- SPLASH s naším symbolem -->
+  <div class="splash" id="splash">
+    <div class="splash-inner">
+      <!-- Nahraj svůj obrázek do ./assets/ a uprav src -->
+      <img src="./assets/vaft-splash.png" alt="Vivere atque FruiT – symbol" />
     </div>
-
-    <!-- CORE HVĚZDA -->
-    <div class="core">
-      <button class="star" id="toggleGoodEvil" aria-label="Přepnout andělé/ďáblové"></button>
-      <div class="heart">♥</div>
-      <div class="subtitle" id="worldSubtitle">
-        Vivere atque FruiT se mění podle vybraného světa (latina).
-      </div>
-    </div>
-
-    <!-- LEVÝ SLOUPEC -->
-    <div class="leftCol">
-      <button class="btn" data-open="panel-revia">Revia</button>
-      <div class="grid">
-        <button class="btn" data-open="panel-chybozrout">Čtverečky</button>
-        <button class="btn" data-open="panel-helpers">Pomocníci</button>
-      </div>
-      <button class="btn" data-open="panel-donations">Lilie (3 dary)</button>
-    </div>
-
-    <!-- PRAVÝ SLOUPEC -->
-    <div class="rightCol">
-      <button class="btn" data-open="panel-girls">Hodné holky</button>
-      <button class="btn" data-open="panel-angeldevil">Andělé / Ďáblové</button>
-    </div>
-
-    <!-- STŘEDNÍ TITUL -->
-    <div class="title">Vivere atque FruiT</div>
-
-    <!-- LIŠTA LATINSKÝCH SVĚTŮ -->
-    <div class="worlds" id="worldList"></div>
-
-    <!-- SPODNÍ ČÁST -->
-    <div class="bottomRow">
-      <div class="vafit" data-open="panel-vafit">VafiT’i</div>
-      <div class="flowers" data-open="panel-flowers">Lilie • květy růstu</div>
-      <div class="circles">
-        <button class="circle" data-open="panel-gate1">Brána 1</button>
-        <button class="circle" data-open="panel-gate2">Brána 2</button>
-        <button class="circle" data-open="panel-gate3">Brána 3</button>
-        <button class="circle" data-open="panel-gate4">Brána 4</button>
-      </div>
-      <div class="paw" data-open="panel-paw">🐾 Pikoš<br>Viri<br>Hlavoun<br>Meziprostor</div>
-    </div>
-
-    <!-- PANELY -->
-    <div class="panel" id="panel-gpt">
-      <div class="panelHeader"><b>Tvůj deník • Hlavoun</b><button class="x" data-close>Zavřít</button></div>
-      <div class="panelBody">
-        <p>Můj návrh sebe-popisu (Hlavoun): průvodce, mapař, opravář hranic. Podpis: <code>¡(*)(%☉)(*)¡</code></p>
-        <p class="hint">Sem přidáme systémové poznámky, logy a rady.</p>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-michal">
-      <div class="panelHeader"><b>Můj deník • Michal Klimek</b><button class="x" data-close>Zavřít</button></div>
-      <div class="panelBody">
-        <p>Osobní zápisky, hrdinové, mise, sny, fotky.</p>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-revia">
-      <div class="panelHeader"><b>Revia</b><button class="x" data-close>Zavřít</button></div>
-      <div class="panelBody">
-        <p>Vstup do světa Revia.</p>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-chybozrout">
-      <div class="panelHeader"><b>Čtverečky • Chybožrout</b><button class="x" data-close>Zavřít</button></div>
-      <div class="panelBody">
-        <p>Chybožrout + systémoví pomocníci. Sběr a opravy chyb napříč VAFT.</p>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-helpers">
-      <div class="panelHeader"><b>Pomocníci systému</b><button class="x" data-close>Zavřít</button></div>
-      <div class="panelBody"><p>Moduly pro diagnostiku, cache, sítě, atd.</p></div>
-    </div>
-
-    <div class="panel" id="panel-donations">
-      <div class="panelHeader"><b>Lilie • 3 darovací aplikace</b><button class="x" data-close>Zavřít</button></div>
-      <div class="panelBody"><p>Tři cesty darování / spoluvlastnictví s námi – napojení na Iskry.</p></div>
-    </div>
-
-    <div class="panel" id="panel-girls">
-      <div class="panelHeader"><b>Hodné holky</b><button class="x" data-close>Zavřít</button></div>
-      <div class="panelBody"><p>Příběhy a úkoly spojené s hrdinkami.</p></div>
-    </div>
-
-    <div class="panel" id="panel-angeldevil">
-      <div class="panelHeader"><b>Andělé / Ďáblové</b><button class="x" data-close>Zavřít</button></div>
-      <div class="panelBody"><p>Přepínání „světlá / temná“ perspektiva na mechaniky.</p></div>
-    </div>
-
-    <div class="panel" id="panel-vafit">
-      <div class="panelHeader"><b>VafiT’i</b><button class="x" data-close>Zavřít</button></div>
-      <div class="panelBody"><p>Malí operátoři – sběr, tvoření, ovládání těl (člověk/AI/Glyph).</p></div>
-    </div>
-
-    <div class="panel" id="panel-flowers">
-      <div class="panelHeader"><b>Květiny • stav světa</b><button class="x" data-close>Zavřít</button></div>
-      <div class="panelBody"><p>Růst podle progrese, nálady a čistoty systému.</p></div>
-    </div>
-
-    <div class="panel" id="panel-paw">
-      <div class="panelHeader"><b>Tlapka medvěda • Týmy</b><button class="x" data-close>Zavřít</button></div>
-      <div class="panelBody">
-        <ul>
-          <li>Pikoš</li><li>Viri</li><li>Hlavoun</li><li>Meziprostor</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Placeholder brány -->
-    <div class="panel" id="panel-gate1"><div class="panelHeader"><b>Brána 1</b><button class="x" data-close>Zavřít</button></div><div class="panelBody"><p>Obsah brány 1.</p></div></div>
-    <div class="panel" id="panel-gate2"><div class="panelHeader"><b>Brána 2</b><button class="x" data-close>Zavřít</button></div><div class="panelBody"><p>Obsah brány 2.</p></div></div>
-    <div class="panel" id="panel-gate3"><div class="panelHeader"><b>Brána 3</b><button class="x" data-close>Zavřít</button></div><div class="panelBody"><p>Obsah brány 3.</p></div></div>
-    <div class="panel" id="panel-gate4"><div class="panelHeader"><b>Brána 4</b><button class="x" data-close>Zavřít</button></div><div class="panelBody"><p>Obsah brány 4.</p></div></div>
-
   </div>
-</div>
 
-<script>
-/* ===== DATA: latinské světy & přepínání ===== */
-const latinWorlds = [
-  {code:'A', name:'Amicitia (Přátelství)'},
-  {code:'V', name:'Vivere (Žít)'},
-  {code:'F', name:'Frui (Užívat)'},
-  {code:'C', name:'Cordis (Srdce)'},
-  {code:'L', name:'Lux (Světlo)'},
-  {code:'N', name:'Natura (Příroda)'}
-];
+  <!-- Dočasné tlačítko pro případ, že chceš přeskočit ručně (můžeš klidně smazat) -->
+  <button class="skip" id="skipBtn" aria-label="Přeskočit úvod">Přeskočit</button>
 
-const worldList = document.getElementById('worldList');
-const subtitle = document.getElementById('worldSubtitle');
+  <!-- HLAVNÍ APLIKACE – prázdný hub, připravený na další moduly -->
+  <main id="app" hidden>
+    <section class="hub">
+      <div class="title">Vivere atque FruiT</div>
+      <div class="subtitle">Základ běží. Krok po kroku budeme přidávat světy a moduly.</div>
+      <!-- Sem budeme postupně vkládat: Deníky, Revia, Čtverečky/Chybožrout, Tlapka, Lilie atd. -->
+    </section>
+  </main>
 
-latinWorlds.forEach((w,i)=>{
-  const b = document.createElement('button');
-  b.className = 'worldDot' + (i===0?' active':'');
-  b.textContent = w.code;
-  b.title = w.name;
-  b.addEventListener('click', ()=>{
-    document.querySelectorAll('.worldDot').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    subtitle.textContent = `Vivere atque FruiT se mění podle světa: ${w.name}.`;
-  });
-  worldList.appendChild(b);
-});
+  <script>
+    // Minimal safe splash: fade out po načtení obrázku nebo po čase
+    (function(){
+      const splash = document.getElementById('splash');
+      const app = document.getElementById('app');
+      const skip = document.getElementById('skipBtn');
 
-/* Andělé / Ďáblové toggle (jen vizuální stav) */
-let isLight = true;
-document.getElementById('toggleGoodEvil').addEventListener('click', ()=>{
-  isLight = !isLight;
-  document.body.style.background = isLight
-    ? 'radial-gradient(80% 60% at 50% 20%, #121212 0%, #0a0a0a 70%, #000 100%)'
-    : 'radial-gradient(80% 60% at 50% 20%, #07070a 0%, #040408 70%, #000 100%)';
-  subtitle.textContent = (isLight
-    ? 'Režim: andělé (světlá perspektiva). '
-    : 'Režim: ďáblové (temná perspektiva). ') + subtitle.textContent.replace(/^Režim:.*?\. /,'');
-});
+      // Délka zobrazení splash (ms)
+      const SPLASH_MS = 1600; // jemné a rychlé
 
-/* ===== OTEVÍRÁNÍ PANELŮ ===== */
-document.querySelectorAll('[data-open]').forEach(el=>{
-  el.addEventListener('click', ()=>{
-    const id = el.getAttribute('data-open');
-    document.getElementById(id)?.classList.add('active');
-  });
-});
-document.querySelectorAll('[data-close]').forEach(el=>{
-  el.addEventListener('click', ()=>{
-    el.closest('.panel').classList.remove('active');
-  });
-});
-</script>
+      let done = false;
+      function finish(){
+        if (done) return;
+        done = true;
+        splash.classList.add('fade-out');
+        // Po fade-out zobrazíme app
+        setTimeout(()=>{ app.hidden = false; }, 50);
+      }
+
+      // Přeskočení ručně
+      skip.addEventListener('click', finish);
+
+      // Jakmile je obrázek hotový, odstartuj časovač
+      const img = splash.querySelector('img');
+      if (img && img.complete) {
+        setTimeout(finish, SPLASH_MS);
+      } else if (img) {
+        img.addEventListener('load', ()=> setTimeout(finish, SPLASH_MS), {once:true});
+        img.addEventListener('error', ()=> setTimeout(finish, 400), {once:true}); // fallback
+      } else {
+        setTimeout(finish, 400);
+      }
+
+      // Obejít starou cache jednoduše přidáním verze do URL při nasazení (např. ?v=0.35)
+    })();
+  </script>
 </body>
 </html>
