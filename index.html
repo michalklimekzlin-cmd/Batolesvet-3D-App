@@ -855,8 +855,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 })();
 </script>
 
-</script>
-
 <!-- 🔰 RESCUE LAYER: kořen jede i když pod-světy vrací 404 -->
 <script>
 (function () {
@@ -936,6 +934,8 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 <!-- 4) chybožrout UI + nakonec app UI -->
 <script src="./vaft.chybozrout.js?v=11"></script>
 <script src="./app.js?v=11"></script>
+
+<script>
 <!-- REPAIR ORDER END -->
 (function () {
   // při načtení doplníme stav
@@ -948,7 +948,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
       box.textContent = '0';
     }
   }
-
   // rotace písmen
   function nextLetter() {
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -958,6 +957,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     localStorage.setItem('VAFT_LETTER_INDEX', idx);
     return letter;
   }
+ </script>
 
 <script>
 if ('serviceWorker' in navigator) {
