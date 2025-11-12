@@ -793,6 +793,68 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   })(window);
 </script>
 
+<!-- RepairNet + Vivere loader (sekvenční, bezpečný) -->
+<script>
+(function () {
+  // pomocník – načti skript a obejdi cache
+  function load(src){
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src + (src.includes('?') ? '&' : '?') + 'v=' + Date.now();
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('404/Načtení selhalo: ' + src));
+      document.body.appendChild(s);
+    });
+  }
+
+  // spusť až po DOMContentLoaded
+  window.addEventListener('DOMContentLoaded', async () => {
+    try {
+      // 1) opravářský mozek jako první
+      await load('./chybozrout-opravar/repairnet.js');
+
+      // 2) JÁDRO DŘÍV NEŽ AGENTI (to řeší "VAF_engine not found")
+      await load('./vaft.engine.js');
+      await load('./vaft.bus.js');
+      await load('./vaft.agents.js');
+
+      // 3) ostatní moduly a agenti
+      await load('./hlavoun.js');
+      await load('./viri.js');
+      await load('./pikos.js');
+      await load('./agents.js');
+      await load('./agents_v3.js');
+      await load('./vaft.ascend.js');
+      await load('./vaft.diagnostics.js');
+
+      // 4) UI + Chybožrout
+      await load('./app.js');
+      await load('./vaft.chybozrout.js');
+
+      // 5) inicializace Chybožrouta
+      if (window.VAFT_CHYBOZROUT) {
+        window.VAFT_CHYBOZROUT({
+          appName: 'Vivere atque FruiT',
+          version: window.V || 'dev'
+        });
+      }
+
+      console.log('[VAFT] loader OK');
+    } catch (e) {
+      console.error('[VAFT] loader error:', e);
+      // hezky to ukaž i v UI (panel v Revii)
+      try {
+        const panel = document.querySelector('.revia-panel') || document.body;
+        const box = document.createElement('pre');
+        box.style.cssText = 'white-space:pre-wrap;background:#1a1f28;border:1px solid #0003;border-radius:10px;padding:10px;color:#ffb;';
+        box.textContent = '❌ ' + (e.message || e);
+        panel.appendChild(box);
+      } catch {}
+    }
+  });
+})();
+</script>
+
 <!-- 💡 TADY vlož ten RepairNet -->
 <script src="./chybozrout-opravar/repairnet.js?v=10"></script>
 
