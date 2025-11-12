@@ -902,93 +902,26 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     return letter;
   }
 
- <script>
-// registrace / aktualizace service workeru
+<script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('./service-worker.js?v=4')
-      .then(reg => {
-        console.log('[SW] registrován', reg);
+  window.addEventListener('load', async () => {
+    try {
+      // registruj jen když stránku zatím neřídí žádný SW
+      if (!navigator.serviceWorker.controller) {
+        const reg = await navigator.serviceWorker.register('./service-worker.js');
+        console.log('[SW] registrován', reg.scope);
 
-        // když už čeká nový SW → řekni mu "aktivuj se"
+        // pokud je nová verze připravená, slušně ji aktivuj
         if (reg.waiting) {
           reg.waiting.postMessage({ type: 'SKIP_WAITING' });
         }
-
-        // když přijde nová verze během běhu
-        reg.addEventListener('updatefound', () => {
-          const newWorker = reg.installing;
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed') {
-              console.log('[SW] je dostupná nová verze');
-              // tady můžeš udělat refresh nebo ukázat hlášku
-              // location.reload();
-            }
-          });
-        });
-      });
+      }
+    } catch (e) {
+      console.warn('[SW] chyba registrace', e);
+    }
   });
 }
 </script>
-  <script>
-  // registrace / aktualizace service workeru
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then(reg => {
-          console.log('[SW] registrován', reg.scope);
-
-          // když přijde nová verze SW → řekni stránce
-          if (reg.waiting) {
-            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-          }
-
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                console.log('[SW] je dostupná nová verze – reloadnu');
-                // tady prostě refresh – dostaneš nový index
-                window.location.reload();
-              }
-            });
-          });
-        })
-        .catch(err => console.warn('[SW] chyba registrace', err));
-    });
-  }
-<script>
-if ('serviceWorker' in navigator) {
-  let alreadyRefreshed = false;
-
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(reg => {
-        console.log('[SW] registrován');
-
-        reg.addEventListener('updatefound', () => {
-          const newWorker = reg.installing;
-          if (!newWorker) return;
-
-          newWorker.addEventListener('statechange', () => {
-            if (
-              newWorker.state === 'installed' &&
-              navigator.serviceWorker.controller &&
-              !alreadyRefreshed
-            ) {
-              alreadyRefreshed = true;
-              console.log('[SW] nová verze aktivní, reload');
-              setTimeout(() => window.location.reload(), 1000);
-            }
-          });
-        });
-      })
-      .catch(err => console.warn('[SW] Chyba registrace:', err));
-  });
-}
-</script>
-<script>
 // ─── VAFT nezničitelný kořen ───────────────────────────
 (function (win) {
   if (win.VAFT_CORE) return;
