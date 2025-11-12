@@ -1,0 +1,34 @@
+window.RepairNet = {
+  version: '2.1',
+  async scan() {
+    const findings = [];
+    try {
+      const files = [
+        '../index.html',
+        '../app.js',
+        '../vaft.engine.js',
+        '../vaft.bus.js'
+      ];
+
+      for (const f of files) {
+        findings.push(`Kontroluji ${f}…`);
+        const resp = await fetch(f + '?v=' + Date.now());
+        if (!resp.ok) {
+          findings.push(`❌ Soubor ${f} se nepodařilo načíst (${resp.status})`);
+          continue;
+        }
+        const text = await resp.text();
+        if (text.includes('<script><script>')) {
+          findings.push(`⚠️ ${f}: nalezen dvojitý <script>`);
+        } else if (text.includes('console.log(')) {
+          findings.push(`ℹ️ ${f}: obsahuje logy (kontrola OK)`);
+        } else {
+          findings.push(`✅ ${f}: bez zjevných chyb`);
+        }
+      }
+    } catch (e) {
+      findings.push('💥 Chyba během skenu: ' + e.message);
+    }
+    return findings;
+  }
+};
