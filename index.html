@@ -979,10 +979,12 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-// ─── VAFT nezničitelný kořen ───────────────────────────
+<!-- —— VAFT nezničitelný kořen —— -->
+<script>
 (function (win) {
   if (win.VAFT_CORE) return;
 
+  // 🧬 DNA
   const dna = {
     name: 'Vivere atque FruiT',
     short: 'VaFT',
@@ -993,30 +995,37 @@ if ('serviceWorker' in navigator) {
     createdAt: '2025-11-11'
   };
 
+  // 🧩 CORE – centrální entita
   const core = {
     id: 'vaft://core',
     version: '1.0',
     dna,
     role: 'sovereign',     // vládnoucí jádro
     signature: 'VaFT-T',
+
     register: function (what) {
       try {
         this.modules = this.modules || [];
         this.modules.push({ name: what, ts: Date.now() });
-      } catch (e) {}
+        console.log('[VAFT] registrován modul:', what);
+      } catch (e) {
+        console.warn('[VAFT] registrace selhala:', e);
+      }
     }
   };
 
-  // 🔸 tady přidáš vrstvy DNA
+  // 🪶 vrstvy DNA (životní vrstvy)
   core.dna.layers = ['scar', 'ink', 'memory', 'world'];
   Object.freeze(core.dna.layers);
 
-  // 🔹 a teď teprve zamrazíš DNA a celé jádro
+  // ❄️ zmražení DNA i jádra
   Object.freeze(core.dna);
   Object.freeze(core);
 
-  // 🔹 uložíš ho do systému
+  // 💾 uložení do systému
   win.VAFT_CORE = core;
+
+  console.log('🧠 [VAFT_CORE] aktivní:', core);
 })(window);
 </script>
   
