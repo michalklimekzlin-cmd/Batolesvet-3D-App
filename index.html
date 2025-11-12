@@ -790,15 +790,18 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
   // dáme to do window
   win.VAFT_CORE = core;
-})(window);
+  })(window);
 </script>
-    
-    <!-- původní skripty -->
-    <script src="./app.js"></script>
-  <!-- CHYBOŽROUT – OPRAVÁŘ -->
+
+<!-- 💡 TADY vlož ten RepairNet -->
+<script src="./chybozrout-opravar/repairnet.js?v=10"></script>
+
+<!-- původní skripty -->
+<script src="./app.js"></script>
+<!-- CHYBOŽROUT – OPRAVÁŘ -->
 <script src="./vaft.chybozrout.js?v=1"></script>
 <script>
-  window.VAFT_CHYBOZROUT && window.VAFT_CHYBOZROUT.init({
+  window.VAFT_CHYBOZROUT && window.VAFT_CHYBOZROUT({
     appName: 'Vivere atque FruiT',
     version: window.V || 'dev'
   });
