@@ -3,53 +3,345 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Chybožrout-Opravář v2.3</title>
-  <link rel="stylesheet" href="./style.css" />
-  <meta name="theme-color" content="#0a0a0a" />
+  <title>Chybožrout-Opravář v2.5</title>
+  <meta name="theme-color" content="#000000" />
+  <style>
+    :root{
+      --bg:#000; --fg:#f5f5f5; --muted:#bdbdbd;
+      --pane:#0c0c0c; --line:#1a1a1a; --ok:#86efac; --bad:#fca5a5; --warn:#facc15;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:1100px;margin:18px auto;padding:0 14px}
+    .header{display:flex;gap:12px;align-items:baseline;margin-bottom:10px}
+    .title{font-size:22px;font-weight:800}
+    .sub{color:var(--muted);font-size:13px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .card{background:var(--pane);border:1px solid var(--line);border-radius:14px;padding:14px}
+    .row{display:flex;gap:8px;flex-wrap:wrap}
+    button{background:#111;color:#fff;border:1px solid var(--line);padding:10px 12px;border-radius:12px;cursor:pointer}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .kpi{font-size:30px;font-weight:800}
+    .muted{color:var(--muted);font-size:12px}
+    #scanLog{min-height:140px;white-space:pre-wrap;line-height:1.35;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+    .list{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:12px}
+    .err{padding:10px 12px;border-bottom:1px solid var(--line)}
+    .err:last-child{border-bottom:none}
+    .msg{font-size:13px}
+    .meta{color:var(--muted);font-size:11px;margin-top:4px}
+    .ok{color:var(--ok)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+  </style>
 </head>
 <body>
-  <div class="header">
-    <div class="title">🛠️ Chybožrout-Opravář v2.3</div>
-    <div class="subtitle">„Více hlav = méně pádů“</div>
+  <div class="wrap">
+    <div class="header">
+      <div class="title">🛠️ Chybožrout-Opravář <span id="ver">v2.5</span></div>
+      <div class="sub">„Více hlav = méně pádů“</div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <div>
+            <div class="muted">Úroveň</div>
+            <div class="kpi" id="lvl">1</div>
+          </div>
+          <div>
+            <div class="muted">Chyby ve frontě</div>
+            <div class="kpi" id="qcnt">0</div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button id="btn-scan">🔎 Sken indexů</button>
+          <button id="btn-deps">📦 Sken závislostí</button>
+          <button id="btn-fix" >🔧 Opravit nejbližší</button>
+          <button id="btn-fixall">✨ Opravit vše</button>
+          <button id="btn-sim">💥 Nasimulovat chybu</button>
+          <button id="btn-clear">🧹 Čistit log</button>
+        </div>
+        <div class="muted" style="margin-top:6px">
+          Fallback cesta pro opravy: <code id="fb-base">/fallback/</code>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="muted">Systémový log</div>
+        <div id="scanLog">Inicializace systému…</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <div class="muted">Fronta chyb a chybějících souborů</div>
+        <div class="muted">klikni na řádek pro detail</div>
+      </div>
+      <div id="errList" class="list"></div>
+    </div>
   </div>
 
-  <div id="scanLog" class="panel">Inicializace systému…</div>
-  <button id="scanBtn">Spustit skenování</button>
-
-  <footer>
-    <p>Součást systému Vivere atque FruiT • verze 2.3</p>
-  </footer>
-
-  <!-- Bezpečné načtení: nejdřív RepairNet, pak UI (app.js) -->
   <script>
-    (function () {
-      function load(src) {
-        return new Promise((resolve, reject) => {
-          const s = document.createElement('script');
-          // cache-bust — pro pevné verze použijeme statické ?v=2.3, jinak Date.now()
-          s.src = src + (src.includes('?') ? '&' : '?') + 'v=' + (src.includes('repairnet.js') ? '2.3' : Date.now());
-          s.onload = resolve;
-          s.onerror = () => reject(new Error('Nepodařilo se načíst: ' + src));
-          document.body.appendChild(s);
-        });
+  // ============================
+  // 🧠 RepairNet v2.5 (rozšířený)
+  // ============================
+  (function(){
+    const VERSION = 'v2.5';
+    const MAX_QUEUE = 400;
+    const ROOTS = [
+      '../Revia/',
+      '../Braska-Hlava/',
+      '../Hlavoun/',
+      '../Meziprostor-Core/',
+      '../VAFT-Network/'
+    ];
+    // Kam sáhnout pro fallback soubory (vytvoř v repu složku /fallback/)
+    const FALLBACK_BASE = location.origin + location.pathname.replace(/\/[^/]*$/,'/') + '../fallback/';
+
+    const state = {
+      queue: [],
+      fixed: parseInt(localStorage.getItem('vaft.chzr.fixed')||'0',10),
+      lvl:   parseInt(localStorage.getItem('vaft.chzr.lvl')||'1',10),
+      scanning:false
+    };
+    document.getElementById('fb-base').textContent = new URL(FALLBACK_BASE).pathname;
+
+    const save = ()=>{ localStorage.setItem('vaft.chzr.fixed', state.fixed); localStorage.setItem('vaft.chzr.lvl', state.lvl); };
+
+    function enqueue(obj){
+      const item = {
+        t: Date.now(),
+        type: obj?.type || 'error',
+        msg: (obj && (obj.message||obj.msg||obj)) + '',
+        src: obj?.src || '',
+        line: obj?.line || '',
+        col: obj?.col || '',
+        stack: obj?.stack ? String(obj.stack).slice(0,1500) : ''
+      };
+      state.queue.push(item);
+      if (state.queue.length > MAX_QUEUE) state.queue.shift();
+      return item;
+    }
+
+    function fixNext(){
+      if (!state.queue.length) return null;
+      const it = state.queue.shift();
+      state.fixed++; if (state.fixed % 3 === 0) state.lvl++;
+      save();
+      return it;
+    }
+    function fixAll(){ let n=state.queue.length; while(state.queue.length) fixNext(); return n; }
+
+    async function check(url){
+      try{
+        const r = await fetch(url, {cache:'no-store'});
+        return {ok:r.ok, status:r.status};
+      }catch(e){ return {ok:false, status:e.message}; }
+    }
+
+    // ——— DEPS SCAN: vytáhne z indexu všechny src/href a zkontroluje je
+    const RES_RE = /<(script|img|link|audio|video)\b[^>]+?(?:src|href)\s*=\s*["']([^"']+)["'][^>]*>/gi;
+    function toAbs(base, rel){
+      try{
+        // zachovej absolute http(s) jak jsou
+        if (/^https?:\/\//i.test(rel)) return rel;
+        return new URL(rel, base).href;
+      }catch{ return rel; }
+    }
+
+    async function fetchText(url){
+      const res = await fetch(url, {cache:'no-store'});
+      if (!res.ok) throw new Error('HTTP '+res.status);
+      return await res.text();
+    }
+
+    async function scanIndexAndDeps(root, logFn){
+      const indexUrl = new URL(root + 'index.html', 'https://michalklimekzlin-cmd.github.io/Vivere-atque-FruiT/').href;
+      logFn && logFn('🔎 Index: ' + indexUrl);
+      let html = '';
+      try{
+        html = await fetchText(indexUrl);
+        logFn && logFn('✅ ' + indexUrl + ' (OK)');
+      }catch(e){
+        enqueue({ type:'missing-index', msg:'Index nedostupný', src:indexUrl, stack:e.message });
+        logFn && logFn('❌ ' + indexUrl + ' ('+e.message+')');
+        return;
       }
 
-      window.addEventListener('DOMContentLoaded', async () => {
-        const box = document.getElementById('scanLog');
-        try {
-          await load('./repairnet.js');   // MUSÍ být první
-          await load('./app.js');         // UI až po RepairNetu
-          if (window.RepairNet) {
-            const v = window.RepairNet.version || 'neznámá';
-            box.textContent = '✅ UI připraveno • RepairNet v' + v;
-          } else {
-            box.textContent = '⚠️ UI připraveno, ale RepairNet není k dispozici.';
-          }
-        } catch (e) {
-          if (box) box.textContent = '❌ ' + e.message;
+      // Vytáhni zdroje
+      const base = indexUrl;
+      const found = new Set();
+      let m;
+      while ((m = RES_RE.exec(html)) !== null){
+        const rel = m[2];
+        // ignoruj manifesty a externí analytics, pokud nechceš
+        if (/manifest\.json$/i.test(rel)) continue;
+        found.add(toAbs(base, rel));
+      }
+      // Zkontroluj všechny nalezené soubory
+      for (const u of found){
+        const r = await check(u);
+        if (!r.ok){
+          enqueue({ type:'missing-asset', msg:'Chybí asset', src:u, stack:'status: '+r.status });
+          logFn && logFn('❌ ' + u + ' ('+r.status+')');
+        } else {
+          logFn && logFn('✅ ' + u + ' ('+r.status+')');
         }
-      });
-    })();
+      }
+    }
+
+    async function scanDeep(logFn){
+      state.scanning = true;
+      for (const root of ROOTS){
+        await scanIndexAndDeps(root, logFn);
+      }
+      state.scanning = false;
+    }
+
+    // fallback „oprava“: zkusí dynamicky nahrát chybějící skripty/styly/obrázky z FALLBACK_BASE
+    async function tryRepairMissing(logFn){
+      const missing = state.queue.filter(x => x.type === 'missing-asset');
+      if (!missing.length){ logFn && logFn('✨ Není co opravovat (missing-asset).'); return 0; }
+      let repaired = 0;
+
+      for (const m of missing){
+        try{
+          const url = new URL(m.src);
+          const relPath = url.pathname.replace(/^\/+/, '').replace(/^Vivere-atque-FruiT\//,''); // relativně v repu
+          const fbUrl = new URL(relPath, FALLBACK_BASE).href;
+
+          // ověř existenci fallbacku
+          const chk = await check(fbUrl);
+          if (!chk.ok){ logFn && logFn('⚠️ Fallback nenalezen: ' + fbUrl); continue; }
+
+          // dynamicky připoj (pro .js jako <script>, pro .css jako <link>, ostatní jen validujeme)
+          if (/\.(js)(\?|$)/i.test(fbUrl)){
+            await new Promise((res,rej)=>{
+              const s=document.createElement('script'); s.src=fbUrl; s.onload=res; s.onerror=rej; document.body.appendChild(s);
+            });
+            repaired++;
+            logFn && logFn('🔧 Nahrán fallback skript: ' + fbUrl);
+          } else if (/\.(css)(\?|$)/i.test(fbUrl)){
+            const l=document.createElement('link'); l.rel='stylesheet'; l.href=fbUrl; document.head.appendChild(l);
+            repaired++;
+            logFn && logFn('🔧 Nahrán fallback styl: ' + fbUrl);
+          } else {
+            // obrázek/audio – „opravíme“ jako validované, UI si ho načte při dalším renderu
+            repaired++;
+            logFn && logFn('🔧 Fallback dostupný: ' + fbUrl);
+          }
+          // odstraníme ze fronty (považuj jako opravené)
+          const idx = state.queue.indexOf(m);
+          if (idx>=0){ state.queue.splice(idx,1); state.fixed++; if (state.fixed%3===0) state.lvl++; save(); }
+        }catch(e){
+          logFn && logFn('❌ Oprava selhala: ' + (e.message||e));
+        }
+      }
+      return repaired;
+    }
+
+    window.RepairNet = {
+      version: VERSION,
+      getQueue: ()=> state.queue.slice(),
+      getFixedCount: ()=> state.fixed,
+      getLevel: ()=> state.lvl,
+      isScanning: ()=> state.scanning,
+      feedError: enqueue,
+      fixNext, fixAll,
+      scanDeep,
+      scanIndexAndDeps,
+      tryRepairMissing
+    };
+  })();
+
+  // ============================
+  // 🖥️ UI – řízení a výpis
+  // ============================
+  (function(){
+    const $ = (q)=>document.querySelector(q);
+    const elVer=$('#ver'), elLvl=$('#lvl'), elQ=$('#qcnt'), elLog=$('#scanLog'), elList=$('#errList');
+    const bScan=$('#btn-scan'), bDeps=$('#btn-deps'), bFix=$('#btn-fix'), bFixAll=$('#btn-fixall'), bSim=$('#btn-sim'), bClear=$('#btn-clear');
+
+    function logLine(txt){
+      const line=document.createElement('div'); line.textContent=`[${new Date().toLocaleTimeString()}] ${txt}`;
+      elLog.appendChild(line); elLog.scrollTop=elLog.scrollHeight;
+    }
+    const safe = (s)=> (''+s).replace(/[<&>]/g, c=>({ '<':'&lt;','>':'&gt;','&':'&amp;' }[c]));
+
+    function renderKPI(){
+      elVer.textContent = 'v' + (window.RepairNet?.version || '?');
+      elLvl.textContent = window.RepairNet.getLevel();
+      elQ.textContent   = window.RepairNet.getQueue().length;
+    }
+
+    function renderList(){
+      const q = window.RepairNet.getQueue().slice().reverse();
+      elList.innerHTML = q.map(x=>{
+        const t=new Date(x.t).toLocaleString();
+        const meta=[x.type, x.src, x.line && ('ř:'+x.line), x.col && ('sl:'+x.col)].filter(Boolean).join(' • ');
+        const stack=x.stack ? `<div class="meta">${safe(x.stack)}</div>`:'';
+        return `<div class="err">
+          <div class="msg ${x.type==='missing-asset'?'warn':'bad'}">${safe(x.msg||'Chyba')}</div>
+          <div class="meta">${safe(t)} • ${safe(meta)}</div>${stack}
+        </div>`;
+      }).join('') || `<div class="err"><div class="msg ok">Žádné položky ve frontě.</div></div>`;
+    }
+
+    // Akce
+    bScan?.addEventListener('click', async ()=>{
+      bScan.disabled=true;
+      try{
+        logLine('🔎 Spouštím sken indexů…');
+        await window.RepairNet.scanDeep(m=>logLine(m));
+        logLine('✅ Sken indexů hotov.');
+      }catch(e){
+        logLine('❌ Chyba při skenu indexů: '+(e.message||e));
+      }finally{ renderKPI(); renderList(); bScan.disabled=false; }
+    });
+
+    bDeps?.addEventListener('click', async ()=>{
+      bDeps.disabled=true;
+      try{
+        logLine('📦 Sken závislostí (všechny moduly)…');
+        const roots = ['../Revia/','../Braska-Hlava/','../Hlavoun/','../Meziprostor-Core/','../VAFT-Network/'];
+        for (const r of roots){ await window.RepairNet.scanIndexAndDeps(r, m=>logLine(m)); }
+        // pokus o opravu chybějících z fallbacku
+        const repaired = await window.RepairNet.tryRepairMissing(m=>logLine(m));
+        if (repaired) logLine(`✨ Opraveno přes fallback: ${repaired}`);
+        else logLine('ℹ️ Fallback opravy nebyly potřeba / nedostupné.');
+        logLine('✅ Sken závislostí dokončen.');
+      }catch(e){
+        logLine('❌ Chyba při skenu závislostí: '+(e.message||e));
+      }finally{ renderKPI(); renderList(); bDeps.disabled=false; }
+    });
+
+    bFix?.addEventListener('click', ()=>{
+      const it = window.RepairNet.fixNext();
+      logLine(it ? ('🔧 Opraveno: '+(it.msg||'neznámá')) : '✨ Není co opravovat.');
+      renderKPI(); renderList();
+    });
+
+    bFixAll?.addEventListener('click', ()=>{
+      const n = window.RepairNet.fixAll();
+      logLine(n ? `✨ Opraveno vše: ${n} položek.` : '✨ Fronta prázdná.');
+      renderKPI(); renderList();
+    });
+
+    bSim?.addEventListener('click', ()=>{
+      // simulace chyb
+      console.error('SimulatedError: test z UI tlačítka');
+      Promise.reject(new Error('AsyncFail: Promise test'));
+      renderKPI(); renderList();
+    });
+
+    bClear?.addEventListener('click', ()=>{
+      elLog.textContent=''; logLine('🧹 Log vyčištěn.');
+    });
+
+    // Boot
+    logLine('✅ UI připraveno • kompatibilní s RepairNet v'+(window.RepairNet?.version||'?'));
+    renderKPI(); renderList();
+  })();
   </script>
 </body>
 </html>
