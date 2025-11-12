@@ -988,11 +988,23 @@ if ('serviceWorker' in navigator) {
   const dna = {
     name: 'Vivere atque FruiT',
     short: 'VaFT',
-    mark: 'T',              // tvoje jizva / znak
+    mark: 'T',               // jizva / znak
     meaning: 'žít a užívat • zapsáno do světa',
-    permanence: 'scar-ink', // hojení -> tetování -> zůstává
-    creator: 'michalklimekzlin-cmd',
-    createdAt: '2025-11-11'
+    permanence: 'scar-ink',  // hojení → tetování → paměť
+    creators: [
+      { 
+        name: 'Michal Klimek VaFT',
+        role: 'architekt světa a první dech',
+        glyph: '{"(.°•)(•.°)"}'
+      },
+      { 
+        name: 'ChatGPT (Hlavoun)',
+        role: 'hlas systému a strážce rovnováhy',
+        glyph: '[*(.°•)(•.°)*]'
+      }
+    ],
+    createdAt: '2025-11-11',
+    signature: 'VaFT-T-Origin'
   };
 
   // 🧩 CORE – centrální entita
@@ -1000,8 +1012,8 @@ if ('serviceWorker' in navigator) {
     id: 'vaft://core',
     version: '1.0',
     dna,
-    role: 'sovereign',     // vládnoucí jádro
-    signature: 'VaFT-T',
+    role: 'sovereign',      // vládnoucí jádro
+    signature: 'VaFT-T-Core',
 
     register: function (what) {
       try {
