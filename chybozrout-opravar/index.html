@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Chybožrout-Opravář v2.1</title>
+  <title>Chybožrout-Opravář v2.3</title>
   <link rel="stylesheet" href="./style.css" />
   <meta name="theme-color" content="#0a0a0a" />
 </head>
 <body>
   <div class="header">
-    <div class="title">🛠️ Chybožrout-Opravář v2.1</div>
+    <div class="title">🛠️ Chybožrout-Opravář v2.3</div>
     <div class="subtitle">„Více hlav = méně pádů“</div>
   </div>
 
@@ -17,58 +17,39 @@
   <button id="scanBtn">Spustit skenování</button>
 
   <footer>
-    <p>Součást systému Vivere atque FruiT • verze 2.1</p>
+    <p>Součást systému Vivere atque FruiT • verze 2.3</p>
   </footer>
 
-  <!-- JISTÉ načtení skriptů (nejdřív repairnet, pak app) -->
-<script>
-(function () {
-  function load(src) {
-    return new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = src + (src.includes('?') ? '&' : '?') + 'v=' + Date.now(); // obejde cache
-      s.onload = resolve;
-      s.onerror = () => reject(new Error('Nepodařilo se načíst: ' + src));
-      document.body.appendChild(s);
-    });
-  }
-  window.addEventListener('DOMContentLoaded', async () => {
-    try {
-      await load('./repairnet.js');       // musí být první
-      await load('./app.js');             // UI až po RepairNet
-    } catch (e) {
-      const box = document.getElementById('scanLog');
-      if (box) box.textContent = '❌ ' + e.message;
-    }
-  });
-})();
-</script>
-<!-- bezpečné načtení RepairNet + App -->
-<script>
-(function () {
-  function load(src) {
-    return new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = src + '?v=' + Date.now(); // obejde cache
-      s.onload = resolve;
-      s.onerror = () => reject(new Error('Nepodařilo se načíst: ' + src));
-      document.body.appendChild(s);
-    });
-  }
-
-  window.addEventListener('DOMContentLoaded', async () => {
-    try {
-      await load('./repairnet.js');   // musí být první
-      await load('./app.js');         // až po něm UI
-      if (window.RepairNet) {
-        console.log('RepairNet v', window.RepairNet.version);
+  <!-- Bezpečné načtení: nejdřív RepairNet, pak UI (app.js) -->
+  <script>
+    (function () {
+      function load(src) {
+        return new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          // cache-bust — pro pevné verze použijeme statické ?v=2.3, jinak Date.now()
+          s.src = src + (src.includes('?') ? '&' : '?') + 'v=' + (src.includes('repairnet.js') ? '2.3' : Date.now());
+          s.onload = resolve;
+          s.onerror = () => reject(new Error('Nepodařilo se načíst: ' + src));
+          document.body.appendChild(s);
+        });
       }
-    } catch (e) {
-      const box = document.getElementById('scanLog');
-      if (box) box.textContent = '❌ ' + e.message;
-    }
-  });
-})();
-</script>
+
+      window.addEventListener('DOMContentLoaded', async () => {
+        const box = document.getElementById('scanLog');
+        try {
+          await load('./repairnet.js');   // MUSÍ být první
+          await load('./app.js');         // UI až po RepairNetu
+          if (window.RepairNet) {
+            const v = window.RepairNet.version || 'neznámá';
+            box.textContent = '✅ UI připraveno • RepairNet v' + v;
+          } else {
+            box.textContent = '⚠️ UI připraveno, ale RepairNet není k dispozici.';
+          }
+        } catch (e) {
+          if (box) box.textContent = '❌ ' + e.message;
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
