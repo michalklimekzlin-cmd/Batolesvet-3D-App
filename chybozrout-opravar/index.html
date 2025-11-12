@@ -43,5 +43,34 @@
   });
 })();
 </script>
+<!-- bezpečné načtení RepairNet + App -->
+<script>
+(function () {
+  function load(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src + '?v=' + Date.now(); // obejde cache
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('Nepodařilo se načíst: ' + src));
+      document.body.appendChild(s);
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    try {
+      await load('./repairnet.js');   // musí být první
+      await load('./app.js');         // až po něm UI
+      if (window.RepairNet) {
+        console.log('RepairNet v', window.RepairNet.version);
+      }
+    } catch (e) {
+      const box = document.getElementById('scanLog');
+      if (box) box.textContent = '❌ ' + e.message;
+    }
+  });
+})();
+</script>
+</body>
+</html>
 </body>
 </html>
