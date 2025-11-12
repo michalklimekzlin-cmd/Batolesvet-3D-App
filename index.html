@@ -979,6 +979,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
 <!-- —— VAFT nezničitelný kořen —— -->
 <script>
 (function (win) {
@@ -1084,6 +1085,7 @@ if ('serviceWorker' in navigator) {
   document.head.appendChild(style);
 })();
 </script>
+
   <script>
 // VAFT status orchestr – bere data z celého tvého světa
 (function () {
@@ -1367,5 +1369,36 @@ document.addEventListener('DOMContentLoaded', () => {
   <script>
 <!-- Chybožrout – Opravář -->
 <script src="./chybozrout-opravar/repairnet.js?v=2"></script>
+<script>
+/* Safe SW – single registration, no reload loops */
+(function () {
+  if (!('serviceWorker' in navigator)) return;
+  let registered = false;
+
+  window.addEventListener('load', async () => {
+    if (registered || navigator.serviceWorker.controller) return;
+    try {
+      const reg = await navigator.serviceWorker.register('./service-worker.js?v=17');
+      registered = true;
+
+      // slušné převzetí bez nuceného reloadu
+      if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+            // pouze info; už žádné location.reload()
+            console.log('[SW] nová verze připravena');
+          }
+        });
+      });
+    } catch (e) {
+      console.warn('[SW] registrace selhala:', e);
+    }
+  });
+})();
+</script>
 </body>
 </html>
