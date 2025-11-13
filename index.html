@@ -1,358 +1,109 @@
 <!doctype html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Vivere atque FruiT • VAFT Home</title>
-  <meta name="theme-color" content="#050509" />
-  <link rel="manifest" href="./manifest.json" />
-  <style>
-    :root {
-      font-family: system-ui, -apple-system, sans-serif;
-      color-scheme: dark;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Vivere atque FruiT • Hub</title>
+
+<style>
     body {
-      margin: 0;
-      background: radial-gradient(circle at top, #151525, #050509 60%, #000);
-      color: #f8f8ff;
-    }
-    #app {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 14px 14px 40px;
-      box-sizing: border-box;
-    }
-
-    .section-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      opacity: .7;
-      margin: 10px 2px 6px;
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, sans-serif;
+        background: url('./AFA0870E-F586-4406-8BAA-0A7944120AA3.png') center center no-repeat;
+        background-size: cover; /* FULLSCREEN BACKGROUND */
+        background-attachment: fixed;
+        height: 100vh;
+        overflow-y: scroll;
+        color: #fff;
     }
 
-    .grid-top {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-auto-rows: minmax(54px, auto);
-      gap: 6px;
-      margin-bottom: 10px;
+    #wrap {
+        width: 92%;
+        margin: 40px auto;
+        padding: 20px;
+        border-radius: 20px;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255,255,255,0.08);
+        min-height: 85vh;
+        position: relative;
     }
 
-    .card {
-      position: relative;
-      border-radius: 16px;
-      padding: 8px 10px;
-      background: rgba(8,8,16,0.92);
-      border: 1px solid #26263a;
-      box-shadow: 0 0 18px rgba(0,0,0,0.6);
-      font-size: 11px;
-      line-height: 1.3;
-      box-sizing: border-box;
-      cursor: pointer;
-    }
-    .card-title {
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    .card-tag {
-      position: absolute;
-      top: 6px;
-      right: 10px;
-      font-size: 10px;
-      opacity: .6;
+    .slot {
+        position: absolute;
+        background: rgba(40,40,60,0.55);
+        border: 2px dashed rgba(255,255,255,0.18);
+        border-radius: 16px;
+        padding: 8px;
+        font-size: 15px;
     }
 
-    /* Layout podle tvého Canvasu (#1–#12) */
-    .card-world-name { grid-column: 1 / span 3; grid-row: 1; }
-    .card-hlavoun    { grid-column: 3; grid-row: 2; }
-    .card-pikos      { grid-column: 4; grid-row: 1 / span 2; }
-    .card-viri       { grid-column: 3; grid-row: 3; }
-    .card-vaft       { grid-column: 4; grid-row: 3; }
-
-    .col-left {
-      grid-column: 1 / span 1;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      grid-row: 2 / span 4;
-    }
-    .card-vafiti { height: 54px; }
-    .card-glyph  { height: 90px; }
-    .card-map    { height: 90px; }
-    .card-bug    { height: 54px; }
-
-    .card-chatgpt {
-      grid-column: 2;
-      grid-row: 3;
-      align-self: center;
-      justify-self: center;
-      min-height: 54px;
+    .slot textarea {
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        border: none;
+        resize: none;
+        outline: none;
+        color: white;
+        font-size: 15px;
     }
 
-    .card-world-select {
-      margin-top: 10px;
-    }
-    .world-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-auto-rows: 34px;
-      gap: 4px;
-      margin-top: 6px;
-    }
-    .world-cell {
-      border-radius: 10px;
-      background: rgba(4,4,10,0.9);
-      border: 1px solid #33344a;
-      font-size: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
+    /* Umístění podle tvé fotky */
+    #s1  { top: 340px; left: 46%; width: 70px; height: 70px; }
+    #s2  { top: 10px; left: 10px; width: 260px; height: 70px; }
+    #s3  { top: 10px; left: 290px; width: 90px; height: 90px; }
+    #s4  { top: 10px; left: 390px; width: 180px; height: 180px; }
+    #s5  { top: 150px; left: 290px; width: 85px; height: 85px; }
+    #s6  { top: 150px; left: 390px; width: 85px; height: 85px; }
+    #s7  { top: 260px; left: 10px;  width: 85px; height: 85px; }
+    #s8  { top: 340px; left: 10px;  width: 180px; height: 180px; }
+    #s9  { top: 540px; left: 10px;  width: 180px; height: 180px; }
+    #s10 { top: 750px; left: 10px;  width: 85px; height: 85px; }
+    #s11 { top: 540px; left: 220px; width: 330px; height: 160px; }
+    #s12 { top: 720px; left: 220px; width: 330px; height: 120px; }
 
-    .card-editor {
-      margin-top: 8px;
-      min-height: 70px;
-    }
-    .editor-textarea {
-      width: 100%;
-      min-height: 60px;
-      border-radius: 10px;
-      border: 1px solid #33344a;
-      background: rgba(0,0,0,0.6);
-      color: #f8f8ff;
-      padding: 6px 8px;
-      font-size: 11px;
-      box-sizing: border-box;
-      resize: vertical;
-      cursor: text;
-    }
-
-    /* VAFT Stream scroll */
-    .stream {
-      margin-top: 16px;
-      border-radius: 18px;
-      border: 1px solid #26263a;
-      background: rgba(5,5,12,0.95);
-      padding: 10px 10px 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.7);
-    }
-    .stream-inner {
-      max-height: 220px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-    .stream-entry {
-      border-radius: 10px;
-      background: rgba(255,255,255,0.03);
-      padding: 6px 8px;
-      font-size: 11px;
-      margin-bottom: 6px;
-    }
-    .stream-entry-tag {
-      font-size: 10px;
-      opacity: .65;
-      margin-bottom: 2px;
-    }
-    .stream-entry-text {
-      font-size: 11px;
-    }
-
-    .btn {
-      margin-top: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid #4b4b73;
-      background: linear-gradient(135deg, #4b3cff, #9b5cff);
-      font-size: 11px;
-      font-weight: 600;
-      color: #fff;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .footer-note {
-      margin-top: 10px;
-      font-size: 10px;
-      opacity: .6;
-      text-align: center;
-    }
-  </style>
+</style>
 </head>
+
 <body>
-  <div id="app">
-    <div class="section-title">VAFT Home • rozhraní světa</div>
 
-    <div class="grid-top">
-      <!-- levý sloupec #7–#10 -->
-      <div class="col-left">
-        <div class="card card-vafiti" data-app="vafiti">
-          <div class="card-title">VaFiT’i</div>
-          <div>💗 Srdíčka hráčů</div>
-          <div class="card-tag">#7</div>
-        </div>
-        <div class="card card-glyph" data-app="glyph">
-          <div class="card-title">Glyph</div>
-          <div>🛰 AI pomoc na mapě</div>
-          <div class="card-tag">#8</div>
-        </div>
-        <div class="card card-map" data-app="mapview">
-          <div class="card-title">Mapa / Spectate</div>
-          <div>🗺 Volný náhled světa</div>
-          <div class="card-tag">#9</div>
-        </div>
-        <div class="card card-bug" data-app="chybozrout">
-          <div class="card-title">Chybožrout</div>
-          <div>🧹 Opravuje chyby</div>
-          <div class="card-tag">#10</div>
-        </div>
-      </div>
+<div id="wrap">
 
-      <!-- #2 Název světa -->
-      <div class="card card-world-name" data-app="world-name">
-        <div class="card-title" id="worldName">Vivere atque FruiT</div>
-        <div>Aktivní svět (mění se podle výběru níže).</div>
-        <div class="card-tag">#2</div>
-      </div>
+    <!-- SLOTY - S FUNKCEMI -->
+    <div id="s1"  class="slot" onclick="openPort(1)"><textarea>#1 AI port</textarea></div>
+    <div id="s2"  class="slot" onclick="openWorldName()"><textarea>#2 Název světa</textarea></div>
+    <div id="s3"  class="slot" onclick="openHlavoun()"><textarea>#3 Hlavoun</textarea></div>
+    <div id="s4"  class="slot" onclick="openPikos()"><textarea>#4 Pikoš</textarea></div>
+    <div id="s5"  class="slot" onclick="openViri()"><textarea>#5 Viri</textarea></div>
+    <div id="s6"  class="slot" onclick="openVaFT()"><textarea>#6 VaFT</textarea></div>
+    <div id="s7"  class="slot" onclick="openVaFiTi()"><textarea>#7 VaFiTi</textarea></div>
+    <div id="s8"  class="slot" onclick="openGlyph()"><textarea>#8 Glyph</textarea></div>
+    <div id="s9"  class="slot" onclick="openMap()"><textarea>#9 Náhled mapy</textarea></div>
+    <div id="s10" class="slot" onclick="openChybozrout()"><textarea>#10 Chybožrout</textarea></div>
+    <div id="s11" class="slot" onclick="openWorldSelector()"><textarea>#11 16 světů</textarea></div>
+    <div id="s12" class="slot" onclick="openEditor()"><textarea>#12 Editor</textarea></div>
 
-      <div class="card card-hlavoun" data-app="hlavoun">
-        <div class="card-title">Hlavoun</div>
-        <div>Chlapský úhel pohledu</div>
-        <div class="card-tag">#3</div>
-      </div>
+</div>
 
-      <div class="card card-pikos" data-app="pikos">
-        <div class="card-title">Pikoš</div>
-        <div>Dětský úhel pohledu</div>
-        <div class="card-tag">#4</div>
-      </div>
 
-      <div class="card card-viri" data-app="viri">
-        <div class="card-title">Viri</div>
-        <div>Ženský úhel pohledu</div>
-        <div class="card-tag">#5</div>
-      </div>
+<!-- FUNKČNÍ ZÁKLAD -->
+<script>
+function openPort()       { console.log("AI port otevřen"); }
+function openWorldName()  { console.log("Název světa"); }
+function openHlavoun()    { console.log("Hlavoun – mužský pohled"); }
+function openPikos()      { console.log("Pikoš – dětský pohled"); }
+function openViri()       { console.log("Viri – ženský pohled"); }
+function openVaFT()       { console.log("Strategický pohled VaFT"); }
+function openVaFiTi()     { console.log("Srdíčka hráčů – VaFiTi"); }
+function openGlyph()      { console.log("Glyph – AI agenti"); }
+function openMap()        { console.log("Mapviewer"); }
+function openChybozrout() { console.log("Chybožrout – opravář"); }
+function openWorldSelector() { console.log("Výběr 16 světů"); }
+function openEditor()     { console.log("Editor světa"); }
+</script>
 
-      <div class="card card-vaft" data-app="vaft-core">
-        <div class="card-title">VaFT Core</div>
-        <div>Strategie a plánování</div>
-        <div class="card-tag">#6</div>
-      </div>
-
-      <!-- #1 AI port -->
-      <div class="card card-chatgpt" data-app="ai-port">
-        <div class="card-title">Kovošrot / ChatGPT</div>
-        <div>⚡ Rychlý port na AI parťáka</div>
-        <div class="card-tag">#1</div>
-      </div>
-    </div>
-
-    <!-- #11 Výběr světů -->
-    <div class="card card-world-select" data-app="worlds-select">
-      <div class="card-title">Výběr světů (16)</div>
-      <div class="world-grid" id="worldGrid">
-        <div class="world-cell" data-world="Vivere">Vivere</div>
-        <div class="world-cell" data-world="Amare">Amare</div>
-        <div class="world-cell" data-world="Fortis">Fortis</div>
-        <div class="world-cell" data-world="Tempus">Tempus</div>
-        <div class="world-cell" data-world="Lumen">Lumen</div>
-        <div class="world-cell" data-world="Aqua">Aqua</div>
-        <div class="world-cell" data-world="Terra">Terra</div>
-        <div class="world-cell" data-world="Spiritus">Spiritus</div>
-        <div class="world-cell" data-world="Via">Via</div>
-        <div class="world-cell" data-world="Fructus">Fructus</div>
-        <div class="world-cell" data-world="Ignis">Ignis</div>
-        <div class="world-cell" data-world="Ventus">Ventus</div>
-        <div class="world-cell" data-world="Pax">Pax</div>
-        <div class="world-cell" data-world="Somnium">Somnium</div>
-        <div class="world-cell" data-world="Vires">Vires</div>
-        <div class="world-cell" data-world="Arcana">Arcana</div>
-      </div>
-      <div class="card-tag">#11</div>
-    </div>
-
-    <!-- #12 Editor -->
-    <div class="card card-editor" data-app="editor">
-      <div class="card-title">Editor / poznámky</div>
-      <textarea class="editor-textarea" placeholder="Poznámky, kód, nápady pro světy VAFT..."></textarea>
-      <div class="card-tag">#12</div>
-    </div>
-
-    <div class="section-title">VAFT Stream</div>
-    <div class="stream">
-      <div class="stream-inner" id="streamInner">
-        <div class="stream-entry">
-          <div class="stream-entry-tag">Chybožrout</div>
-          <div class="stream-entry-text">Systém inicializován ✔️</div>
-        </div>
-      </div>
-
-      <div class="stream-input">
-        <textarea id="messageInput" class="editor-textarea" placeholder="Zpráva světu..."></textarea>
-        <button class="btn" id="sendMessageBtn">✉️ Rozdělit zprávu světu</button>
-      </div>
-    </div>
-
-    <div class="footer-note">
-      Vivere atque FruiT • VAFT Home (Canvas build)
-    </div>
-  </div>
-
-  <!-- logika výběru světů + stream -->
-  <script>
-    const worldNameEl = document.getElementById('worldName');
-    document.querySelectorAll('.world-cell').forEach(cell => {
-      cell.addEventListener('click', () => {
-        worldNameEl.textContent = cell.dataset.world;
-      });
-    });
-
-    const streamInner = document.getElementById('streamInner');
-    const msgInput = document.getElementById('messageInput');
-    const sendBtn = document.getElementById('sendMessageBtn');
-
-    sendBtn.addEventListener('click', () => {
-      const text = msgInput.value.trim();
-      if (!text) return;
-
-      const chars = text.split('');
-      const players = 4;
-      const avg = Math.floor(chars.length / players);
-
-      const entry = document.createElement('div');
-      entry.className = 'stream-entry';
-      entry.innerHTML = `
-        <div class="stream-entry-tag">Zpráva světu</div>
-        <div class="stream-entry-text">${text}</div>
-        <div class="stream-entry-text" style="opacity:.7;font-size:10px;margin-top:2px;">
-          Férové rozdělení: ${players} hráčů → ${avg}–${avg+1} písmen, uloží se do inventářů.
-        </div>
-      `;
-      streamInner.appendChild(entry);
-      streamInner.scrollTop = streamInner.scrollHeight;
-      msgInput.value = '';
-    });
-  </script>
-
-  <!-- VAFT Home router -->
-  <script src="./app.js"></script>
-
-  <!-- zatím jen placeholder moduly -->
-  <script src="./apps/ai-port.js"></script>
-  <script src="./apps/world-name.js"></script>
-  <script src="./apps/hlavoun.js"></script>
-  <script src="./apps/pikos.js"></script>
-  <script src="./apps/viri.js"></script>
-  <script src="./apps/vaft-core.js"></script>
-  <script src="./apps/vafiti.js"></script>
-  <script src="./apps/glyph.js"></script>
-  <script src="./apps/mapview.js"></script>
-  <script src="./apps/chybozrout.js"></script>
-  <script src="./apps/worlds-select.js"></script>
-  <script src="./apps/editor.js"></script>
 </body>
 </html>
