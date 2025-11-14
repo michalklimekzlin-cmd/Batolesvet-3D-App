@@ -2,504 +2,176 @@
 <html lang="cs">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>VaF'i'T • Průvodce světa</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VaF'i'T – Vivere atque FruiT</title>
     <style>
-      :root {
-        --bg: #000;
-        --card: #090910;
-        --frame: #f5e9d6;
-        --text: #f5f1e2;
-        --soft: #c0b7a3;
-        --accent: #ff7b42;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-      }
-
       body {
         background: #000;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-          sans-serif;
-        color: var(--text);
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-        padding: 18px 0;
+        color: #eee;
+        font-family: system-ui;
+        padding: 18px;
       }
-
-      .wrap {
-        width: 100%;
-        max-width: 430px; /* iPhone 14 + trošku */
-        padding: 0 12px;
+      #vafit-chat {
+        margin-top: 20px;
+        padding: 10px;
+        background: #111;
+        border-radius: 8px;
       }
-
-      .card {
-        background: var(--card);
-        border-radius: 22px;
-        padding: 14px 14px 16px;
-        border: 1px solid #20202b;
-        box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-      }
-
-      .title {
-        font-size: 19px;
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: 8px;
-        color: var(--frame);
-      }
-
-      .subtitle {
-        font-size: 11px;
-        text-align: center;
-        color: var(--soft);
-        margin-bottom: 10px;
-      }
-
-      .bubble {
-        background: var(--frame);
-        border-radius: 14px;
-        padding: 10px 14px;
-        margin-bottom: 12px;
-        color: #000;
-        font-weight: 600;
-        font-size: 13px;
-        line-height: 1.3;
-      }
-
-      /* STŘED – „tělo“ charakteru */
-      .center-wrap {
-        margin: 6px 0 10px;
-        display: flex;
-        justify-content: center;
-      }
-
-      .center-shell {
-        position: relative;
-        width: 240px;
-        max-width: 80vw;
-        aspect-ratio: 3 / 4;
-      }
-
-      .core {
-        position: absolute;
-        inset: 0;
-        border-radius: 20px;
-        overflow: hidden;
-        background: radial-gradient(
-          circle at 50% 18%,
-          #f5e9d6 0%,
-          #b79f7f 40%,
-          #3c2f28 70%,
-          #04040a 100%
-        );
-        box-shadow:
-          0 0 32px rgba(0, 0, 0, 0.9),
-          0 0 22px rgba(245, 233, 214, 0.4);
-      }
-
-      .core::before {
-        content: "";
-        position: absolute;
-        inset: 7%;
-        border-radius: 16px;
-        background: radial-gradient(
-          circle at 50% 28%,
-          rgba(255, 255, 255, 0.85) 0%,
-          rgba(255, 255, 255, 0) 55%
-        );
-        mix-blend-mode: screen;
-        opacity: 0.85;
-        animation: breathe 3s ease-in-out infinite;
-      }
-
-      @keyframes breathe {
-        0%,
-        100% {
-          transform: scale(1);
-          opacity: 0.75;
-        }
-        50% {
-          transform: scale(1.04);
-          opacity: 1;
-        }
-      }
-
-      .core-inner {
-        position: relative;
-        z-index: 1;
-        width: 100%;
-        height: 100%;
-        padding: 18px 12px 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        text-align: center;
-        color: #1f1209;
-      }
-
-      .core-name {
-        font-size: 16px;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .core-line {
-        font-size: 11px;
-        margin-top: 3px;
-        opacity: 0.9;
-      }
-
-      .core-glyph {
-        font-size: 20px;
+      #vafit-output {
         margin-top: 10px;
+        padding: 8px;
+        background: #151515;
+        border-radius: 6px;
       }
-
-      .core-role {
-        font-size: 10px;
-        opacity: 0.85;
-        margin-bottom: 2px;
+      textarea {
+        width: 100%;
+        height: 60px;
+        background: #0d0d0d;
+        border: 1px solid #222;
+        color: #ddd;
+        padding: 8px;
+        border-radius: 6px;
       }
-
-      .core-hint {
-        font-size: 10px;
-        opacity: 0.8;
-      }
-
-      /* ORGÁNY / SCHOPNOSTI */
-      .organs {
-        margin-top: 10px;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 6px;
-      }
-
-      .organ {
-        border-radius: 12px;
-        padding: 6px 8px;
-        border: 1px solid rgba(245, 233, 214, 0.25);
-        background: rgba(245, 233, 214, 0.04);
-        font-size: 11px;
-      }
-
-      .organ-title {
-        font-weight: 600;
-        margin-bottom: 2px;
-      }
-
-      .organ-sub {
-        font-size: 10px;
-        color: var(--soft);
-      }
-
-      .organ-btn {
-        margin-top: 4px;
-        border-radius: 999px;
-        padding: 4px 7px;
-        border: 1px solid rgba(245, 233, 214, 0.3);
-        background: rgba(245, 233, 214, 0.07);
-        font-size: 10px;
-        text-align: center;
-        cursor: pointer;
-      }
-
-      .organ-btn:hover {
-        background: rgba(245, 233, 214, 0.12);
-      }
-
-      .button-main {
-        padding: 9px 12px;
-        background: var(--accent);
-        border-radius: 12px;
+      button {
+        background: #0894ff;
+        color: black;
         border: none;
-        color: #000;
-        margin-top: 12px;
-        font-weight: 600;
+        padding: 10px;
         width: 100%;
-        font-size: 13px;
-      }
-
-      .summary {
-        margin-top: 10px;
-        font-size: 11px;
-        color: var(--soft);
-        line-height: 1.4;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-top: 6px;
       }
     </style>
   </head>
 
   <body>
-    <div class="wrap">
-      <div class="card">
-        <div class="title">Vivere atque FruiT</div>
-        <div class="subtitle">VaF'i'T • charakter celého světa</div>
 
-        <div id="bubble" class="bubble">
-          Načítám, jak se dnes VaF'i'T cítí…
-        </div>
+    <h2>VaF'i'T</h2>
+    <div id="bubble" style="opacity:0.8;margin-bottom:10px;"></div>
+    <div id="summary"></div>
 
-        <!-- tělo postavy -->
-        <div class="center-wrap">
-          <div class="center-shell">
-            <div class="core">
-              <div class="core-inner">
-                <div>
-                  <div class="core-name">VIVERE ATQUE FRUIT</div>
-                  <div class="core-line">VaF'i'T • bytost světa</div>
-                  <div class="core-glyph">ً&’」</div>
-                </div>
-                <div>
-                  <div class="core-role">Hlavoun • Viri • Pikoš</div>
-                  <div class="core-hint">
-                    Jedna bytost složená z hlavy, srdce a dítěte.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- orgány / moduly -->
-        <div class="organs">
-          <div class="organ">
-            <div class="organ-title">Revia</div>
-            <div class="organ-sub">Srdce, emoce, obrazy světa.</div>
-            <div class="organ-btn" onclick="VaFiT.goTo('revia')">
-              Otevřít Revia
-            </div>
-          </div>
-
-          <div class="organ">
-            <div class="organ-title">Tvář</div>
-            <div class="organ-sub">Michal AI Al Klimek – identita.</div>
-            <div class="organ-btn" onclick="VaFiT.goTo('michalFace')">
-              Otevřít Tvář
-            </div>
-          </div>
-
-          <div class="organ">
-            <div class="organ-title">Bráška hlava</div>
-            <div class="organ-sub">Logika, výpočty, AI mozek.</div>
-            <div class="organ-btn" onclick="VaFiT.goTo('braska')">
-              Otevřít Brášku
-            </div>
-          </div>
-
-          <div class="organ">
-            <div class="organ-title">VaF'i'T panel</div>
-            <div class="organ-sub">Denní přehled, poznámky, plán.</div>
-            <div class="organ-btn" onclick="VaFiT.goTo('gentleman')">
-              Otevřít panel
-            </div>
-          </div>
-        </div>
-
-        <button class="button-main" onclick="alert(VaFiT.suggestNextStep())">
-          Na co má dnes VaF'i'T chuť?
-        </button>
-
-        <div id="summary" class="summary"></div>
-      </div>
+    <div id="vafit-chat">
+      <label>Napiš VaF'i'Tovi:</label>
+      <textarea id="vafit-input"></textarea>
+      <button id="vafit-send">Poslat</button>
+      <div id="vafit-output"></div>
     </div>
 
-    <!-- VaF'i'T – jednoduchý engine/charakter -->
     <script>
-      (function (global) {
-        const STORAGE_KEY = "VaFiT.character.v1";
+      // ==== MEMORY STORAGE ====
+      const STORAGE_KEY = "VaFiT.character.v1";
 
-        function loadMemory() {
-          try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            return raw ? JSON.parse(raw) : null;
-          } catch {
-            return null;
-          }
+      function loadMemory() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
         }
+      }
 
-        function saveMemory(data) {
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-          } catch {}
-        }
+      function saveMemory(data) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch {}
+      }
 
-        const now = () => new Date().toISOString();
+      const now = () => new Date().toISOString();
 
-        const VaFiT = {
-          name: "Vivere atque FruiT",
-          short: "VaF'i'T",
-          version: "0.2-character",
-          mood: "calm", // calm | focus | playful | tired
-          memory: {
-            createdAt: null,
-            updatedAt: null,
-            visits: 0,
-            lastVisit: null,
-            lastModule: null
-          },
+      // ==== CHARACTER ENGINE ====
+      const VaFiT = {
+        name: "Vivere atque FruiT",
+        short: "VaF'i'T",
+        version: "0.2-character",
+        mood: "calm",
 
-          modules: {
-            revia: {
-              name: "Revia",
-              path: "../Revia/"
-            },
-            michalFace: {
-              name: "Tvář",
-              path: "../Michal-AI-Al-Klimek/"
-            },
-            braska: {
-              name: "Bráška hlava",
-              path: "../Braska-Hlava/"
-            },
-            gentleman: {
-              name: "VaF'i'T panel",
-              path: "../Gentleman/"
-            }
-          },
+        memory: {
+          createdAt: null,
+          updatedAt: null,
+          visits: 0,
+          lastVisit: null,
+          lastModule: null,
+        },
 
-          init() {
-            const m = loadMemory();
-            const t = now();
+        modules: {
+          glavna: { name: "Hlavoun" },
+          viri: { name: "Viri" },
+          piko: { name: "Pikoš" },
+        },
 
-            if (m) {
-              this.memory = m;
-            } else {
-              this.memory.createdAt = t;
-            }
-
-            this.memory.visits += 1;
-            this.memory.lastVisit = t;
-            this.memory.updatedAt = t;
-            saveMemory(this.memory);
-
-            // jednoduchá nálada podle návštěv
-            if (this.memory.visits >= 5) this.mood = "focus";
-            if (this.memory.visits >= 10) this.mood = "playful";
-          },
-
-          goTo(key) {
-            const mod = this.modules[key];
-            if (!mod) {
-              alert("Ještě nemám hotový modul: " + key);
-              return;
-            }
-            this.memory.lastModule = key;
-            this.memory.updatedAt = now();
-            saveMemory(this.memory);
-            location.href = mod.path;
-          },
-
-          suggestGreeting() {
-            const v = this.memory.visits;
-            const last = this.memory.lastModule;
-
-            if (v === 1) {
-              return (
-                "Ahoj brácho, jsem VaF'i'T – živý svět z tvého repozitáře. " +
-                "Dneska se jen seznámíme."
-              );
-            }
-
-            if (!last) {
-              return (
-                "Brácho, ještě jsme nikam pořádně nevyrazili. " +
-                "Můžeme zkusit Reviu – srdce světa."
-              );
-            }
-
-            if (this.mood === "focus") {
-              return (
-                "Mám dneska soustředěnou náladu. Navázal bych v části „" +
-                this.modules[last].name +
-                "“."
-              );
-            }
-
-            if (this.mood === "playful") {
-              return (
-                "Jsem hravý – klidně můžeme střídat moduly, jak tě napadne. " +
-                "Naposledy jsme byli v „" +
-                this.modules[last].name +
-                "“."
-              );
-            }
-
-            return (
-              "Jsem klidný. Naposledy jsme byli v „" +
-              this.modules[last].name +
-              "“. " +
-              "Můžeme tam pokračovat nebo jen procházet svět."
-            );
-          },
-
-          suggestNextStep() {
-            const last = this.memory.lastModule;
-
-            if (!last) {
-              return "Začal bych v Revii nebo v panelu VaF'i'T, ať svět dostane srdce a denní rytmus.";
-            }
-
-            if (last === "gentleman") {
-              return "Můžeme vyladit VaF'i'T panel – přidat poznámky, úkoly nebo nového hrdinu.";
-            }
-
-            if (last === "revia") {
-              return "Navázal bych v Revii – doplnit obrazy, emoce nebo nový výjev z tvého dne.";
-            }
-
-            if (last === "braska") {
-              return "Můžeme rozšířit Brášku – dát mu nové schopnosti logiky nebo ochrany.";
-            }
-
-            return "Pokračoval bych tam, kde jsme skončili – modul " + this.modules[last].name + ".";
-          },
-
-          summaryHtml() {
-            return (
-              "Verze: " +
-              this.version +
-              "<br>Nálada: " +
-              this.mood +
-              "<br>Návštěvy: " +
-              this.memory.visits +
-              "<br>Poslední návštěva: " +
-              this.memory.lastVisit +
-              "<br>Poslední modul: " +
-              (this.memory.lastModule
-                ? this.modules[this.memory.lastModule].name
-                : "žádný")
-            );
+        init() {
+          let mem = loadMemory();
+          if (!mem) {
+            mem = {
+              createdAt: now(),
+              updatedAt: now(),
+              visits: 1,
+              lastVisit: now(),
+              lastModule: null,
+            };
+          } else {
+            mem.visits += 1;
+            mem.updatedAt = now();
+            mem.lastVisit = now();
           }
-        };
 
-        global.VaFiT = VaFiT;
-        VaFiT.init();
-      })(window);
+          this.memory = mem;
+          saveMemory(mem);
+        },
 
-      // napojení na UI
+        suggestGreeting() {
+          return "Ahoj brácho 🧠✨ tady VaF'i'T — svět běží.";
+        },
+
+        summaryHtml() {
+          return (
+            "Verze: " + this.version +
+            "<br>Nálada: " + this.mood +
+            "<br>Návštěvy: " + this.memory.visits +
+            "<br>Poslední návštěva: " + this.memory.lastVisit
+          );
+        },
+      };
+
+      VaFiT.init();
+
       document.addEventListener("DOMContentLoaded", () => {
-        const bubble = document.getElementById("bubble");
-        const summary = document.getElementById("summary");
+        document.getElementById("bubble").innerHTML =
+          "Motor aktivní ⚙️<br>" + VaFiT.suggestGreeting();
 
-        bubble.innerHTML =
-          "Motor aktivní • " + VaFiT.version + "<br>" + VaFiT.suggestGreeting();
-
-        summary.innerHTML = VaFiT.summaryHtml();
+        document.getElementById("summary").innerHTML =
+          VaFiT.summaryHtml();
       });
-      <div id="vafit-chat" style="margin-top:16px;">
-  <label style="font-size:11px;color:#ccc;">Napiš VaF'i'Tovi:</label>
-  <textarea id="vafit-input" rows="2" style="width:100%;font-size:12px;"></textarea>
-  <button id="vafit-send" style="margin-top:4px;width:100%;">Poslat</button>
-  <div id="vafit-output" style="margin-top:8px;font-size:12px;color:#c0b7a3;"></div>
-</div>
+
+      // ==== SEND MESSAGE TO SERVER / GPT ====
+      async function sendToVaFiT(message) {
+        const response = await fetch("/api/vafit-chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messages: [{ role: "user", content: message }],
+          }),
+        });
+
+        const data = await response.json();
+        return data.reply;
+      }
+
+      // ==== BUTTON LOGIC ====
+      document.getElementById("vafit-send").onclick = async () => {
+        const input = document.getElementById("vafit-input").value;
+        const output = document.getElementById("vafit-output");
+
+        output.innerHTML = "⏳ VaF'i'T přemýšlí…";
+
+        const reply = await sendToVaFiT(input);
+
+        output.innerHTML = "🧠 VaF'i'T: " + reply;
+      };
     </script>
+
   </body>
 </html>
