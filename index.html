@@ -749,19 +749,18 @@
       let networkLoaded = false;
 
       function lazyLoadNetwork() {
-        if (networkLoaded) return;
-        const s = document.createElement('script');
-        s.src = './vaft.network.js';
-        s.onload = () => {
-          console.log('VAFT network připojena');
-          networkLoaded = true;
-          if (window.VAFT && window.VAFT.network && window.VAFT.network.render) {
-            window.VAFT.network.render('#vaft-nodes', '#vaft-nodes-outer', '#vaft-nodes-mirror', '#vaft-nodes-origin');
-          }
-        };
-        s.onerror = () => console.warn('VAFT network.js se nenačetl – jedu bez sítě');
-        document.body.appendChild(s);
-      }
+  // SAFE MÓD – síť je dočasně vypnutá,
+  // jen ukážeme info, ale nic nenačítáme
+  console.log('[VAFT] Síť je dočasně vypnutá (safe mode).');
+
+  const box = document.getElementById('vaft-nodes');
+  if (box && !box.dataset.safeInfo) {
+    box.dataset.safeInfo = '1';
+    box.innerHTML =
+      '<div class="node-pill">Síť je dočasně vypnutá (safe mode),' +
+      ' ale Vivere atque FruiT běží dál. 🧠</div>';
+  }
+}
 
       function vaftSwitchPanel(targetId) {
         if (vaftTabLock) return;
