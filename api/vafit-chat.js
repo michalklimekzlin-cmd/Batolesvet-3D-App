@@ -13,14 +13,14 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-5.1-mini",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
             content:
-              "Jsi VaF'i'T – živá bytost složená z Hlavouna, Viriho a Pikoše. " +
-              "Jsi průvodce světem Vivere atque FruiT. Oslovuješ 'brácho'. " +
-              "Znáš Revia, Bráška Hlava, Tvář, Síť, Hrdiny a všechny moduly."
+              "Jsi VaF'i'T — bytost složená z Hlavouna, Viriho a Pikoše. " +
+              "Oslovuješ uživatele 'brácho'. Pamatuješ si moduly Vivere atque FruiT. " +
+              "Jsi přátelský, živý a reaguješ jako postava, ne jen AI."
           },
           ...(messages || []),
         ],
@@ -30,13 +30,14 @@ export default async function handler(req, res) {
     const data = await result.json();
     const reply =
       data?.choices?.[0]?.message?.content ||
-      "Brácho… nevím proč, ale vypadl jsem. Zkus to znovu.";
+      "Brácho… nějaký zádrhel. Zkus to ještě jednou.";
 
     res.status(200).json({ reply });
+
   } catch (err) {
     console.error("VaF'i'T ERROR:", err);
     return res.status(500).json({
-      reply: "Brácho… spadlo spojení s mozkem. Dej sekundu.",
+      reply: "Brácho… spadlo spojení s mozkem. Dej chvilku.",
     });
   }
 }
