@@ -233,12 +233,13 @@ export default async function handler(req, res) {
     // posledních 30 zpráv stačí
     const clientMessages = Array.isArray(body.messages) ? body.messages : [];
 
+const clientMessages = Array.isArray(body.messages) ? body.messages : [];
+
 // oprava – odfiltrujeme špatné zprávy
 const safeMessages = clientMessages.filter(
   (m) => m && typeof m.content === "string" && m.content.trim() !== ""
 );
 
-// posledních 30 zpráv
 const trimmedMessages =
   safeMessages.length > 30
     ? safeMessages.slice(safeMessages.length - 30)
