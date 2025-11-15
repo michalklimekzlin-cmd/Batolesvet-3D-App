@@ -652,17 +652,22 @@
     <script>
       // ======== LOKÁLNÍ PAMĚŤ ========
      // ======== STORAGE MODUL ========
+// ======== MODUL: VAFT_STORAGE (bezpečné ukládání stavu motoru) ========
 const VAFT_STORAGE = {
   save(key, value) {
-    try { localStorage.setItem(key, JSON.stringify(value)); }
-    catch (e) { console.warn("VAFT storage fail:", e); }
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      console.warn("VAFT storage save fail:", key, e);
+    }
   },
 
   load(key, fallback = null) {
     try {
       const raw = localStorage.getItem(key);
       return raw ? JSON.parse(raw) : fallback;
-    } catch {
+    } catch (e) {
+      console.warn("VAFT storage load fail:", key, e);
       return fallback;
     }
   }
