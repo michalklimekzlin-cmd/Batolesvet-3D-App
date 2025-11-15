@@ -892,21 +892,30 @@ S láskou a důvěrou – Michal.
       // ======== CHAT HISTORIE ========
       let chatHistory = loadJson(STORAGE_KEY_CHAT) || [];
 
-      function addMessage(role, content) {
+      // ======== CHAT HISTORIE ========
+let chatHistory = loadJson(STORAGE_KEY_CHAT) || [];
+
+function addMessage(role, content) {
+  // ochrana proti null / undefined / ne-stringu
   if (!content || typeof content !== "string") {
     content = "[⚠️ prázdná zpráva byla opravena]";
   }
-        const msg = {
-          role,
-          content,
-          time: nowTime(),
-        };
-        chatHistory.push(msg);
-        if (chatHistory.length > 20) {
-          chatHistory = chatHistory.slice(chatHistory.length - 20);
-        }
-        saveJson(STORAGE_KEY_CHAT, chatHistory);
-        renderChat();
+
+  const msg = {
+    role,
+    content,
+    time: nowTime(),
+  };
+
+  chatHistory.push(msg);
+
+  if (chatHistory.length > 20) {
+    chatHistory = chatHistory.slice(chatHistory.length - 20);
+  }
+
+  saveJson(STORAGE_KEY_CHAT, chatHistory);
+  renderChat();
+}
 
         if (role === "assistant") {
           const lower = (content || "").toLowerCase();
