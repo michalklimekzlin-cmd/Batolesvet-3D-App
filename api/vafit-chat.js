@@ -213,8 +213,8 @@ Odpovídej česky, přátelsky, jako parťák, ale s respektem k pravidlům.
 `;
 }
 
-// Hlavní handler pro Vercel
-export default async function handler(req, res) {
+// Hlavní handler pro Vercel – CommonJS export
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
     return res.status(405).json({ error: "Použij POST /api/vafit-chat" });
@@ -227,29 +227,38 @@ export default async function handler(req, res) {
   }
 
   try {
-    const body = req.body || {};
-    const clientMessages = Array.isArray(body.messages) ? body.messages : [];
+    // tělo requestu – jistota, že máme objekt
+    let body = req.body || {};
+    if (typeof body === "string") {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        console.error("Body JSON parse fail:", e);
+        body = {};
+      }
+    }
 
-    // posledních 30 zpráv stačí
-    const clientMessages = Array.isArray(body.messages) ? body.messages : [];
+    const rawMessages = Array.isArray(body.messages) ? body.messages : [];
 
-const clientMessages = Array.isArray(body.messages) ? body.messages : [];
+    // odfiltrujeme divné / prázdné zprávy
+    const safeMessages = rawMessages.filter(
+      (m) =>
+        m &&
+        typeof m.content === "string" &&
+        m.content.trim() !== "" &&
+        (m.role === "user" || m.role === "assistant")
+    );
 
-// oprava – odfiltrujeme špatné zprávy
-const safeMessages = clientMessages.filter(
-  (m) => m && typeof m.content === "string" && m.content.trim() !== ""
-);
-
-const trimmedMessages =
-  safeMessages.length > 30
-    ? safeMessages.slice(safeMessages.length - 30)
-    : safeMessages;
+    const trimmedMessages =
+      safeMessages.length > 30
+        ? safeMessages.slice(safeMessages.length - 30)
+        : safeMessages;
 
     // Načteme přehled repa – VaF'i'T ví, co ve světě existuje
     const repoOverview = await fetchRepoOverview();
     const systemContent = buildSystemPrompt(repoOverview);
 
-    // Volání OpenAI – chat/completions s novým modelem
+    // Volání OpenAI – chat/completions
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -257,7 +266,7 @@ const trimmedMessages =
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini", // novější mini mozek
+        model: "gpt-4.1-mini",
         messages: [
           { role: "system", content: systemContent },
           ...trimmedMessages,
@@ -271,7 +280,6 @@ const trimmedMessages =
       const errText = await openaiRes.text().catch(() => "");
       console.error("OpenAI error:", openaiRes.status, errText);
 
-      // ↴ Tohle uvidíš přímo v chatu místo "undefined"
       return res.status(500).json({
         reply:
           "Brácho… OpenAI vrátilo chybu " +
@@ -284,8 +292,12 @@ const trimmedMessages =
 
     const data = await openaiRes.json();
     const reply =
-      data.choices?.[0]?.message?.content ||
-      "Brácho… něco se pokazilo, nenašel jsem odpověď od motoru.";
+      data.choices &&
+      data.choices[0] &&
+      data.choices[0].message &&
+      data.choices[0].message.content
+        ? data.choices[0].message.content
+        : "Brácho… něco se pokazilo, nenašel jsem odpověď od motoru.";
 
     return res.status(200).json({ reply });
   } catch (err) {
@@ -295,4 +307,4 @@ const trimmedMessages =
       error: true,
     });
   }
-}
+};
