@@ -890,8 +890,6 @@ S láskou a důvěrou – Michal.
       });
 
       // ======== CHAT HISTORIE ========
-      let chatHistory = loadJson(STORAGE_KEY_CHAT) || [];
-
       // ======== CHAT HISTORIE ========
 let chatHistory = loadJson(STORAGE_KEY_CHAT) || [];
 
@@ -915,20 +913,20 @@ function addMessage(role, content) {
 
   saveJson(STORAGE_KEY_CHAT, chatHistory);
   renderChat();
-}
 
-        if (role === "assistant") {
-          const lower = (content || "").toLowerCase();
-          if (lower.includes("chyba") || lower.includes("error")) {
-            chyboLog(
-              "event",
-              "Motor hlásí, že ve své odpovědi řeší chyby nebo problémy."
-            );
-          } else {
-            chyboLog("info", "Motor odpověděl na impuls.");
-          }
-        }
-      }
+  // reakce Chybožrouta
+  if (role === "assistant") {
+    const lower = (content || "").toLowerCase();
+    if (lower.includes("chyba") || lower.includes("error")) {
+      chyboLog(
+        "event",
+        "Motor hlásí, že ve své odpovědi řeší chyby nebo problémy."
+      );
+    } else {
+      chyboLog("info", "Motor odpověděl na impuls.");
+    }
+  }
+}
 
       function renderChat() {
         const box = document.getElementById("chat-history");
