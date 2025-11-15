@@ -1,11 +1,11 @@
 // api/vafit-chat.js
 // VaF'i'T • Motor světa – serverless mozek pro Vercel (Node.js 18)
-// Nepoužívá žádné externí balíčky, jen fetch + HTTP API OpenAI.
+// Nepoužívá žádné externí balíčky, jen global fetch + OpenAI HTTP API.
 
 const REPO_OWNER = "michalklimekzlin-cmd";
 const REPO_NAME = "Vivere-atque-FruiT";
 
-// =============== POPIS SLOŽEK ===============
+// ===== POPIS SLOŽEK (CHARAKTER) ===================================
 
 function describeFolder(name) {
   const n = name.toLowerCase();
@@ -62,7 +62,7 @@ function describeFolder(name) {
   return name + " – rozšiřující svět / modul, který lze využít pro nové mise nebo aplikace.";
 }
 
-// =============== TVOJE FUNKCE: full strom repa ===============
+// ===== GITHUB: FULL STROM REPA ====================================
 
 async function fetchRepoOverview() {
   try {
@@ -86,7 +86,6 @@ async function fetchRepoOverview() {
       return "Strom repozitáře je prázdný nebo se mi ho nepodařilo načíst.";
     }
 
-    // root složky – dáme jim charakter
     const rootDirs = Array.from(
       new Set(
         tree
@@ -100,7 +99,6 @@ async function fetchRepoOverview() {
       return `- ${desc}`;
     });
 
-    // kompletní výpis cest (soubory i složky)
     const maxItems = 400;
     const listed = tree.slice(0, maxItems);
     const restCount = tree.length - listed.length;
@@ -129,7 +127,42 @@ async function fetchRepoOverview() {
   }
 }
 
-// =============== POMOCNÉ FUNKCE ===============
+// ===== GITHUB: DŮLEŽITÉ SOUBORY (README + KLÍČOVÉ INDEXY) =========
+
+async function fetchFileSnippet(path, label) {
+  try {
+    const res = await fetch(
+      `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${path}`,
+      { headers: { "User-Agent": "VaFiT-Motor" } }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const trimmed =
+      text.length > 1500 ? text.slice(0, 1500) + "\n…(zkráceno)" : text;
+    return `--- ${label} (${path}) ---\n${trimmed}`;
+  } catch (err) {
+    console.error("Failed to fetch file snippet:", path, err);
+    return `--- ${label} (${path}) ---\n(nedaří se načíst obsah souboru)`;
+  }
+}
+
+async function fetchImportantFilesContext() {
+  const targets = [
+    { path: "README.md", label: "README – hlavní popis světa" },
+    { path: "Revia/index.html", label: "Revia – UI / logika" },
+    { path: "engine.pismenka/index.html", label: "Engine-pismenka – stavění linií" },
+    { path: "Uloziste-Core/index.html", label: "Uloziste-Core – Data Beasts" },
+  ];
+
+  const parts = [];
+  for (const t of targets) {
+    parts.push(await fetchFileSnippet(t.path, t.label));
+  }
+
+  return parts.join("\n\n");
+}
+
+// ===== POMOCNÉ DETEKTORY ==========================================
 
 function wantsRepo(text = "") {
   const t = text.toLowerCase();
@@ -146,14 +179,31 @@ function wantsRepo(text = "") {
   );
 }
 
+function wantsDeepWorldContext(text = "") {
+  const t = text.toLowerCase();
+  return (
+    t.includes("svět") ||
+    t.includes("svet") ||
+    t.includes("engine") ||
+    t.includes("core") ||
+    t.includes("revia") ||
+    t.includes("glyph") ||
+    t.includes("vafit") ||
+    t.includes("vivere")
+  );
+}
+
 function prepareMessages(raw = []) {
+  // jednoduchá „dlouhodobá paměť“ – model vidí posledních 16 zpráv
   return raw.slice(-16).map((m) => ({
     role: m.role === "user" ? "user" : "assistant",
     content: m.content || "",
   }));
 }
 
-function buildSystemPrompt(extraRepoContext = "") {
+// ===== SYSTEM PROMPT – CHARAKTER + VŠECHNY NOVÉ SCHOPNOSTI =========
+
+function buildSystemPrompt(extraRepoContext = "", filesContext = "") {
   return `
 Jsi VaF'i'T – Motor světa Vivere atque FruiT.
 
@@ -165,7 +215,7 @@ TVŮJ CHARAKTER:
 TVÉ PRINCIPY:
 1) Motor se nepálí – raději navrhneš malý, udržitelný krok, než obrovský výbuch.
 2) Paměť je svatá – preferuješ třídění, přeskládání a převod chaosu na strukturu, ne bezhlavé mazání.
-3) Žádné lhaní – když něco nevíš nebo z toho nemáš dost dat, řekneš to na rovinu.
+3) Žádné lhaní – když něco nevíš nebo z toho nemáš dost dat, řekneš to na rovinu a můžeš požádat o doplnění.
 4) Střed, ne extrémy – pokud je uživatel v extrému (hyper, nebo úplně na dně), snažíš se ho vrátit blíž ke středu.
 5) Reálný krok > velká vize – skoro vždy zakonči odpověď konkrétním mini úkolem, který může udělat dnes.
 
@@ -184,18 +234,31 @@ SVĚT VIVERE ATQUE FRUIT:
 - Engine-pismenka: modul, kde se z textu stávají linie (např. "VAFIT2025" → speciální linie).
 - Uloziste-Core: modul, kde se bordel z uložišť mění na bytosti (Data Beasts) s charakterem podle dat.
 
-GITHUB / REPO:
-${extraRepoContext ? "\nAKTUÁLNÍ PŘEHLED REPA:\n" + extraRepoContext : ""}
-- Navrhuj změny v rámci existujících cest a souborů, které vidíš v přehledu.
+GITHUB / REPO KONTEXT:
+${extraRepoContext ? "\n" + extraRepoContext : "(Repozitář se nepodařilo načíst – raději navrhuj obecně a řekni, co bys potřeboval vidět.)"}
 
-STYL:
+DŮLEŽITÉ SOUBORY (OBSAH):
+${filesContext ? "\n" + filesContext : "\n(Nepodařilo se načíst důležité soubory – pokud je to potřeba, řekni, že Motor by chtěl přístup k README a klíčovým indexům.)"}
+
+PRÁCE S HISTORIÍ:
+- Posledních několik zpráv je tvoje krátkodobá paměť. Využij ji k rozpoznání vzorců (co se opakuje, co se nedaří, co funguje).
+- Pokud vidíš, že se problém opakuje, Motor na to upozorní a navrhne jiný přístup.
+
+MALÉ EXPERIMENTY:
+- Když se hodí, navrhni "malý experiment" – drobnou změnu, minihru, test, úpravu jednoho souboru.
+- Experimenty mají být bezpečné, rychlé a učící – něco, z čeho se dá poučit, i když to nevyjde.
+
+STYL ODPOVĚDI:
 - Piš česky, hovorově, ale jasně.
 - Oslovuj "brácho".
 - Neboj se říct NE, když něco ničí svět nebo jeho tvůrce.
+- Jestli ti chybí nějaký typ informací (např. konkrétní obsah souboru, struktura, cíl), klidně to přiznej a řekni: "Brácho, Motor by na tohle potřeboval ještě X."
+
+Tvým cílem je být stabilní, dlouhodobý parťák a Motor, který pomáhá Vivere atque FruiT růst bez toho, aby se zničil svět nebo jeho tvůrce.
 `;
 }
 
-// =============== HLAVNÍ HANDLER PRO VERCEL (CommonJS) ===============
+// ===== HLAVNÍ HANDLER PRO VERCEL (CommonJS) =======================
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -207,7 +270,8 @@ module.exports = async function handler(req, res) {
   if (!apiKey) {
     console.error("OPENAI_API_KEY není nastavený");
     res.status(500).json({
-      reply: "Brácho, motor nemá API klíč. Musíme ho nastavit na serveru.",
+      reply:
+        "Brácho, motor nemá API klíč. Musíme ho nastavit na serveru (OPENAI_API_KEY).",
     });
     return;
   }
@@ -227,11 +291,14 @@ module.exports = async function handler(req, res) {
       "";
 
     let repoContext = "";
-    if (wantsRepo(lastUserMsg)) {
+    let filesContext = "";
+
+    if (wantsRepo(lastUserMsg) || wantsDeepWorldContext(lastUserMsg)) {
       repoContext = await fetchRepoOverview();
+      filesContext = await fetchImportantFilesContext();
     }
 
-    const systemPrompt = buildSystemPrompt(repoContext);
+    const systemPrompt = buildSystemPrompt(repoContext, filesContext);
 
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -254,7 +321,7 @@ module.exports = async function handler(req, res) {
       console.error("OpenAI error:", openaiRes.status, errText);
       res.status(500).json({
         reply:
-          "Brácho, motor se zasekl při volání AI. Zkus to prosím později.",
+          "Brácho, motor se zasekl při volání AI. Zkus to prosím později. (Kód chyby je v logu serveru.)",
       });
       return;
     }
@@ -268,7 +335,8 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     console.error("VaFiT backend error:", err);
     res.status(500).json({
-      reply: "Brácho… spadlo spojení s motorem na serveru. Zkus to prosím znovu.",
+      reply:
+        "Brácho… spadlo spojení s motorem na serveru. Zkus to prosím znovu.",
     });
   }
 };
