@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VaFT • Data Beasts (DNA)</title>
+
+  <style>
+    body {
+      background:#000;
+      color:#fff;
+      font-family: monospace;
+      padding:20px;
+    }
+    .title {
+      font-size:24px;
+      margin-bottom:10px;
+    }
+    .dna-box {
+      border:1px solid #555;
+      padding:15px;
+      margin-top:20px;
+      background:#111;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="title">🧬 VaFT • Data Beast Generator</div>
+
+  <!-- ZDE SE BUDE GENEROVAT DNA Z ÚLOŽIŠTĚ -->
+  <div id="dna-output" class="dna-box">
+    <b>DNA bytosti:</b><br>
+    <span id="dna-sequence">Čekám na data...</span>
+  </div>
+
+  <script>
+    // Sem budeme dávat algoritmus DNA → vlastnosti → vzhled
+    function createDataBeast(rawData) {
+      // placeholder logika
+      const dna = rawData.toUpperCase().replace(/[^A-Z0-9]/g,'');
+      document.getElementById("dna-sequence").innerText = dna || "Žádná data";
+    }
+
+    // TEST – později se nahradí reálnými daty
+    createDataBeast("demo-faktury 2020 / duplicate / IMG_4432");
+  </script>
+
+</body>
+</html>
