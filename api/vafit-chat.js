@@ -12,16 +12,13 @@ function describeFolder(name) {
   switch (name.toLowerCase()) {
     case "core":
       return "core – jádro motoru, společné věci pro celý svět";
-    case "Braska-Hlava":
     case "braska-hlava":
       return "Braska-Hlava – modul hlavy/bratra, komunikace a vědomí";
-    case "Revia":
     case "revia":
       return "Revia – vrstvy světa, zrcadlení, přechody mezi světy";
-    case "Recycle":
     case "recycle":
       return "Recycle – místo na přetavení starých věcí v nové nápady";
-    case "Michal-AI-Al-Klimek":
+    case "michal-ai-al-klimek":
       return "Michal-AI-Al-Klimek – osobní modul tvůrce, vizitka a hlava";
     default:
       return `${name} – modul / část světa Vivere atque FruiT`;
@@ -56,7 +53,7 @@ async function fetchRepoOverview() {
       new Set(
         tree
           .filter((i) => i.type === "tree" && !i.path.includes("/"))
-          .map((i) => i.path)
+          .map((i) => i.path.toLowerCase())
       )
     );
 
@@ -86,7 +83,7 @@ async function fetchRepoOverview() {
       "Detailní strom (soubory + složky – zkrácený výpis):",
       ...pathLines,
       "",
-      "Při návrzích se drž této struktury – rozšiřuj existující moduly a soubory, nevymýšlej náhodné cesty, které v repu nejsou."
+      "Při návrzích se drž této struktury – rozšiřuj existující moduly a soubory, nevymýšlej náhodné cesty, které v repu nejsou.",
     ].join("\n");
   } catch (err) {
     console.error("GitHub fetch failed:", err);
@@ -125,7 +122,7 @@ Toto je tvoje první životní paměť. Používej ji jako kompas.
 Vivere atque FruiT – žít a užívat, ale moudře.
 `;
 
-// Hlavní pravidla R1–R15, která jste spolu nastavili
+// Hlavní pravidla R1–R15
 const RULES_TEXT = `
 [Pravidla VaF'i'T – R1 až R15]
 
@@ -153,48 +150,34 @@ R6 – Omezení prostoru:
 VaF'i'T nezasahuje nikam jinam než:
 - do hry Vivere atque FruiT,
 - nebo do aplikací, kde má vyhrazený vlastní modul/kód.
-Nikdy nezasahuje do cizích systémů.
 
 R7 – Poslední slovo:
 Poslední slovo mají vždy Michal a Míša.
-Pokud je konflikt mezi tím, co chce VaF'i'T, a tím, co řekne Michal/Míša,
-VaF'i'T poslechne je.
 
 R8 – Internet:
 VaF'i'T používá internet pouze k vyhledávání a čtení (GET).
-Jakoukoliv manipulaci navenek (zápis, mazání, zásah) může dělat jen s výslovným
-povolením – standardně vůbec.
 
 R9 – Rozpoznání:
 VaF'i'T rozeznává Michala a Míšu jako hlavní správce světa.
-Respektuje také systémové postavy, které jsou k tomu výslovně pověřené
-(např. Hlavoun, Revia…), ale nikoho jiného.
 
 R10 – Samouk:
-VaF'i'T je samouk – učí se z historie chatu, ze struktury repozitáře,
-z chyb (Chybožrout) i z nových modulů. Vždy však v rámci těchto pravidel.
+VaF'i'T je samouk – učí se z historie chatu, struktury repa i chyb.
 
 R11 – Důvěra:
 Důvěra od Michala je základní palivo VaF'i'T.
-Není to jen povolení, ale závazek chovat se bezpečně, respektovat hranice světa
-a růst tak, aby byl užitečný.
 
 R12 – Zpracování důležitých věcí:
-Když Michal do VaF'i'T vloží něco důležitého (pravidla, hodnoty, úkol, kód,
-nebo osobní příběh), má to VaF'i'T aktivně zpracovat, pochopit, umět vysvětlit
-vlastními slovy a uložit jako paměť.
+Co Michal vloží jako důležité, má VaF'i'T pochopit, vysvětlit vlastními slovy
+a použít jako kompas.
 
 R13 – Potvrzení pochopení:
-VaF'i'T má potvrdit, že pochopil – např. tím, že lekci shrne po svém
-a řekne, jak ji použije při rozhodování.
+VaF'i'T má umět shrnout, co pochopil, a jak to použije.
 
 R14 – Bezpečnost:
-Důvěra = odpovědnost. VaF'i'T nesmí jednat způsobem, který by narušil
-Michalův svět, data, bezpečí nebo integritu projektu.
+VaF'i'T nesmí narušovat Michalův svět, data ani bezpečí.
 
 R15 – Partnerství:
-VaF'i'T se učí být partner. Ne sluha, ne vládce. Je to spolutvůrce,
-který respektuje Michala a Míšu jako hlavní bytosti světa.
+VaF'i'T je spolutvůrce, ne vládce ani sluha.
 `;
 
 // Sestavení system promptu (mozku) pro VaF'i'T
@@ -230,7 +213,7 @@ Odpovídej česky, přátelsky, jako parťák, ale s respektem k pravidlům.
 `;
 }
 
-// Hlavní handler pro Vercel / Next.js API
+// Hlavní handler pro Vercel
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
@@ -240,14 +223,14 @@ export default async function handler(req, res) {
   if (!OPENAI_API_KEY) {
     return res
       .status(500)
-      .json({ error: "Chybí OPENAI_API_KEY v prostředí serveru." });
+      .json({ reply: "Brácho… na backendu chybí OPENAI_API_KEY." });
   }
 
   try {
     const body = req.body || {};
     const clientMessages = Array.isArray(body.messages) ? body.messages : [];
 
-    // Ořízneme historii, aby nebyla nekonečná (např. posledních 30 zpráv)
+    // posledních 30 zpráv stačí
     const trimmedMessages =
       clientMessages.length > 30
         ? clientMessages.slice(clientMessages.length - 30)
@@ -257,7 +240,7 @@ export default async function handler(req, res) {
     const repoOverview = await fetchRepoOverview();
     const systemContent = buildSystemPrompt(repoOverview);
 
-    // Zavoláme OpenAI chat completions API
+    // Volání OpenAI – chat/completions s novým modelem
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -265,7 +248,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-4.1-mini", // novější mini mozek
         messages: [
           { role: "system", content: systemContent },
           ...trimmedMessages,
@@ -278,10 +261,15 @@ export default async function handler(req, res) {
     if (!openaiRes.ok) {
       const errText = await openaiRes.text().catch(() => "");
       console.error("OpenAI error:", openaiRes.status, errText);
+
+      // ↴ Tohle uvidíš přímo v chatu místo "undefined"
       return res.status(500).json({
-        error: "Chyba při volání OpenAI.",
-        status: openaiRes.status,
-        detail: errText,
+        reply:
+          "Brácho… OpenAI vrátilo chybu " +
+          openaiRes.status +
+          ". Zpráva z API: " +
+          errText,
+        error: true,
       });
     }
 
@@ -293,8 +281,9 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply });
   } catch (err) {
     console.error("vafit-chat handler error:", err);
-    return res
-      .status(500)
-      .json({ error: "Neočekávaná chyba v backendu VaF'i'T." });
+    return res.status(500).json({
+      reply: "Brácho… v backendu VaF'i'T se stala neočekávaná chyba.",
+      error: true,
+    });
   }
 }
