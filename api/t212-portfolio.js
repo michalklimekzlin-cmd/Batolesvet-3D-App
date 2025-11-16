@@ -1,50 +1,30 @@
 // api/t212-portfolio.js
-// Vivere atque FruiT – Portfolio Impulse Engine
+// DEMO napojení Trading212 -> VaF'i'T
+// Zatím NELEZE na skutečné API, jen vrací tvoje tréninková čísla,
+// aby se v motoru ukazovala reálná hodnota portfolia.
 
-const KEY = process.env.T212_API_KEY_VAFIT;
+const DEMO_PORTFOLIO = {
+  practice: true,
+  currency: "€",
+  total: 323003108.39,    // Hodnota portfolia celkem
+  cash: 60313333.22,      // Hotovost
+  invested: 262689775.17, // Investice
+};
 
 export default async function handler(req, res) {
-  if (!KEY) {
-    return res.status(500).json({
-      error: "Chybí T212_API_KEY_VAFIT v prostředí serveru."
-    });
-  }
+  // Klíč z prostředí – může, ale nemusí být nastavený
+  const apiKey = process.env.T212_API_KEY_VAFIT;
 
-  try {
-    const response = await fetch("https://demo.trading212.com/api/v0/equity/account", {
-      headers: {
-        Authorization: `Bearer ${KEY}`,
-        Accept: "application/json"
-      }
-    });
+  // Pro jistotu zalogujeme jen to, jestli existuje (NE hodnotu)
+  console.log("T212_API_KEY_VAFIT exists?", !!apiKey);
 
-    if (!response.ok) {
-      const text = await response.text();
-      return res.status(500).json({
-        error: "Trading212 API error",
-        status: response.status,
-        text
-      });
-    }
-
-    const data = await response.json();
-
-    // Vyfiltrujeme pouze užitečné hodnoty
-    const output = {
-      currency: data?.account?.currency || "CZK",
-      cash: data?.account?.cash || 0,
-      invested: data?.account?.invested || 0,
-      pnl: data?.account?.pnl || 0,
-      total: data?.account?.total || 0,
-      updated: new Date().toISOString()
-    };
-
-    return res.status(200).json({ portfolio: output });
-
-  } catch (err) {
-    return res.status(500).json({
-      error: "Nečekaná chyba backendu při načítání portfolio impulsu.",
-      message: err.message
-    });
-  }
+  // ZATÍM vždy vracíme demo data.
+  // Později sem doplníme skutečný request na Trading212 API.
+  return res.status(200).json({
+    ok: true,
+    ...DEMO_PORTFOLIO,
+    note: apiKey
+      ? "DEMO: API klíč je nastavený, ale zatím používáme tréninková statická čísla."
+      : "DEMO: API klíč není v prostředí vidět, používám tréninková statická čísla.",
+  });
 }
