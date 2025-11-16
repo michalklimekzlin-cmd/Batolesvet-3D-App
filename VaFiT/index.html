@@ -1121,6 +1121,38 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
   initWorkshop();
 
+  <!-- ===== TRADING212: načtení hodnoty portfolia ===== -->
+<script>
+fetch('/api/t212-portfolio')
+  .then(res => res.json())
+  .then(data => {
+    console.log("T212 PORTFOLIO:", data);
+
+    const bubble = document.getElementById("bubble");
+
+    if (!bubble) return;
+
+    // Pokud API selže
+    if (data.error) {
+      bubble.innerHTML += `
+        <br><br>
+        ⚠️ Nepodařilo se načíst hodnotu portfolia.
+      `;
+    } 
+    // Pokud API vrátilo data
+    else {
+      bubble.innerHTML += `
+        <br><br>
+        <strong>Hodnota portfolia:</strong><br>
+        💶 ${data.total.toLocaleString("cs-CZ")} €
+      `;
+    }
+  })
+  .catch(err => {
+    console.log("FETCH ERROR:", err);
+  });
+</script>
+
   const bubble = document.getElementById("bubble");
 
   // --- TRADING212: načtení hodnot portfolia ---
